@@ -20,6 +20,8 @@ JINJA_ENVIRONMENT = {'extensions': ['jinja2.ext.i18n']}
 PLUGIN_PATHS = ['plugins']
 PLUGINS = ['i18n_subsites']
 
+STATIC_PATHS = ['images']
+
 # Feed generation is usually not desired when developing
 FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
@@ -43,7 +45,7 @@ DEFAULT_PAGINATION = 10
 #RELATIVE_URLS = True
 
 SLUG_SUBSTITUTIONS = (('.md','',False),)
-ARTICLE_URL = '{date:%Y}/{date:%m}/{date:%d}/{slug}/'
+ARTICLE_URL = '{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 ARTICLE_SAVE_AS = '{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 ARCHIVES_URL = 'archive.html'
 
