@@ -6,9 +6,11 @@ AUTHOR = 'Chris Jones'
 SITENAME = 'cmsj.net'
 SITEURL = ''
 
-THEME = 'themes/bootstrap3'
+THEME = 'themes/hss'
 BOOTSTRAP_THEME = 'flatly'
 PATH = 'content'
+DISPLAY_ARTICLE_INFO_ON_INDEX = True
+HIDE_SIDEBAR = True
 
 TIMEZONE = 'Europe/London'
 
@@ -32,16 +34,18 @@ LINKS = (('Pelican', 'http://getpelican.com/'),
          ('You can modify those links in your config file', '#'),)
 
 # Social widget
-SOCIAL = (('You can add links in your config file', '#'),
-          ('Another social link', '#'),)
+SOCIAL = (('twitter', 'https://twitter.com/cmsj'),
+          ('github', 'https://github.com/cmsj'))
 
 DEFAULT_PAGINATION = 10
 
 # Uncomment following line if you want document-relative URLs when developing
 #RELATIVE_URLS = True
 
+SLUG_SUBSTITUTIONS = (('.md','',False),)
 ARTICLE_URL = '{date:%Y}/{date:%m}/{date:%d}/{slug}/'
 ARTICLE_SAVE_AS = '{date:%Y}/{date:%m}/{date:%d}/{slug}/index.html'
+ARCHIVES_URL = 'archives.html'
 
 FEED_ATOM = ('atom.xml')
 CATEGORY_FEED_ATOM = None
