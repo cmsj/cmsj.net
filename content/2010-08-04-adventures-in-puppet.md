@@ -1,5 +1,5 @@
 title: Adventures in Puppet
-slug: adventures-in-puppet.md
+slug: adventures-in-puppet
 date: 2010-08-04
 
 

@@ -1,5 +1,5 @@
 title: The city, locked down
-slug: city-locked-down.md
+slug: city-locked-down
 date: 2004-09-24
 
 

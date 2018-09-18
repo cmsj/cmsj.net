@@ -1,5 +1,5 @@
 title: Quick guide to saving power with USB devices
-slug: quick-guide-to-saving-power-with-usb.md
+slug: quick-guide-to-saving-power-with-usb
 date: 2008-10-09
 
 

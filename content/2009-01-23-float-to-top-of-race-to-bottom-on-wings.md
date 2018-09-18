@@ -1,5 +1,5 @@
 title: Float to the top of the race to the bottom, on wings of quality
-slug: float-to-top-of-race-to-bottom-on-wings.md
+slug: float-to-top-of-race-to-bottom-on-wings
 date: 2009-01-23
 
 

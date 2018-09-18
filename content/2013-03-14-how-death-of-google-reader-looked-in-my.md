@@ -1,5 +1,5 @@
 title: How the death of Google Reader looked in my Twitter timeline
-slug: how-death-of-google-reader-looked-in-my.md
+slug: how-death-of-google-reader-looked-in-my
 date: 2013-03-14
 
 

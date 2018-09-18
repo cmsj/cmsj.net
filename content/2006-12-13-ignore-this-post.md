@@ -1,5 +1,5 @@
 title: Ignore this post
-slug: ignore-this-post.md
+slug: ignore-this-post
 date: 2006-12-13
 
 

@@ -1,5 +1,5 @@
 title: yay for linux devices
-slug: yay-for-linux-devices.md
+slug: yay-for-linux-devices
 date: 2006-12-08
 
 

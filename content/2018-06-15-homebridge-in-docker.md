@@ -1,5 +1,5 @@
 title: Homebridge in Docker, an adventure in networking
-slug: homebridge-in-docker.md
+slug: homebridge-in-docker
 date: 2018-06-15
 
 

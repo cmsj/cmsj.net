@@ -1,5 +1,5 @@
 title: Watching the PS3
-slug: watching-ps3.md
+slug: watching-ps3
 date: 2007-06-04
 
 

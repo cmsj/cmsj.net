@@ -1,5 +1,5 @@
 title: Writing Terminator plugins
-slug: writing-terminator-plugins.md
+slug: writing-terminator-plugins
 date: 2010-04-18
 
 

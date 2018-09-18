@@ -1,5 +1,5 @@
 title: Last bongo in Brighton
-slug: last-bongo-in-brighton.md
+slug: last-bongo-in-brighton
 date: 2005-04-21
 
 

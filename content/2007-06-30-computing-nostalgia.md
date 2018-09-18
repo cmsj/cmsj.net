@@ -1,5 +1,5 @@
 title: Computing nostalgia
-slug: computing-nostalgia.md
+slug: computing-nostalgia
 date: 2007-06-30
 
 

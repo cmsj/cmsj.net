@@ -1,5 +1,5 @@
 title: Installing Ubuntu on the PS3
-slug: installing-ubuntu-on-ps3.md
+slug: installing-ubuntu-on-ps3
 date: 2007-06-07
 
 

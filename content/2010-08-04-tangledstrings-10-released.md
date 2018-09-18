@@ -1,5 +1,5 @@
 title: TangledStrings 1.0 released!
-slug: tangledstrings-10-released.md
+slug: tangledstrings-10-released
 date: 2010-08-04
 
 

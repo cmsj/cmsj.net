@@ -1,5 +1,5 @@
 title: Grand Theft Auto: San Andreas
-slug: grand-theft-auto-san-andreas.md
+slug: grand-theft-auto-san-andreas
 date: 2004-10-30
 
 

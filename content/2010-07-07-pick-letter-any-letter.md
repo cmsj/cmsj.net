@@ -1,5 +1,5 @@
 title: Pick a letter, any letter
-slug: pick-letter-any-letter.md
+slug: pick-letter-any-letter
 date: 2010-07-07
 
 

@@ -1,5 +1,5 @@
 title: Iphone shortcomings
-slug: iphone-shortcomings.md
+slug: iphone-shortcomings
 date: 2008-07-28
 
 

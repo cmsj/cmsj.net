@@ -1,5 +1,5 @@
 title: Dear Apple
-slug: dear-apple.md
+slug: dear-apple
 date: 2011-10-06
 
 

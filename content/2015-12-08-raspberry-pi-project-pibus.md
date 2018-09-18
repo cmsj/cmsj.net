@@ -1,5 +1,5 @@
 title: Raspberry Pi project: PiBus
-slug: raspberry-pi-project-pibus.md
+slug: raspberry-pi-project-pibus
 date: 2015-12-08
 
 

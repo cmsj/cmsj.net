@@ -1,5 +1,5 @@
 title: LCD and a crazy disk chassis
-slug: lcd-and-crazy-disk-chassis.md
+slug: lcd-and-crazy-disk-chassis
 date: 2013-02-06
 
 

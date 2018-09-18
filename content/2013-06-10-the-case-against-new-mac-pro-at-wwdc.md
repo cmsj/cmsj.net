@@ -1,5 +1,5 @@
 title: The (simplest) case against a new Mac Pro at WWDC
-slug: the-case-against-new-mac-pro-at-wwdc.md
+slug: the-case-against-new-mac-pro-at-wwdc
 date: 2013-06-10
 
 

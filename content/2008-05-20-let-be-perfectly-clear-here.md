@@ -1,5 +1,5 @@
 title: Let's be perfectly clear here...
-slug: let-be-perfectly-clear-here.md
+slug: let-be-perfectly-clear-here
 date: 2008-05-20
 
 

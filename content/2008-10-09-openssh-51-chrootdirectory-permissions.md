@@ -1,5 +1,5 @@
 title: openssh 5.1 chrootdirectory permissions issue
-slug: openssh-51-chrootdirectory-permissions.md
+slug: openssh-51-chrootdirectory-permissions
 date: 2008-10-09
 
 

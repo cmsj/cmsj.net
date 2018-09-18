@@ -1,5 +1,5 @@
 title: Terminator hits PPA
-slug: terminator-hits-ppa.md
+slug: terminator-hits-ppa
 date: 2007-09-21
 
 

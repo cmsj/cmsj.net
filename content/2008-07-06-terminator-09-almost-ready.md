@@ -1,5 +1,5 @@
 title: Terminator 0.9 almost ready
-slug: terminator-09-almost-ready.md
+slug: terminator-09-almost-ready
 date: 2008-07-06
 
 

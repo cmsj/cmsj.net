@@ -1,5 +1,5 @@
 title: Suck suck suck suck suck
-slug: suck-suck-suck-suck-suck.md
+slug: suck-suck-suck-suck-suck
 date: 2004-11-15
 
 

@@ -1,5 +1,5 @@
 title: Home networking like a pro - Part 1 - Network Storage
-slug: home-pro-part-1-nas.md
+slug: home-pro-part-1-nas
 date: 2017-06-22
 
 

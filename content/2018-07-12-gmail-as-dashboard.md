@@ -1,5 +1,5 @@
 title: Abusing Gmail as a ghetto dashboard
-slug: gmail-as-dashboard.md
+slug: gmail-as-dashboard
 date: 2018-07-12
 
 

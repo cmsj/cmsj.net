@@ -1,5 +1,5 @@
 title: Further Terminator Progress
-slug: further-terminator-progress.md
+slug: further-terminator-progress
 date: 2008-05-21
 
 

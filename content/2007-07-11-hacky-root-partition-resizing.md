@@ -1,5 +1,5 @@
 title: hacky root partition resizing
-slug: hacky-root-partition-resizing.md
+slug: hacky-root-partition-resizing
 date: 2007-07-11
 
 

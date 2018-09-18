@@ -1,5 +1,5 @@
 title: Infernal Affairs
-slug: infernal-affairs.md
+slug: infernal-affairs
 date: 2004-09-23
 
 

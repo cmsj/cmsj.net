@@ -1,5 +1,5 @@
 title: Zend Studio 64bitness
-slug: zend-studio-64bitness.md
+slug: zend-studio-64bitness
 date: 2005-06-01
 
 

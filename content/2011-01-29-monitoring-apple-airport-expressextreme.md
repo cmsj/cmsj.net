@@ -1,5 +1,5 @@
 title: Monitoring an Apple Airport Express/Extreme with Munin
-slug: monitoring-apple-airport-expressextreme.md
+slug: monitoring-apple-airport-expressextreme
 date: 2011-01-29
 
 

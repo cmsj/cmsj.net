@@ -1,5 +1,5 @@
 title: An adventure with an HP printer/scanner and Ubuntu
-slug: adventure-with-hp-printerscanner-and.md
+slug: adventure-with-hp-printerscanner-and
 date: 2010-03-15
 
 

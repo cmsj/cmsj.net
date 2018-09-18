@@ -1,5 +1,5 @@
 title: My python also spins webs
-slug: my-python-also-spins-webs.md
+slug: my-python-also-spins-webs
 date: 2010-07-06
 
 

@@ -1,5 +1,5 @@
 title: Terminator 0.11 released!
-slug: terminator-011-released.md
+slug: terminator-011-released
 date: 2008-09-20
 
 

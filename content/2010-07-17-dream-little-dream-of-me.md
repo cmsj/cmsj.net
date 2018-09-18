@@ -1,5 +1,5 @@
 title: Dream a little dream of me
-slug: dream-little-dream-of-me.md
+slug: dream-little-dream-of-me
 date: 2010-07-17
 
 

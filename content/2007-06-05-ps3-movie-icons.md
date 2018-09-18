@@ -1,5 +1,5 @@
 title: PS3 movie icons
-slug: ps3-movie-icons.md
+slug: ps3-movie-icons
 date: 2007-06-05
 
 

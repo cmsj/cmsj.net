@@ -1,5 +1,5 @@
 title: Esoteric command line argument parsing in python
-slug: esoteric-command-line-argument-parsing.md
+slug: esoteric-command-line-argument-parsing
 date: 2008-02-12
 
 

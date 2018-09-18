@@ -1,5 +1,5 @@
 title: More iphone
-slug: more-iphone.md
+slug: more-iphone
 date: 2008-07-27
 
 

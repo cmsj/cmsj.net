@@ -1,5 +1,5 @@
 title: Terminator PPA plans
-slug: terminator-ppa-plans.md
+slug: terminator-ppa-plans
 date: 2008-01-31
 
 

@@ -1,5 +1,5 @@
 title: Evil shell genius
-slug: evil-shell-genius.md
+slug: evil-shell-genius
 date: 2012-01-23
 
 

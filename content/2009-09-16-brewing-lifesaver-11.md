@@ -1,5 +1,5 @@
 title: Brewing Lifesaver 1.1
-slug: brewing-lifesaver-11.md
+slug: brewing-lifesaver-11
 date: 2009-09-16
 
 

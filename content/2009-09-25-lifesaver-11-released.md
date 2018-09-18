@@ -1,5 +1,5 @@
 title: Lifesaver 1.1 released!
-slug: lifesaver-11-released.md
+slug: lifesaver-11-released
 date: 2009-09-25
 
 

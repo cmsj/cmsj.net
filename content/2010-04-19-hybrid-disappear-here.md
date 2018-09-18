@@ -1,5 +1,5 @@
 title: Hybrid - Disappear Here
-slug: hybrid-disappear-here.md
+slug: hybrid-disappear-here
 date: 2010-04-19
 
 

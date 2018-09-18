@@ -1,5 +1,5 @@
 title: I'm waving I'm waving
-slug: i-waving-i-waving.md
+slug: i-waving-i-waving
 date: 2009-10-06
 
 

@@ -1,5 +1,5 @@
 title: A little bit of automation of the Trello Mac App
-slug: trello-mac-app-automation.md
+slug: trello-mac-app-automation
 date: 2018-06-19
 
 

@@ -1,5 +1,5 @@
 title: Using Caps Lock as a new modifier key in OS X
-slug: using-caps-lock-as-new-modifier-key-in.md
+slug: using-caps-lock-as-new-modifier-key-in
 date: 2012-11-27
 
 

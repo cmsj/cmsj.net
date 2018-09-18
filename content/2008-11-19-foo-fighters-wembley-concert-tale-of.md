@@ -1,5 +1,5 @@
 title: Foo Fighters Wembley Concert, the tale of a weekend like no other
-slug: foo-fighters-wembley-concert-tale-of.md
+slug: foo-fighters-wembley-concert-tale-of
 date: 2008-11-19
 
 

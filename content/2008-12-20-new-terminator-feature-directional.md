@@ -1,5 +1,5 @@
 title: New Terminator feature: Directional terminal navigation
-slug: new-terminator-feature-directional.md
+slug: new-terminator-feature-directional
 date: 2008-12-20
 
 

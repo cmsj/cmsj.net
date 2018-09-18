@@ -1,5 +1,5 @@
 title: Ubuntu 8.10 (Intrepid) power performance
-slug: ubuntu-810-intrepid-power-performance.md
+slug: ubuntu-810-intrepid-power-performance
 date: 2008-10-09
 
 

@@ -1,5 +1,5 @@
 title: More on comments
-slug: more-on-comments.md
+slug: more-on-comments
 date: 2004-12-18
 
 

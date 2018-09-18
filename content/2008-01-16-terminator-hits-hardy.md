@@ -1,5 +1,5 @@
 title: Terminator hits hard(y)
-slug: terminator-hits-hardy.md
+slug: terminator-hits-hardy
 date: 2008-01-16
 
 

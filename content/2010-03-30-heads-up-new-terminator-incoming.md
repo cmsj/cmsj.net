@@ -1,5 +1,5 @@
 title: Heads up, new Terminator incoming
-slug: heads-up-new-terminator-incoming.md
+slug: heads-up-new-terminator-incoming
 date: 2010-03-30
 
 

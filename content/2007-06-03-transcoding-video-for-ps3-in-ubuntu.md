@@ -1,5 +1,5 @@
 title: Transcoding video for the PS3 in Ubuntu
-slug: transcoding-video-for-ps3-in-ubuntu.md
+slug: transcoding-video-for-ps3-in-ubuntu
 date: 2007-06-03
 
 

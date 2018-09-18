@@ -1,5 +1,5 @@
 title: Adventures in Puppet: concat module
-slug: adventures-in-puppet-concat-module.md
+slug: adventures-in-puppet-concat-module
 date: 2010-08-04
 
 

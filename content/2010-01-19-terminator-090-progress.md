@@ -1,5 +1,5 @@
 title: Terminator 0.90 progress
-slug: terminator-090-progress.md
+slug: terminator-090-progress
 date: 2010-01-19
 
 

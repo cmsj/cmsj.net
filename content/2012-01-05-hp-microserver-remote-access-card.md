@@ -1,5 +1,5 @@
 title: HP Microserver Remote Access Card
-slug: hp-microserver-remote-access-card.md
+slug: hp-microserver-remote-access-card
 date: 2012-01-05
 
 

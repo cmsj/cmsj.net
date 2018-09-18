@@ -1,5 +1,5 @@
 title: screen titles from ssh
-slug: screen-titles-from-ssh.md
+slug: screen-titles-from-ssh
 date: 2007-06-13
 
 

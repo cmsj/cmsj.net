@@ -1,5 +1,5 @@
 title: More PS3 video stuff
-slug: more-ps3-video-stuff.md
+slug: more-ps3-video-stuff
 date: 2007-06-09
 
 

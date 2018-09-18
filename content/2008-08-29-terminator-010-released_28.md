@@ -1,5 +1,5 @@
 title: Terminator 0.10 released
-slug: terminator-010-released_28.md
+slug: terminator-010-released_28
 date: 2008-08-29
 
 

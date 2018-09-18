@@ -1,5 +1,5 @@
 title: Terminator 0.96 released
-slug: terminator-096-released.md
+slug: terminator-096-released
 date: 2011-09-23
 
 

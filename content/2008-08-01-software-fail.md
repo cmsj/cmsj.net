@@ -1,5 +1,5 @@
 title: Software fail
-slug: software-fail.md
+slug: software-fail
 date: 2008-08-01
 
 

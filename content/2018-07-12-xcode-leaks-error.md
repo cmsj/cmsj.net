@@ -1,5 +1,5 @@
 title: Fixing an error in Xcode Instruments's Leaks profile
-slug: xcode-leaks-error.md
+slug: xcode-leaks-error
 date: 2018-07-12
 
 

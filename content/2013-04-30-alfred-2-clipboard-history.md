@@ -1,5 +1,5 @@
 title: Alfred 2 clipboard history
-slug: alfred-2-clipboard-history.md
+slug: alfred-2-clipboard-history
 date: 2013-04-30
 
 

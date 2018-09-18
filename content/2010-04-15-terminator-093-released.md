@@ -1,5 +1,5 @@
 title: Terminator 0.93 released!
-slug: terminator-093-released.md
+slug: terminator-093-released
 date: 2010-04-15
 
 

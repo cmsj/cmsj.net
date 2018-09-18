@@ -1,5 +1,5 @@
 title: Recent FOSS activities
-slug: recent-foss-activities.md
+slug: recent-foss-activities
 date: 2009-03-10
 
 

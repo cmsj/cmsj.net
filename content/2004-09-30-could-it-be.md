@@ -1,5 +1,5 @@
 title: Could it be?
-slug: could-it-be.md
+slug: could-it-be
 date: 2004-09-30
 
 

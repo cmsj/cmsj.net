@@ -1,5 +1,5 @@
 title: Terminator 0.95 released!
-slug: terminator-095-released.md
+slug: terminator-095-released
 date: 2010-08-24
 
 

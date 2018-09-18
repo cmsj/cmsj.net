@@ -1,5 +1,5 @@
 title: You know that Alan "popey" Pope?
-slug: you-know-that-alan-pope.md
+slug: you-know-that-alan-pope
 date: 2009-09-29
 
 

@@ -1,5 +1,5 @@
 title: Terminator is in Debian
-slug: terminator-is-in-debian.md
+slug: terminator-is-in-debian
 date: 2008-02-11
 
 

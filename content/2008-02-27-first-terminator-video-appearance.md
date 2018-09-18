@@ -1,5 +1,5 @@
 title: First terminator video appearance?
-slug: first-terminator-video-appearance.md
+slug: first-terminator-video-appearance
 date: 2008-02-27
 
 

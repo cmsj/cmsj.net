@@ -1,5 +1,5 @@
 title: Farm ore punny
-slug: farm-ore-punny.md
+slug: farm-ore-punny
 date: 2007-05-11
 
 

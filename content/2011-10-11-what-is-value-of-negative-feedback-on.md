@@ -1,5 +1,5 @@
 title: What is the value of negative feedback on the Internet?
-slug: what-is-value-of-negative-feedback-on.md
+slug: what-is-value-of-negative-feedback-on
 date: 2011-10-11
 
 

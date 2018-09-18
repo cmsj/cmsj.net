@@ -1,5 +1,5 @@
 title: Team America
-slug: team-america.md
+slug: team-america
 date: 2004-10-26
 
 

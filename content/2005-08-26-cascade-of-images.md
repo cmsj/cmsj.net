@@ -1,5 +1,5 @@
 title: Cascade of images
-slug: cascade-of-images.md
+slug: cascade-of-images
 date: 2005-08-26
 
 

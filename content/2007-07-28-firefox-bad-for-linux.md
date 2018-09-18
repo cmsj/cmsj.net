@@ -1,5 +1,5 @@
 title: Firefox bad for Linux?
-slug: firefox-bad-for-linux.md
+slug: firefox-bad-for-linux
 date: 2007-07-28
 
 

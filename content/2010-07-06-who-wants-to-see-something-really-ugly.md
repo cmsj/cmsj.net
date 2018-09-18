@@ -1,5 +1,5 @@
 title: Who wants to see something really ugly?
-slug: who-wants-to-see-something-really-ugly.md
+slug: who-wants-to-see-something-really-ugly
 date: 2010-07-06
 
 

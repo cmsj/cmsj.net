@@ -1,5 +1,5 @@
 title: Happy 10th Birthday Terminator!
-slug: happy-10th-terminator.md
+slug: happy-10th-terminator
 date: 2017-07-28
 
 

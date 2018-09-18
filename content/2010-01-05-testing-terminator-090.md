@@ -1,5 +1,5 @@
 title: Testing Terminator 0.90
-slug: testing-terminator-090.md
+slug: testing-terminator-090
 date: 2010-01-05
 
 

@@ -1,5 +1,5 @@
 title: I've got a, but I'm not a b
-slug: i-got-but-i-not-b.md
+slug: i-got-but-i-not-b
 date: 2009-05-25
 
 

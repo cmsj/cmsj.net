@@ -1,5 +1,5 @@
 title: Happenings
-slug: happenings.md
+slug: happenings
 date: 2005-06-12
 
 

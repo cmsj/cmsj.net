@@ -1,5 +1,5 @@
 title: Funky lcd4linux python module
-slug: funky-lcd4linux-python-module.md
+slug: funky-lcd4linux-python-module
 date: 2013-01-26
 
 

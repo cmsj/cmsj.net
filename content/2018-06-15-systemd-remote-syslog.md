@@ -1,5 +1,5 @@
 title: Receiving remote syslog events with systemd
-slug: systemd-remote-syslog.md
+slug: systemd-remote-syslog
 date: 2018-06-15
 
 

@@ -1,5 +1,5 @@
 title: New project released - Lifesaver
-slug: new-project-released-lifesaver.md
+slug: new-project-released-lifesaver
 date: 2009-09-15
 
 

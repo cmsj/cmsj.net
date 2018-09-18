@@ -1,5 +1,5 @@
 title: The Lawnmower Man
-slug: lawnmower-man.md
+slug: lawnmower-man
 date: 2010-06-08
 
 

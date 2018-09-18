@@ -1,5 +1,5 @@
 title: Motorstorm
-slug: motorstorm.md
+slug: motorstorm
 date: 2007-06-03
 
 

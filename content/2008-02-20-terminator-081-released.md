@@ -1,5 +1,5 @@
 title: Terminator 0.8.1 released
-slug: terminator-081-released.md
+slug: terminator-081-released
 date: 2008-02-20
 
 

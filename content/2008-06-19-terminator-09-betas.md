@@ -1,5 +1,5 @@
 title: Terminator 0.9 Betas
-slug: terminator-09-betas.md
+slug: terminator-09-betas
 date: 2008-06-19
 
 

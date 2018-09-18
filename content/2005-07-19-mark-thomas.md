@@ -1,5 +1,5 @@
 title: Mark Thomas
-slug: mark-thomas.md
+slug: mark-thomas
 date: 2005-07-19
 
 

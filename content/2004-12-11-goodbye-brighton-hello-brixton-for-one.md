@@ -1,5 +1,5 @@
 title: Goodbye Brighton, Hello Brixton (for one night only)
-slug: goodbye-brighton-hello-brixton-for-one.md
+slug: goodbye-brighton-hello-brixton-for-one
 date: 2004-12-11
 
 

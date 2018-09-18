@@ -1,5 +1,5 @@
 title: At it again
-slug: at-it-again.md
+slug: at-it-again
 date: 2007-10-14
 
 

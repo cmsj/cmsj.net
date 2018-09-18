@@ -1,5 +1,5 @@
 title: Final approach for Terminator epic-refactor
-slug: final-approach-for-terminator-epic.md
+slug: final-approach-for-terminator-epic
 date: 2010-01-21
 
 

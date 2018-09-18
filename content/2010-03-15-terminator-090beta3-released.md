@@ -1,5 +1,5 @@
 title: Terminator 0.90beta3 released
-slug: terminator-090beta3-released.md
+slug: terminator-090beta3-released
 date: 2010-03-15
 
 

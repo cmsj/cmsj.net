@@ -1,5 +1,5 @@
 title: Rise of the Floating Fonters
-slug: rise-of-floating-fonters.md
+slug: rise-of-floating-fonters
 date: 2009-10-20
 
 

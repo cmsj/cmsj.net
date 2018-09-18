@@ -1,5 +1,5 @@
 title: Sending iMessages and SMS through Messages.app with AppleScript
-slug: send-imessage-and-sms-with-applescript.md
+slug: send-imessage-and-sms-with-applescript
 date: 2015-02-20
 
 

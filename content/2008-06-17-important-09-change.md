@@ -1,5 +1,5 @@
 title: Important 0.9 change
-slug: important-09-change.md
+slug: important-09-change
 date: 2008-06-17
 
 

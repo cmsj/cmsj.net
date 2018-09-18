@@ -1,5 +1,5 @@
 title: Terminator 0.9 released!
-slug: terminator-09-released.md
+slug: terminator-09-released
 date: 2008-07-08
 
 

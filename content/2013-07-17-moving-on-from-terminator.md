@@ -1,5 +1,5 @@
 title: Moving on from Terminator
-slug: moving-on-from-terminator.md
+slug: moving-on-from-terminator
 date: 2013-07-17
 
 

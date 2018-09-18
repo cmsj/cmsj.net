@@ -1,5 +1,5 @@
 title: Adventures in Puppet: Tangled Strings
-slug: adventures-in-puppet-tangled-strings.md
+slug: adventures-in-puppet-tangled-strings
 date: 2010-08-04
 
 

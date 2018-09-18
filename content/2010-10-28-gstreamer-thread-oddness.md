@@ -1,5 +1,5 @@
 title: GStreamer thread oddness
-slug: gstreamer-thread-oddness.md
+slug: gstreamer-thread-oddness
 date: 2010-10-28
 
 

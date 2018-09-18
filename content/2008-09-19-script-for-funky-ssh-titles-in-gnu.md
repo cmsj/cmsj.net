@@ -1,5 +1,5 @@
 title: Script for funky SSH titles in GNU Screen
-slug: script-for-funky-ssh-titles-in-gnu.md
+slug: script-for-funky-ssh-titles-in-gnu
 date: 2008-09-19
 
 

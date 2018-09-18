@@ -1,5 +1,5 @@
 title: Thinkpad USB keyboard
-slug: thinkpad-usb-keyboard.md
+slug: thinkpad-usb-keyboard
 date: 2009-10-17
 
 

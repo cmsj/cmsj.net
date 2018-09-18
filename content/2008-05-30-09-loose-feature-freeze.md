@@ -1,5 +1,5 @@
 title: 0.9 loose feature freeze
-slug: 09-loose-feature-freeze.md
+slug: 09-loose-feature-freeze
 date: 2008-05-30
 
 

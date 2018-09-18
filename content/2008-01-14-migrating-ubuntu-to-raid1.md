@@ -1,5 +1,5 @@
 title: Migrating Ubuntu to RAID1
-slug: migrating-ubuntu-to-raid1.md
+slug: migrating-ubuntu-to-raid1
 date: 2008-01-14
 
 

@@ -1,5 +1,5 @@
 title: Hellboy: Directors Cut
-slug: hellboy-directors-cut.md
+slug: hellboy-directors-cut
 date: 2004-10-18
 
 

@@ -1,5 +1,5 @@
 title: getting information out of a badly broken debian installer
-slug: getting-information-out-of-badly-broken.md
+slug: getting-information-out-of-badly-broken
 date: 2008-04-08
 
 

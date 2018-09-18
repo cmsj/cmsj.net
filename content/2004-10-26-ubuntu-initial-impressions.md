@@ -1,5 +1,5 @@
 title: Ubuntu initial impressions
-slug: ubuntu-initial-impressions.md
+slug: ubuntu-initial-impressions
 date: 2004-10-26
 
 

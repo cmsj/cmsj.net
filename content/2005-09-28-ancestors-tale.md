@@ -1,5 +1,5 @@
 title: The Ancestor’s Tale
-slug: ancestors-tale.md
+slug: ancestors-tale
 date: 2005-09-28
 
 

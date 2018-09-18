@@ -1,5 +1,5 @@
 title: Changing GPG key
-slug: changing-gpg-key.md
+slug: changing-gpg-key
 date: 2016-08-30
 
 

@@ -1,5 +1,5 @@
 title: Adventures in Lua stack overflows
-slug: lua-stack-adventures.md
+slug: lua-stack-adventures
 date: 2018-04-13
 
 

@@ -1,5 +1,5 @@
 title: Delightful Hybridisation
-slug: delightful-hybridisation.md
+slug: delightful-hybridisation
 date: 2010-07-29
 
 

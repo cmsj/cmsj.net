@@ -1,5 +1,5 @@
 title: Random musical linkage
-slug: random-musical-linkage.md
+slug: random-musical-linkage
 date: 2009-12-23
 
 

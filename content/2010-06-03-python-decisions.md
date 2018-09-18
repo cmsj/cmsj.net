@@ -1,5 +1,5 @@
 title: Python decisions
-slug: python-decisions.md
+slug: python-decisions
 date: 2010-06-03
 
 

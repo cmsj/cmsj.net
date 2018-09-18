@@ -1,5 +1,5 @@
 title: Old and new: Mixing irssi and iPhones for fun and no profit
-slug: old-and-new-mixing-irssi-and-iphones.md
+slug: old-and-new-mixing-irssi-and-iphones
 date: 2010-12-14
 
 

@@ -1,5 +1,5 @@
 title: Terminator gets a nice bugfix
-slug: terminator-gets-nice-bugfix.md
+slug: terminator-gets-nice-bugfix
 date: 2007-11-07
 
 

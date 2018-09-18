@@ -1,5 +1,5 @@
 title: SonyEricsson k750i
-slug: sonyericsson-k750i.md
+slug: sonyericsson-k750i
 date: 2005-07-05
 
 

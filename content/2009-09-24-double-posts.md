@@ -1,5 +1,5 @@
 title: Double posts
-slug: double-posts.md
+slug: double-posts
 date: 2009-09-24
 
 

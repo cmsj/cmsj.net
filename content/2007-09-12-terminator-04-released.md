@@ -1,5 +1,5 @@
 title: Terminator 0.4 released
-slug: terminator-04-released.md
+slug: terminator-04-released
 date: 2007-09-12
 
 

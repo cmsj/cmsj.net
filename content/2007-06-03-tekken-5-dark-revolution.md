@@ -1,5 +1,5 @@
 title: Tekken 5: Dark Revolution
-slug: tekken-5-dark-revolution.md
+slug: tekken-5-dark-revolution
 date: 2007-06-03
 
 

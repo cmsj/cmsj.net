@@ -1,5 +1,5 @@
 title: Gallery returns
-slug: gallery-returns.md
+slug: gallery-returns
 date: 2004-09-23
 
 

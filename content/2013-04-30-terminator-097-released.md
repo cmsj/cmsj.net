@@ -1,6 +1,6 @@
 title: Terminator 0.97 released!
 date: 2013-04-30
-slug: terminator-097-released.md
+slug: terminator-097-released
 
 
 ## The present:

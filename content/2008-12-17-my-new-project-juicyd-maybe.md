@@ -1,5 +1,5 @@
 title: My new project: juicyD (maybe)
-slug: my-new-project-juicyd-maybe.md
+slug: my-new-project-juicyd-maybe
 date: 2008-12-17
 
 

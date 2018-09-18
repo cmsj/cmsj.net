@@ -1,5 +1,5 @@
 title: Mmm, Source goodness
-slug: mmm-source-goodness.md
+slug: mmm-source-goodness
 date: 2004-12-04
 
 

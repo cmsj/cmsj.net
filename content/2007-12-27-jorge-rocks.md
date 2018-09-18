@@ -1,5 +1,5 @@
 title: Jorge rocks
-slug: jorge-rocks.md
+slug: jorge-rocks
 date: 2007-12-27
 
 

@@ -1,5 +1,5 @@
 title: Terminator 0.14 released!
-slug: terminator-014-released.md
+slug: terminator-014-released
 date: 2009-12-03
 
 

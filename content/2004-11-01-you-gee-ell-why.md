@@ -1,5 +1,5 @@
 title: You Gee Ell Why!
-slug: you-gee-ell-why.md
+slug: you-gee-ell-why
 date: 2004-11-01
 
 

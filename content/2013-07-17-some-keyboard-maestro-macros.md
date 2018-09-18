@@ -1,5 +1,5 @@
 title: Some Keyboard Maestro macros
-slug: some-keyboard-maestro-macros.md
+slug: some-keyboard-maestro-macros
 date: 2013-07-17
 
 

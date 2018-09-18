@@ -1,5 +1,5 @@
 title: Terminator 0.13 released!
-slug: terminator-013-released.md
+slug: terminator-013-released
 date: 2009-06-23
 
 

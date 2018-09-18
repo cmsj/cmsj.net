@@ -1,5 +1,5 @@
 title: HP Microserver Remote Access helper
-slug: hp-microserver-remote-access-helper.md
+slug: hp-microserver-remote-access-helper
 date: 2012-01-06
 
 

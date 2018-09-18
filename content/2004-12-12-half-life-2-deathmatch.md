@@ -1,5 +1,5 @@
 title: Half-Life 2: Deathmatch
-slug: half-life-2-deathmatch.md
+slug: half-life-2-deathmatch
 date: 2004-12-12
 
 

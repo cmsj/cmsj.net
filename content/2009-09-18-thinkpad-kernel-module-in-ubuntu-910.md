@@ -1,5 +1,5 @@
 title: Thinkpad kernel module in Ubuntu 9.10 (Karmic)
-slug: thinkpad-kernel-module-in-ubuntu-910.md
+slug: thinkpad-kernel-module-in-ubuntu-910
 date: 2009-09-18
 
 

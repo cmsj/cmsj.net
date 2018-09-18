@@ -1,5 +1,5 @@
 title: All your pixels are belong to me!
-slug: all-your-pixels-are-belong-to-me.md
+slug: all-your-pixels-are-belong-to-me
 date: 2006-12-06
 
 

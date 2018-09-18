@@ -1,5 +1,5 @@
 title: Python wanderings, part two
-slug: python-wanderings-part-two.md
+slug: python-wanderings-part-two
 date: 2009-12-31
 
 

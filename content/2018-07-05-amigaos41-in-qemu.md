@@ -1,5 +1,5 @@
 title: AmigaOS 4.1 Final Edition in Qemu
-slug: amigaos41-in-qemu.md
+slug: amigaos41-in-qemu
 date: 2018-07-05
 
 

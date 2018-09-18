@@ -1,5 +1,5 @@
 title: Terminator 0.94 released!
-slug: terminator-094-released.md
+slug: terminator-094-released
 date: 2010-07-04
 
 

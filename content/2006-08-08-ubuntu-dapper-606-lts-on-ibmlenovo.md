@@ -1,5 +1,5 @@
 title: Ubuntu Dapper 6.06 LTS on an IBM/Lenovo Thinkpad x40
-slug: ubuntu-dapper-606-lts-on-ibmlenovo.md
+slug: ubuntu-dapper-606-lts-on-ibmlenovo
 date: 2006-08-08
 
 

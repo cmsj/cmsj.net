@@ -1,5 +1,5 @@
 title: gtk icon cache search tool
-slug: gtk-icon-cache-search-tool.md
+slug: gtk-icon-cache-search-tool
 date: 2010-05-13
 
 

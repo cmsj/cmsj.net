@@ -1,5 +1,5 @@
 title: Ghost in the shell 2: Innocence
-slug: ghost-in-shell-2-innocence.md
+slug: ghost-in-shell-2-innocence
 date: 2004-09-23
 
 

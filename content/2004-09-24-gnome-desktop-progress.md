@@ -1,5 +1,5 @@
 title: GNOME Desktop progress
-slug: gnome-desktop-progress.md
+slug: gnome-desktop-progress
 date: 2004-09-24
 
 

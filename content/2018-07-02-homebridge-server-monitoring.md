@@ -1,5 +1,5 @@
 title: Homebridge server monitoring
-slug: homebridge-server-monitoring.md
+slug: homebridge-server-monitoring
 date: 2018-07-02
 
 

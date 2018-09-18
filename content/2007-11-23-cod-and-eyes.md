@@ -1,5 +1,5 @@
 title: Cod and eyes
-slug: cod-and-eyes.md
+slug: cod-and-eyes
 date: 2007-11-23
 
 

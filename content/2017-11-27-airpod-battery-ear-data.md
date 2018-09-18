@@ -1,5 +1,5 @@
 title: Getting battery data from AirPods in macOS
-slug: airpod-battery-ear-data.md
+slug: airpod-battery-ear-data
 date: 2017-11-27
 
 

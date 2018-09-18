@@ -1,5 +1,5 @@
 title: PS3 setup and barebones review
-slug: ps3-setup-and-barebones-review.md
+slug: ps3-setup-and-barebones-review
 date: 2007-06-03
 
 

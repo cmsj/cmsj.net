@@ -1,5 +1,5 @@
 title: tenshu.net is back!
-slug: tenshunet-is-back.md
+slug: tenshunet-is-back
 date: 2004-09-23
 
 

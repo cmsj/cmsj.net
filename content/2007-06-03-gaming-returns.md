@@ -1,5 +1,5 @@
 title: Gaming returns
-slug: gaming-returns.md
+slug: gaming-returns
 date: 2007-06-03
 
 

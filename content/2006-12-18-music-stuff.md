@@ -1,5 +1,5 @@
 title: Music stuff
-slug: music-stuff.md
+slug: music-stuff
 date: 2006-12-18
 
 

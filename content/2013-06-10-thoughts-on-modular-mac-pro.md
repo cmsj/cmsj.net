@@ -1,5 +1,5 @@
 title: Thoughts on a modular Mac Pro
-slug: thoughts-on-modular-mac-pro.md
+slug: thoughts-on-modular-mac-pro
 date: 2013-06-10
 
 

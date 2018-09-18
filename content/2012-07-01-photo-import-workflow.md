@@ -1,5 +1,5 @@
 title: Photo import workflow
-slug: photo-import-workflow.md
+slug: photo-import-workflow
 date: 2012-07-01
 
 

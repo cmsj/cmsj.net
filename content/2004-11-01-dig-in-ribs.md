@@ -1,5 +1,5 @@
 title: Dig in the ribs
-slug: dig-in-ribs.md
+slug: dig-in-ribs
 date: 2004-11-01
 
 

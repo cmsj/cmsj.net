@@ -1,5 +1,5 @@
 title: Some more awesome Alfred 2 workflows
-slug: some-more-awesome-alfred-2-workflows.md
+slug: some-more-awesome-alfred-2-workflows
 date: 2013-04-11
 
 

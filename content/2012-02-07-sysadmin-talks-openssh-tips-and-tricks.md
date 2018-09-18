@@ -1,5 +1,5 @@
 title: A sysadmin talks OpenSSH tips and tricks
-slug: sysadmin-talks-openssh-tips-and-tricks.md
+slug: sysadmin-talks-openssh-tips-and-tricks
 date: 2012-02-07
 
 

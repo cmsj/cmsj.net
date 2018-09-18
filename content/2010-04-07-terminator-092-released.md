@@ -1,5 +1,5 @@
 title: Terminator 0.92 released
-slug: terminator-092-released.md
+slug: terminator-092-released
 date: 2010-04-07
 
 

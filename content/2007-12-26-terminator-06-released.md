@@ -1,5 +1,5 @@
 title: Terminator 0.6 released
-slug: terminator-06-released.md
+slug: terminator-06-released
 date: 2007-12-26
 
 

@@ -1,5 +1,5 @@
 title: Quick GT4 review
-slug: quick-gt4-review.md
+slug: quick-gt4-review
 date: 2005-03-06
 
 

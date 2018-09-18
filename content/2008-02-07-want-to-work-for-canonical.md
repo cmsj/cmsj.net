@@ -1,5 +1,5 @@
 title: Want to work for Canonical?
-slug: want-to-work-for-canonical.md
+slug: want-to-work-for-canonical
 date: 2008-02-07
 
 

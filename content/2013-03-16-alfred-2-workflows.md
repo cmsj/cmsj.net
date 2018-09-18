@@ -1,5 +1,5 @@
 title: Alfred 2 workflows
-slug: alfred-2-workflows.md
+slug: alfred-2-workflows
 date: 2013-03-16
 
 

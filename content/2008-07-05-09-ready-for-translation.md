@@ -1,5 +1,5 @@
 title: 0.9 ready for translation!
-slug: 09-ready-for-translation.md
+slug: 09-ready-for-translation
 date: 2008-07-05
 
 

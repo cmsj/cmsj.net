@@ -1,5 +1,5 @@
 title: Firefox made me think, help!
-slug: firefox-made-me-think-help.md
+slug: firefox-made-me-think-help
 date: 2005-10-13
 
 

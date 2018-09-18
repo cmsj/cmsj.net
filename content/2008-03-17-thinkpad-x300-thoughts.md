@@ -1,5 +1,5 @@
 title: Thinkpad X300 thoughts
-slug: thinkpad-x300-thoughts.md
+slug: thinkpad-x300-thoughts
 date: 2008-03-17
 
 

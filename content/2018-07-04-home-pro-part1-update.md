@@ -1,5 +1,5 @@
 title: Home networking like a pro - Part 1.1 - Network Storage Redux
-slug: home-pro-part1-update.md
+slug: home-pro-part1-update
 date: 2018-07-04
 
 

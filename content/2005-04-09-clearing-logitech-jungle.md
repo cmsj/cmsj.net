@@ -1,5 +1,5 @@
 title: Clearing the Logitech jungle
-slug: clearing-logitech-jungle.md
+slug: clearing-logitech-jungle
 date: 2005-04-09
 
 

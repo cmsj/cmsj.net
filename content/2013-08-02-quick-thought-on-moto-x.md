@@ -1,5 +1,5 @@
 title: The curious Moto X pricing
-slug: quick-thought-on-moto-x.md
+slug: quick-thought-on-moto-x
 date: 2013-08-02
 
 

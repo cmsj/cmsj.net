@@ -1,5 +1,5 @@
 title: Paperless workflow
-slug: paperless-workflow.md
+slug: paperless-workflow
 date: 2012-07-01
 
 

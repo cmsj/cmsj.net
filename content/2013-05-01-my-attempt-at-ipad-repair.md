@@ -1,5 +1,5 @@
 title: My attempt at iPad repair.
-slug: my-attempt-at-ipad-repair.md
+slug: my-attempt-at-ipad-repair
 date: 2013-05-01
 
 

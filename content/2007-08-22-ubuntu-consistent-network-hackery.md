@@ -1,5 +1,5 @@
 title: Ubuntu consistent network hackery
-slug: ubuntu-consistent-network-hackery.md
+slug: ubuntu-consistent-network-hackery
 date: 2007-08-22
 
 

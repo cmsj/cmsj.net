@@ -1,5 +1,5 @@
 title: Terminator progress
-slug: terminator-progress.md
+slug: terminator-progress
 date: 2008-04-18
 
 

@@ -1,5 +1,5 @@
 title: Lifesaver for Maverick
-slug: lifesaver-for-maverick.md
+slug: lifesaver-for-maverick
 date: 2010-09-21
 
 

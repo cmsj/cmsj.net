@@ -1,5 +1,5 @@
 title: Using inotify in a pygtk application without pyinotify
-slug: using-inotify-in-pygtk-application.md
+slug: using-inotify-in-pygtk-application
 date: 2008-10-24
 
 

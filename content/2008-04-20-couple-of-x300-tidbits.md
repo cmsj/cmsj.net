@@ -1,5 +1,5 @@
 title: A couple of X300 tidbits...
-slug: couple-of-x300-tidbits.md
+slug: couple-of-x300-tidbits
 date: 2008-04-20
 
 

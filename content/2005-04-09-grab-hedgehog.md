@@ -1,5 +1,5 @@
 title: Grab a hedgehog
-slug: grab-hedgehog.md
+slug: grab-hedgehog
 date: 2005-04-09
 
 

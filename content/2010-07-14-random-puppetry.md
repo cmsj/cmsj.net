@@ -1,5 +1,5 @@
 title: Random puppetry
-slug: random-puppetry.md
+slug: random-puppetry
 date: 2010-07-14
 
 

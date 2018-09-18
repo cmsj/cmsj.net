@@ -1,5 +1,5 @@
 title: This is your captain speaking, Terminator has now landed!
-slug: this-is-your-captain-speaking.md
+slug: this-is-your-captain-speaking
 date: 2010-01-21
 
 

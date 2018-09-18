@@ -1,5 +1,5 @@
 title: USB Type C is awful
-slug: usb-c-is-awful.md
+slug: usb-c-is-awful
 date: 2017-06-30
 
 

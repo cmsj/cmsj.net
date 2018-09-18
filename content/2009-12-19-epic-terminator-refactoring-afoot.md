@@ -1,5 +1,5 @@
 title: Epic Terminator refactoring afoot
-slug: epic-terminator-refactoring-afoot.md
+slug: epic-terminator-refactoring-afoot
 date: 2009-12-19
 
 

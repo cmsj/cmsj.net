@@ -1,5 +1,5 @@
 title: Hyper Key in macOS Sierra with Karabiner Elements
-slug: karabiner-elements-sierra-hyper.md
+slug: karabiner-elements-sierra-hyper
 date: 2017-06-13
 
 

@@ -1,5 +1,5 @@
 title: Migrations
-slug: migrations.md
+slug: migrations
 date: 2011-07-16
 
 

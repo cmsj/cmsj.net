@@ -1,5 +1,5 @@
 title: Terminator 0.5 released
-slug: terminator-05-released.md
+slug: terminator-05-released
 date: 2007-11-09
 
 

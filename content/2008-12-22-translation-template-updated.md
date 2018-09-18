@@ -1,5 +1,5 @@
 title: Translation template updated
-slug: translation-template-updated.md
+slug: translation-template-updated
 date: 2008-12-22
 
 

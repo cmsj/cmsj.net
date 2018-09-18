@@ -1,5 +1,5 @@
 title: testing...testing...1..2...3...
-slug: testingtesting123.md
+slug: testingtesting123
 date: 2007-11-06
 
 
