@@ -24,7 +24,12 @@ hr {
   height: 1px;
   border: none; }
 
-img {
+img + em {
+  width: 1600px;
+  text-align: center;
+  overflow-wrap: break-word; }
+
+img, img + em {
   display: block;
   max-width: 650px;
   max-height: 650px;
@@ -137,7 +142,7 @@ iframe.embedly-card {
     margin-right: auto;
     font-size: 30px; } }
 @media screen and (max-width: 769px) {
-  article img {
+  article img, article img + em {
     height: auto;
     width: 100%; } }
 main {

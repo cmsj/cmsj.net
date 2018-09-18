@@ -10,3 +10,6 @@ STYLE = default
 
 pygments:
 	pygmentize -S ${STYLE} -f html -a ".highlight pre" > ./static/css/pygments.css
+
+css:
+	scss --sourcemap=none static/css/style.scss static/css/style.min.css

@@ -46,7 +46,13 @@ hr {
   -webkit-border-radius: $radius;
 }
 
-img {
+img+em {
+    width: 1600px;
+    text-align: center;
+    overflow-wrap: break-word;
+}
+
+img,img+em {
   display: block;
   max-width: 650px;
   max-height: 650px;
@@ -205,7 +211,7 @@ iframe.embedly-card {
 
 @media screen and (max-width: 769px){
   article {
-    img {
+    img,img+em {
       height : auto;
       width  : 100%;
     }
