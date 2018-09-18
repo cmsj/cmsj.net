@@ -44,8 +44,8 @@ DEFAULT_PAGINATION = 10
 
 SLUG_SUBSTITUTIONS = (('.md','',False),)
 ARTICLE_URL = '{date:%Y}/{date:%m}/{date:%d}/{slug}/'
-ARTICLE_SAVE_AS = '{date:%Y}/{date:%m}/{date:%d}/{slug}/index.html'
-ARCHIVES_URL = 'archives.html'
+ARTICLE_SAVE_AS = '{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
+ARCHIVES_URL = 'archive.html'
 
 FEED_ATOM = ('atom.xml')
 CATEGORY_FEED_ATOM = None
