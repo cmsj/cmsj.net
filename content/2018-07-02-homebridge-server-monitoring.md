@@ -24,4 +24,4 @@ The configuration is very simple, allowing you to configure one temperature sens
 
 Below is a screenshot showing the server's CPU temperature mingling with all of the Nest and Arlo items :)
 
-![Screenshot]({{ "/assets/2018-07-02-server-temp-homekit.jpg" | absolute_url }})
+![Screenshot](/images/2018-07-02-server-temp-homekit.jpg)

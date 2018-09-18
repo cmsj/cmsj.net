@@ -9,4 +9,4 @@ I'll probably write more about this later, but for now, here is a simple screens
 
 *Update*: Zoltan has published a page with information about how to get it working, [see here](http://zero.eik.bme.hu/~balaton/qemu/amiga/)
 
-![Screenshot]({{ "/assets/2018-07-05-amigaos-qemu.png" | absolute_url }})
+![Screenshot]({filename}/images/2018-07-05-amigaos-qemu.png)

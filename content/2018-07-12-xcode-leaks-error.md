@@ -5,7 +5,7 @@ date: 2018-07-12
 
 As part of our general effort to try and raise the quality of Hammerspoon, I've been working with [@latenitefilms](https://twitter.com/latenitefilms) to track down some memory leaks, which can be very easy if you use the Leaks profile in Xcode's "Instruments" tool. I tried this various ways, but I kept running into this error:
 
-![Screenshot]({{ "/assets/2018-07-12-xcode-leaks-error.png" | absolute_url }})
+![Screenshot]({filename}/images/2018-07-12-xcode-leaks-error.png)
 
 After asking on the [Apple Developer Forums](https://forums.developer.apple.com/thread/104011) we got an interesting response from an Apple employee that code signing might be involved. One change later to not do codesigning on Profile builds and Leaks is working again!
 
