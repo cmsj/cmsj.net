@@ -3,7 +3,7 @@ slug: last-bongo-in-brighton
 date: 2005-04-21
 
 
-![](http://www.tenshu.net/wp-content/format_gig.jpg "DJ Format (left), Abdominal (centre), D-Sicive (right)")Last night I went to a DJ Format gig at the most excellent Concorde 2 here in Brighton, with Alex and Simon.
+![DJ Format](http://www.tenshu.net/wp-content/format_gig.jpg "DJ Format (left), Abdominal (centre), D-Sicive (right)")Last night I went to a DJ Format gig at the most excellent Concorde 2 here in Brighton, with Alex and Simon.
 In short, it rocked!
 Format is a great DJ and Abdominal is a great rapper. D-Sisive was ok, but doesn't seem to be as good as Abdominal.
 They played some tunes off their new album, "If you can't join em, beat em" as well as some classics from "Music for the Mature B-Boy", including a very funny version of Vicious Battle Raps with most of the lyrics reversed from the original.
