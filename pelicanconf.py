@@ -10,6 +10,7 @@ PATH = 'content'
 STATIC_PATHS = ['images']
 DISPLAY_ARTICLE_INFO_ON_INDEX = True
 HIDE_SIDEBAR = True
+RELATIVE_URLS = True
 
 THEME = 'themes/hss'
 DEFAULT_PAGINATION = 10
