@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="./theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="./">
+  <link rel="stylesheet" type="text/css" href="./theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="./theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="./theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="./theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="./archive.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/03/transcoding-video-for-ps3-in-ubuntu.html">Transcoding video for the PS3 in Ubuntu</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 03 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>The title says it all really. I've banged on about games a bit and now it's time to do something involving curiosity!
+So I know how to, should i want to for any reason, this is how you can make videos that are playable on a PS3 (only tested on firmware 1.80). Note that it doesn't transcode to H.264, but instead uses a lesser MPEG4 profile of some kind (mpeg4 appears to be entirely too complicated to figure out!).
+This mostly comes from <a href="http://po-ru.com/diary/bleeding-edge-ffmpeg-on-ubuntu-feisty/">here</a>, but the gist is that you grab a specific version of ffmpeg from SVN and compile it against a variety of media libraries from multiverse. This makes me think ubuntu should have a bleeding edge version of ffmpeg in multiverse that links against the libraries there - if licences allow for it.
+For what it's worth, this is the command line I've been using with it (note that it will strip surround audio down to 2 channel stereo. That's all i have, so I haven't bothered to figure out anything better).
+<code>ffmpeg -y -i /path/to/source.avi -acodec aac -ab 192kb -vcodec mpeg4 -b 1500kb -mbd 2 -flags +4mv+trell -aic 2 -cmp 2 -subcmp 2 -title "Blah 2: The blahing" /path/to/output.mp4</code></p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/05/11/farm-ore-punny.html">Farm ore punny</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 11 May 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <div class="highlight"><pre><span></span><span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">He</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">such</span> <span class="n">a</span> <span class="n">boar</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">koudelkat</span><span class="p">:</span> <span class="n">bee</span> <span class="n">quiet</span><span class="p">,</span> <span class="n">that</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">a</span> <span class="n">terribull</span> <span class="n">pun</span> <span class="p">;)</span>
+ <span class="nl">Ng</span><span class="p">:</span> <span class="n">No</span> <span class="n">need</span> <span class="n">to</span> <span class="n">be</span> <span class="n">piggish</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">pathetick</span> <span class="p">;)</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">I</span> <span class="n">can</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">bear</span> <span class="n">this</span> <span class="n">any</span> <span class="nl">more</span> <span class="p">:</span><span class="err">&#39;</span><span class="p">(</span>
+ <span class="n">Now</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">ve</span> <span class="n">got</span> <span class="n">koudelka</span> <span class="n">cowed</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">lemur</span> <span class="n">alone</span><span class="p">,</span> <span class="n">he</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">had</span> <span class="n">enough</span><span class="p">.</span>
+ <span class="o">*</span> <span class="n">koudelkat</span> <span class="n">eyes</span> <span class="n">lily</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">sheeply</span> <span class="n">curves</span>
+ <span class="nl">koudelkat</span><span class="p">:</span> <span class="n">stop</span> <span class="n">being</span> <span class="n">so</span> <span class="n">catty</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">no</span> <span class="n">pussy</span><span class="o">!</span>
+ <span class="nb">true</span><span class="p">,</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">definitely</span> <span class="n">not</span> <span class="n">henpecked</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">Don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">egg</span> <span class="n">me</span> <span class="n">on</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">Ok</span><span class="p">,</span> <span class="n">we</span><span class="err">&#39;</span><span class="n">ve</span> <span class="n">milked</span> <span class="n">this</span> <span class="n">quite</span> <span class="n">enough</span>
+ <span class="n">Chicken</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="o">:</span><span class="err">&#39;</span><span class="p">(</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="nl">koudelkat</span><span class="p">:</span> <span class="n">I</span> <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">think</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">ve</span> <span class="n">been</span> <span class="n">gibbon</span> <span class="n">enough</span> <span class="n">credit</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">then</span> <span class="n">I</span> <span class="n">shall</span> <span class="n">crow</span> <span class="k">in</span> <span class="n">delight</span> <span class="n">over</span> <span class="n">the</span> <span class="n">recognition</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">I</span> <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">mean</span> <span class="n">to</span> <span class="n">worm</span> <span class="n">my</span> <span class="n">way</span> <span class="k">in</span> <span class="n">though</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">civet</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">ve</span> <span class="n">done</span> <span class="n">now</span><span class="o">?</span> <span class="n">You</span> <span class="n">can</span> <span class="n">your</span> <span class="n">puns</span><span class="p">.</span>
+ <span class="n">ok</span><span class="p">,</span> <span class="n">time</span> <span class="n">to</span> <span class="n">stop</span> <span class="n">monkeying</span> <span class="n">around</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">yeah</span><span class="p">,</span> <span class="n">it</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">not</span> <span class="n">cricket</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">let</span> <span class="n">me</span> <span class="n">stick</span> <span class="n">my</span> <span class="n">proboscis</span> <span class="k">in</span> <span class="n">to</span> <span class="n">this</span> <span class="n">conversation</span><span class="p">.</span>
+ <span class="nl">cdavies</span><span class="p">:</span> <span class="n">OK</span><span class="p">,</span> <span class="n">but</span> <span class="n">just</span> <span class="n">what</span> <span class="n">is</span> <span class="n">it</span> <span class="n">giraffe</span><span class="o">-</span><span class="n">ter</span><span class="o">?</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">nothing</span> <span class="n">at</span> <span class="n">all</span><span class="p">,</span> <span class="n">he</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">lion</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">I</span> <span class="n">can</span> <span class="n">see</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">a</span> <span class="n">shrew</span><span class="o">-</span><span class="n">d</span> <span class="n">operator</span><span class="p">.</span>
+ <span class="nl">cdavies</span><span class="p">:</span> <span class="n">No</span> <span class="n">need</span> <span class="n">to</span> <span class="n">fawn</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">yes</span><span class="p">,</span> <span class="n">deer</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">you</span> <span class="n">guys</span> <span class="n">are</span> <span class="n">doeps</span>
+ <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">be</span> <span class="n">a</span> <span class="n">dik</span> <span class="n">dik</span>
+ <span class="n">which</span> <span class="n">is</span> <span class="n">my</span> <span class="n">favortie</span> <span class="n">animal</span> <span class="n">name</span><span class="p">,</span> <span class="n">btw</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">marmoset</span> <span class="n">I</span> <span class="n">shouldn</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">talk</span> <span class="n">to</span> <span class="n">strangers</span><span class="p">.</span>
+ <span class="nl">cdavies</span><span class="p">:</span> <span class="n">I</span> <span class="n">was</span> <span class="n">expecting</span> <span class="s">&quot;marmoset there&#39;d be days like these.&quot;</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">she</span> <span class="n">toad</span> <span class="n">me</span> <span class="n">the</span> <span class="n">same</span> <span class="n">thing</span><span class="o">!</span>
+ <span class="nl">cdavies</span><span class="p">:</span> <span class="n">it</span> <span class="n">would</span> <span class="n">have</span> <span class="n">rammed</span> <span class="n">the</span> <span class="n">pun</span> <span class="n">home</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">If</span> <span class="n">I</span> <span class="n">can</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">think</span> <span class="n">up</span> <span class="n">a</span> <span class="n">good</span> <span class="n">pun</span> <span class="n">soon</span><span class="p">,</span> <span class="n">I</span> <span class="n">may</span> <span class="n">have</span> <span class="n">to</span> <span class="n">fall</span> <span class="n">back</span> <span class="n">on</span> <span class="n">a</span> <span class="n">meer</span> <span class="n">cat</span> <span class="n">joke</span><span class="p">.</span>
+ <span class="n">but</span> <span class="n">ewe</span> <span class="n">missed</span> <span class="n">it</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">what</span> <span class="n">an</span> <span class="n">ass</span><span class="o">!</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">he</span> <span class="n">should</span> <span class="n">have</span> <span class="n">mule</span><span class="err">&#39;</span><span class="n">d</span> <span class="n">it</span> <span class="n">over</span> <span class="n">more</span><span class="p">.</span>
+ <span class="nl">cdavies</span><span class="p">:</span> <span class="n">If</span> <span class="n">you</span> <span class="n">had</span> <span class="n">responded</span> <span class="n">to</span> <span class="s">&quot;he&#39;s lion&quot;</span> <span class="n">with</span> <span class="s">&quot;he&#39;s not lion, he&#39;s a meerkat&quot;</span> <span class="n">you</span> <span class="n">could</span> <span class="n">have</span> <span class="n">even</span> <span class="n">gotten</span> <span class="n">a</span> <span class="n">rimshot</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">I</span> <span class="n">didn</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">want</span> <span class="n">to</span> <span class="n">hog</span> <span class="n">the</span> <span class="n">glory</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">sure</span> <span class="n">one</span> <span class="n">of</span> <span class="n">us</span> <span class="n">would</span> <span class="n">have</span> <span class="n">swined</span> <span class="n">about</span> <span class="n">it</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">But</span> <span class="n">we</span><span class="err">&#39;</span><span class="n">ve</span> <span class="n">no</span> <span class="n">need</span> <span class="n">to</span> <span class="n">ham</span> <span class="n">i</span> <span class="n">tup</span>
+ <span class="n">probably</span> <span class="n">not</span><span class="p">.</span>  <span class="n">we</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">too</span> <span class="n">busy</span> <span class="n">putting</span> <span class="n">on</span> <span class="n">hares</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">and</span> <span class="n">steaking</span> <span class="n">our</span> <span class="n">own</span> <span class="n">claims</span>
+ <span class="n">steering</span> <span class="n">each</span> <span class="n">other</span> <span class="k">in</span> <span class="n">wrong</span> <span class="n">directions</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">owl</span> <span class="n">come</span> <span class="n">right</span> <span class="k">out</span> <span class="n">and</span> <span class="n">say</span> <span class="n">it</span><span class="p">,</span> <span class="n">this</span> <span class="n">coversation</span> <span class="n">makes</span> <span class="n">me</span> <span class="n">want</span> <span class="n">to</span> <span class="n">shriek</span> <span class="n">and</span> <span class="n">run</span> <span class="k">out</span> <span class="n">to</span> <span class="n">the</span> <span class="n">barn</span><span class="p">.</span>
+ <span class="n">a</span> <span class="n">rather</span> <span class="n">mousey</span> <span class="n">response</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">we</span> <span class="k">do</span> <span class="n">hawk</span> <span class="n">bad</span> <span class="nl">puns</span> <span class="p">:(</span>
+ <span class="n">It</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">getting</span> <span class="n">harder</span> <span class="n">to</span> <span class="n">ferret</span> <span class="n">them</span> <span class="k">out</span><span class="p">,</span> <span class="n">though</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">maybe</span> <span class="n">it</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">time</span> <span class="n">to</span> <span class="n">clam</span> <span class="n">up</span> <span class="n">then</span><span class="p">.</span>
+ <span class="nl">cdavies</span><span class="p">:</span> <span class="n">I</span> <span class="n">think</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">just</span> <span class="n">being</span> <span class="n">shellfish</span>
+ <span class="nl">lilyj</span><span class="p">:</span> <span class="n">it</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">good</span> <span class="n">to</span> <span class="n">see</span> <span class="n">that</span> <span class="n">you</span> <span class="n">still</span> <span class="n">have</span> <span class="n">elephantitis</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">d</span> <span class="n">better</span> <span class="n">krill</span> <span class="n">him</span><span class="o">!</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">mount</span> <span class="n">him</span> <span class="n">though</span><span class="p">,</span> <span class="n">he</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">been</span> <span class="n">known</span> <span class="n">to</span> <span class="n">humpback</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">cdavies</span><span class="p">:</span> <span class="n">not</span> <span class="k">if</span> <span class="n">she</span> <span class="n">starts</span> <span class="n">whaling</span> <span class="n">on</span> <span class="n">you</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">yeah</span><span class="p">,</span> <span class="n">squid</span> <span class="n">pro</span> <span class="n">quo</span> <span class="k">for</span> <span class="n">putting</span> <span class="n">up</span> <span class="n">with</span> <span class="n">your</span> <span class="n">puns</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">cdavies</span><span class="p">:</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">a</span> <span class="n">sucker</span> <span class="k">for</span> <span class="n">them</span>
+ <span class="n">he</span> <span class="n">wolfs</span> <span class="n">them</span> <span class="n">down</span>
+ <span class="n">damn</span><span class="p">,</span> <span class="n">this</span> <span class="n">conversation</span> <span class="n">is</span> <span class="n">just</span> <span class="n">beastly</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">it</span> <span class="n">has</span> <span class="n">a</span> <span class="n">tendency</span> <span class="n">to</span> <span class="n">dragon</span> <span class="n">though</span><span class="p">...</span>
+ <span class="n">maybe</span> <span class="n">we</span> <span class="n">could</span> <span class="n">sire</span> <span class="n">a</span> <span class="n">new</span> <span class="n">one</span>
+ <span class="k">if</span> <span class="n">everyone</span> <span class="n">is</span> <span class="n">done</span> <span class="n">horsing</span> <span class="n">around</span><span class="p">,</span> <span class="n">that</span> <span class="n">is</span><span class="p">...</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">such</span> <span class="n">a</span> <span class="n">cheetah</span>
+ <span class="n">you</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">going</span> <span class="n">to</span> <span class="n">have</span> <span class="n">have</span> <span class="n">to</span> <span class="n">pony</span> <span class="n">up</span> <span class="n">an</span> <span class="n">explanation</span> <span class="k">for</span> <span class="n">that</span> <span class="n">accusation</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">that</span> <span class="n">wasnt</span> <span class="n">stipulated</span> <span class="k">in</span> <span class="n">the</span> <span class="n">rider</span> <span class="n">agreement</span>
+ <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">try</span> <span class="n">to</span> <span class="n">jockey</span> <span class="n">around</span> <span class="n">the</span> <span class="n">subject</span>
+ <span class="n">Your</span> <span class="n">telling</span> <span class="n">of</span> <span class="n">tails</span> <span class="n">gives</span> <span class="n">me</span> <span class="n">paws</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">mare</span><span class="o">-</span><span class="n">ry</span> <span class="n">me</span><span class="o">?</span>
+ <span class="nl">koudelkat</span><span class="p">:</span> <span class="n">am</span> <span class="n">I</span> <span class="n">the</span> <span class="n">gorilla</span> <span class="n">your</span> <span class="n">dreams</span><span class="o">?</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">i</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">homoerectus</span> <span class="k">for</span> <span class="n">your</span> <span class="n">man</span> <span class="nl">though</span> <span class="p">:</span><span class="err">&#39;</span><span class="p">(</span>
+ <span class="n">salamander</span> <span class="n">of</span> <span class="n">taste</span><span class="p">,</span> <span class="n">I</span> <span class="n">suppose</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">actually</span> <span class="n">newt</span><span class="o">-</span><span class="n">ral</span> <span class="n">on</span> <span class="n">the</span> <span class="n">subject</span><span class="p">..</span>
+ <span class="n">I</span> <span class="n">gnu</span> <span class="n">you</span> <span class="n">would</span> <span class="n">be</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">after</span> <span class="n">all</span> <span class="n">this</span> <span class="n">punnery</span> <span class="n">there</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">going</span> <span class="n">to</span> <span class="n">have</span> <span class="n">to</span> <span class="n">be</span> <span class="n">some</span> <span class="n">lion</span> <span class="n">down</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">yeah</span><span class="p">,</span> <span class="n">they</span><span class="err">&#39;</span><span class="n">ve</span> <span class="n">got</span> <span class="n">no</span> <span class="n">sole</span> <span class="n">now</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">oh</span> <span class="n">my</span> <span class="n">cod</span> <span class="n">this</span> <span class="n">is</span> <span class="n">getting</span> <span class="n">bat</span> <span class="p">;)</span>
+ <span class="n">I</span> <span class="n">can</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">be</span> <span class="n">herring</span> <span class="n">this</span> <span class="n">correctly</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">We</span> <span class="n">should</span> <span class="n">really</span> <span class="n">put</span> <span class="n">lox</span> <span class="n">on</span> <span class="n">our</span> <span class="n">mouths</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">there</span> <span class="n">there</span> <span class="n">deer</span><span class="p">,</span> <span class="n">it</span><span class="err">&#39;</span><span class="n">ll</span> <span class="n">be</span> <span class="n">ok</span>
+ <span class="n">now</span> <span class="n">Ng</span> <span class="n">is</span> <span class="n">fawning</span> <span class="n">over</span> <span class="n">me</span>
+ <span class="n">salmon</span> <span class="n">should</span> <span class="n">stop</span> <span class="n">us</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">noo</span><span class="o">!</span> <span class="n">wevil</span> <span class="n">got</span> <span class="n">to</span> <span class="n">keep</span> <span class="n">going</span><span class="o">!</span> <span class="p">;)</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">frogging</span> <span class="n">and</span> <span class="n">country</span>
+ <span class="nl">Ng</span><span class="p">:</span> <span class="n">I</span> <span class="n">thought</span> <span class="n">bad</span> <span class="n">puns</span> <span class="n">were</span> <span class="n">your</span> <span class="n">bugbear</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">Ng</span><span class="p">:</span> <span class="n">Flea</span> <span class="k">while</span> <span class="n">you</span> <span class="n">still</span> <span class="n">can</span><span class="o">!</span>
+ <span class="n">Fly</span> <span class="n">away</span>
+ <span class="n">before</span> <span class="n">the</span> <span class="n">bull</span> <span class="n">gets</span> <span class="n">any</span> <span class="n">thicker</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">eel</span> <span class="n">brb</span> <span class="p">;)</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">and</span> <span class="n">with</span> <span class="n">that</span><span class="p">,</span> <span class="n">he</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">herring</span> <span class="n">off</span> <span class="k">in</span> <span class="n">to</span> <span class="n">the</span> <span class="n">night</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">i</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">just</span> <span class="n">gonna</span> <span class="n">tuna</span> <span class="n">you</span> <span class="n">guys</span> <span class="k">out</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">I</span> <span class="n">dont</span> <span class="n">want</span> <span class="n">us</span> <span class="n">to</span> <span class="n">get</span> <span class="n">into</span> <span class="n">a</span> <span class="n">roe</span> <span class="n">about</span> <span class="n">this</span><span class="p">.</span>
+ <span class="nl">Ng</span><span class="p">:</span> <span class="n">We</span><span class="err">&#39;</span><span class="n">ll</span> <span class="n">whlek</span><span class="o">-</span><span class="n">ome</span> <span class="n">you</span> <span class="n">back</span> <span class="n">with</span> <span class="n">open</span> <span class="n">arms</span>
+ <span class="n">whelk</span><span class="o">-</span><span class="n">ome</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">he</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">such</span> <span class="n">an</span> <span class="n">urchin</span>
+ <span class="nl">cdavies</span><span class="p">:</span> <span class="n">Yeah</span><span class="p">,</span> <span class="n">he</span> <span class="n">left</span> <span class="n">us</span> <span class="n">to</span> <span class="n">flounder</span> <span class="n">about</span> <span class="n">on</span> <span class="n">our</span> <span class="n">own</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">always</span> <span class="n">musseling</span> <span class="k">in</span> <span class="n">on</span> <span class="n">our</span> <span class="n">punnage</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">he</span> <span class="n">crabs</span> <span class="n">all</span> <span class="n">the</span> <span class="n">good</span> <span class="nl">ones</span> <span class="p">:</span><span class="err">&#39;</span><span class="p">(</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">he</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">sole</span><span class="err">&#39;</span><span class="n">d</span> <span class="k">out</span><span class="p">.</span>
+ <span class="n">what</span> <span class="n">a</span> <span class="n">rat</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">to</span> <span class="n">another</span> <span class="n">orca</span><span class="o">-</span><span class="n">stra</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">what</span> <span class="n">a</span> <span class="n">cheap</span> <span class="n">skate</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">let</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">make</span> <span class="n">him</span> <span class="n">walk</span> <span class="n">the</span> <span class="n">plankton</span>
+ <span class="n">he</span><span class="err">&#39;</span><span class="n">d</span> <span class="n">just</span> <span class="n">fish</span> <span class="n">himself</span> <span class="k">out</span>
+ <span class="n">but</span> <span class="n">i</span> <span class="n">suppose</span> <span class="n">we</span> <span class="n">could</span> <span class="n">just</span> <span class="n">gopher</span> <span class="n">it</span> <span class="n">and</span> <span class="n">see</span> <span class="n">what</span> <span class="n">happens</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">that</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">what</span> <span class="n">he</span> <span class="n">went</span> <span class="n">to</span> <span class="n">school</span> <span class="k">for</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">I</span> <span class="n">swear</span><span class="p">,</span> <span class="n">he</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">one</span> <span class="n">of</span> <span class="n">the</span> <span class="n">pod</span> <span class="n">people</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">can</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">trust</span> <span class="n">men</span> <span class="n">of</span> <span class="n">that</span> <span class="n">elk</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">you</span> <span class="n">moose</span> <span class="n">love</span> <span class="n">punnani</span> <span class="n">bad</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">well</span><span class="p">,</span> <span class="n">i</span> <span class="k">do</span> <span class="n">love</span> <span class="n">critter</span><span class="o">-</span><span class="n">us</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">Oh</span> <span class="n">well</span><span class="p">,</span> <span class="n">I</span> <span class="n">can</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">just</span> <span class="n">yak</span> <span class="n">on</span><span class="p">.</span> <span class="n">Must</span> <span class="n">work</span><span class="p">.</span>
+ <span class="n">that</span> <span class="n">pun</span> <span class="n">will</span> <span class="n">hound</span> <span class="n">me</span> <span class="k">for</span> <span class="n">days</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">i</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">gonna</span> <span class="n">be</span> <span class="n">feline</span> <span class="n">it</span> <span class="k">for</span> <span class="n">days</span>
+ <span class="n">I</span> <span class="n">might</span> <span class="n">even</span> <span class="n">bitch</span> <span class="n">about</span> <span class="n">it</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">ve</span> <span class="n">haddock</span> <span class="n">with</span> <span class="n">you</span> <span class="n">guys</span><span class="p">,</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">gonna</span> <span class="n">work</span><span class="p">.</span>
+ <span class="nl">koudelkat</span><span class="p">:</span> <span class="n">OK</span><span class="p">,</span> <span class="n">simian</span> <span class="n">the</span> <span class="n">morning</span> <span class="n">and</span> <span class="n">we</span><span class="err">&#39;</span><span class="n">ll</span> <span class="k">continue</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">I</span> <span class="n">hope</span> <span class="n">we</span> <span class="n">can</span> <span class="n">include</span> <span class="n">frogging</span> <span class="k">in</span> <span class="n">the</span> <span class="n">agenda</span><span class="p">,</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">ve</span> <span class="n">been</span> <span class="n">bad</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">we</span> <span class="n">wouldn</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">have</span> <span class="n">to</span> <span class="n">frog</span> <span class="n">you</span><span class="p">,</span> <span class="k">if</span> <span class="n">only</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">d</span> <span class="n">toad</span> <span class="n">the</span> <span class="n">line</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">Meat</span> <span class="n">you</span> <span class="k">in</span> <span class="n">the</span> <span class="n">morning</span><span class="p">,</span> <span class="n">then</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">cdavies</span><span class="p">:</span> <span class="n">he</span> <span class="n">always</span> <span class="n">weasels</span> <span class="n">his</span> <span class="n">way</span> <span class="k">out</span> <span class="n">of</span> <span class="n">such</span> <span class="n">things</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="nl">Ng</span><span class="p">:</span> <span class="n">Oh</span><span class="p">,</span> <span class="n">I</span> <span class="n">didn</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">know</span><span class="p">,</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">newt</span> <span class="n">to</span> <span class="n">this</span><span class="p">.</span>
+ <span class="nl">cdavies</span><span class="p">:</span> <span class="n">that</span><span class="err">&#39;</span> <span class="n">stoat</span><span class="o">-</span><span class="n">ally</span> <span class="n">untrue</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">we</span> <span class="n">just</span> <span class="n">spent</span> <span class="n">an</span> <span class="n">hour</span> <span class="n">on</span> <span class="n">delicious</span> <span class="n">puns</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">i</span> <span class="n">didn</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">even</span> <span class="n">notice</span>
+ <span class="n">it</span> <span class="n">was</span> <span class="n">our</span> <span class="n">dogged</span> <span class="n">determination</span> <span class="n">that</span> <span class="n">got</span> <span class="n">us</span> <span class="n">through</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">that</span> <span class="n">and</span> <span class="n">years</span> <span class="n">of</span> <span class="n">squirrelling</span> <span class="n">away</span> <span class="n">puns</span><span class="p">.</span>
+ <span class="n">But</span> <span class="n">we</span> <span class="n">were</span> <span class="n">finally</span> <span class="n">able</span> <span class="n">to</span> <span class="n">come</span> <span class="k">out</span> <span class="n">of</span> <span class="n">our</span> <span class="n">shells</span>
+ <span class="n">fur</span> <span class="n">what</span> <span class="n">it</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">worth</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">and</span> <span class="n">that</span> <span class="n">the</span> <span class="n">audience</span> <span class="n">didn</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">let</span> <span class="n">fruit</span> <span class="n">fly</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">impressed</span><span class="p">,</span> <span class="n">I</span> <span class="n">thought</span> <span class="n">it</span><span class="err">&#39;</span><span class="n">d</span> <span class="n">die</span> <span class="k">out</span> <span class="n">quickly</span><span class="p">,</span> <span class="n">but</span> <span class="n">you</span> <span class="n">all</span> <span class="n">kept</span> <span class="n">beavering</span> <span class="n">away</span>
+ <span class="nl">cdavies</span><span class="p">:</span> <span class="n">They</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">just</span> <span class="n">gnat</span> <span class="n">like</span> <span class="n">that</span>
+ <span class="n">of</span> <span class="n">course</span><span class="p">,</span> <span class="n">sometimes</span> <span class="n">they</span> <span class="n">can</span> <span class="n">bee</span> <span class="n">waspish</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">I</span> <span class="n">canter</span> <span class="k">do</span> <span class="n">this</span> <span class="n">anymore</span><span class="p">.</span> <span class="o">:</span><span class="p">(</span>
+ <span class="nl">koudelkat</span><span class="p">:</span> <span class="n">no</span> <span class="n">need</span> <span class="n">to</span> <span class="n">get</span> <span class="n">your</span> <span class="n">gallop</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">koudelkat</span><span class="p">:</span> <span class="n">come</span> <span class="n">bacteria</span> <span class="n">tomorrow</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">and</span> <span class="n">your</span> <span class="n">salvation</span> <span class="n">shall</span> <span class="n">be</span> <span class="n">found</span> <span class="n">virus</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">you</span> <span class="n">shouldn</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">ape</span> <span class="n">jesus</span><span class="p">.</span>
+ <span class="o">+</span><span class="n">r</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">cdavies</span><span class="p">:</span> <span class="n">he</span> <span class="n">won</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">be</span> <span class="n">back</span> <span class="n">until</span> <span class="n">the</span> <span class="n">raptor</span> <span class="p">;)</span>
+ <span class="n">woah</span><span class="p">,</span> <span class="n">this</span> <span class="n">has</span> <span class="n">been</span> <span class="n">going</span> <span class="n">on</span> <span class="k">for</span> <span class="n">ages</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">kif</span><span class="p">:</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">ll</span> <span class="n">bison</span> <span class="n">time</span> <span class="k">while</span> <span class="n">you</span> <span class="n">catch</span> <span class="n">up</span> <span class="p">;)</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">then</span> <span class="n">you</span> <span class="n">can</span> <span class="n">yak</span> <span class="n">with</span> <span class="n">us</span><span class="o">!</span> <span class="p">;)</span>
+ <span class="n">sow</span> <span class="n">you</span> <span class="n">say</span><span class="p">...</span>
+ <span class="o">*</span> <span class="n">kif</span> <span class="n">just</span> <span class="n">bees</span> <span class="n">quiet</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="nl">kif</span><span class="p">:</span> <span class="n">I</span> <span class="n">you</span> <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">think</span> <span class="n">of</span> <span class="n">puns</span><span class="p">,</span> <span class="n">you</span> <span class="n">ruminant</span> <span class="k">for</span> <span class="n">the</span> <span class="n">rest</span> <span class="n">of</span> <span class="n">us</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">and</span> <span class="n">that</span> <span class="n">gets</span> <span class="n">my</span> <span class="n">goat</span><span class="p">.</span>
+ <span class="n">besides</span><span class="p">,</span> <span class="n">it</span> <span class="n">probably</span> <span class="n">won</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">beetle</span> <span class="n">tomorrow</span> <span class="n">sometime</span> <span class="n">that</span> <span class="n">we</span> <span class="n">decide</span> <span class="n">to</span> <span class="n">stop</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">i</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">horny</span>
+ <span class="nl">lilyj</span><span class="p">:</span> <span class="n">but</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">ve</span> <span class="n">ewe</span><span class="o">-</span><span class="n">sed</span> <span class="n">mouse</span><span class="o">-</span><span class="n">t</span> <span class="n">of</span> <span class="n">the</span> <span class="n">possibilities</span> <span class="n">already</span><span class="o">!</span>
+ <span class="nl">kif</span><span class="p">:</span> <span class="n">Don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">be</span> <span class="n">a</span> <span class="nl">tit</span> <span class="p">:</span><span class="n">D</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">kif</span><span class="p">:</span> <span class="n">so</span> <span class="n">start</span> <span class="n">robin</span> <span class="n">other</span> <span class="n">peoples</span><span class="err">&#39;</span> <span class="p">;)</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">that</span><span class="err">&#39;</span><span class="n">d</span> <span class="n">just</span> <span class="n">be</span> <span class="n">cuckoo</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">she</span> <span class="n">just</span> <span class="n">squeeked</span> <span class="n">by</span>
+ <span class="n">yeah</span><span class="p">,</span> <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">just</span> <span class="n">try</span> <span class="n">to</span> <span class="n">badger</span> <span class="n">us</span> <span class="n">into</span> <span class="n">quitting</span>
+ <span class="o">*</span> <span class="n">kif</span> <span class="n">admits</span> <span class="n">to</span> <span class="n">being</span> <span class="k">out</span><span class="o">-</span><span class="n">foxed</span> <span class="p">)</span><span class="o">:</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">we</span> <span class="n">could</span> <span class="n">surely</span> <span class="n">take</span> <span class="n">a</span> <span class="n">little</span> <span class="n">fowl</span> <span class="n">play</span><span class="o">?</span> <span class="p">;)</span>
+ <span class="n">i</span> <span class="n">prefer</span> <span class="n">it</span> <span class="n">when</span> <span class="n">you</span> <span class="n">guys</span> <span class="n">just</span> <span class="n">paste</span> <span class="n">rood</span> <span class="n">lynx</span> <span class="p">(;</span>
+ <span class="n">like</span> <span class="n">lynx</span> <span class="n">from</span> <span class="n">hornet</span><span class="o">?</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">kif</span><span class="p">:</span> <span class="n">that</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">our</span> <span class="n">of</span> <span class="n">sty</span><span class="o">-</span><span class="n">le</span>
+ <span class="n">a</span> <span class="n">crime</span> <span class="n">against</span> <span class="n">hu</span><span class="o">-</span><span class="n">manatee</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">our</span> <span class="n">ewe</span><span class="o">-</span><span class="n">nun</span> <span class="n">is</span> <span class="n">good</span> <span class="n">though</span><span class="p">,</span> <span class="n">you</span> <span class="n">get</span> <span class="n">days</span> <span class="n">off</span> <span class="k">for</span> <span class="n">good</span> <span class="n">bee</span> <span class="n">hive</span> <span class="n">here</span>
+ <span class="n">well</span><span class="p">,</span> <span class="n">bugger</span> <span class="n">that</span> <span class="k">for</span> <span class="n">a</span> <span class="n">lark</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">get</span> <span class="n">antsey</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">termite</span> <span class="n">be</span> <span class="n">cake</span> <span class="n">later</span>
+ <span class="nl">Ng</span><span class="p">:</span> <span class="n">Yes</span><span class="p">,</span> <span class="n">mallard</span>
+ <span class="o">*</span> <span class="n">koudelkat</span> <span class="n">ducks</span> <span class="n">the</span> <span class="n">bad</span> <span class="n">puns</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">koudelkat</span><span class="p">:</span> <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">have</span> <span class="n">a</span> <span class="n">cow</span><span class="p">,</span> <span class="n">man</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">Ng</span><span class="p">:</span> <span class="n">well</span> <span class="n">stop</span> <span class="n">with</span> <span class="n">insect</span><span class="o">-</span><span class="n">uous</span> <span class="n">relationships</span> <span class="n">with</span> <span class="n">lilyj</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">koudelkat</span><span class="p">:</span> <span class="n">cheeky</span> <span class="n">monkey</span><span class="o">!</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="n">butt</span> <span class="n">of</span> <span class="nl">course</span> <span class="p">:</span><span class="n">D</span>
+ <span class="n">ok</span><span class="p">,</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">boar</span><span class="o">-</span><span class="n">ing</span> <span class="n">me</span> <span class="n">now</span>
+ <span class="n">I</span> <span class="n">think</span> <span class="n">he</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">just</span> <span class="n">aping</span> <span class="n">you</span> <span class="n">now</span>
+ <span class="o">*</span> <span class="n">kif</span> <span class="n">wonders</span> <span class="n">owl</span> <span class="n">this</span> <span class="n">end</span><span class="o">?</span>
+<span class="o">&lt;</span> <span class="n">koudelkat</span><span class="o">&gt;</span> <span class="nl">kif</span><span class="p">:</span> <span class="n">we</span><span class="err">&#39;</span><span class="n">ll</span> <span class="n">probably</span> <span class="n">all</span> <span class="n">flock</span> <span class="n">to</span> <span class="n">the</span> <span class="n">icecream</span> <span class="n">place</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">koudelkat</span><span class="p">:</span> <span class="n">well</span> <span class="n">flamingo</span> <span class="n">then</span><span class="o">!</span>
+ <span class="nl">kif</span><span class="p">:</span> <span class="n">WHenever</span> <span class="n">we</span><span class="err">&#39;</span><span class="n">re</span> <span class="k">out</span> <span class="n">of</span> <span class="n">puns</span> <span class="n">to</span> <span class="n">panda</span> <span class="n">to</span> <span class="n">the</span> <span class="n">masses</span>
+ <span class="n">oh</span> <span class="n">deer</span> <span class="p">)</span><span class="o">:</span>
+<span class="o">&lt;</span> <span class="n">learath</span><span class="o">&gt;</span> <span class="n">Panda</span> <span class="n">Style</span><span class="o">!</span>
+ <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">listen</span> <span class="n">to</span> <span class="n">him</span><span class="p">,</span> <span class="n">he</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">just</span> <span class="n">raven</span>
+ <span class="o">*</span> <span class="n">kif</span> <span class="n">leaves</span> <span class="n">you</span> <span class="n">guys</span> <span class="n">to</span> <span class="n">rabbit</span> <span class="n">on</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">alls</span> <span class="n">whelk</span> <span class="n">that</span> <span class="n">ends</span> <span class="n">whelk</span><span class="p">,</span> <span class="n">I</span> <span class="n">say</span><span class="p">.</span>
+ <span class="nl">cdavies</span><span class="p">:</span> <span class="n">I</span> <span class="n">don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">swallow</span> <span class="n">that</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">I</span> <span class="n">cow</span><span class="o">-</span><span class="n">tow</span> <span class="n">to</span> <span class="n">your</span> <span class="n">superiour</span> <span class="n">wisdom</span>
+ <span class="n">ooo</span><span class="p">,</span> <span class="n">mushroomtwo</span><span class="p">.</span>  <span class="n">i</span> <span class="n">bet</span> <span class="n">he</span> <span class="n">sable</span> <span class="n">to</span> <span class="n">pun</span> <span class="n">with</span> <span class="n">us</span>
+ <span class="n">at</span> <span class="n">least</span><span class="p">,</span> <span class="n">he</span> <span class="n">mite</span> <span class="n">be</span>
+<span class="mi">2007</span><span class="o">-</span><span class="mo">05</span><span class="o">-</span><span class="mi">10</span> <span class="mi">17</span><span class="o">:</span><span class="mi">38</span><span class="o">:</span><span class="mo">07</span><span class="o">-!-</span> <span class="n">mushroomtwo</span> <span class="p">[</span><span class="n">n</span><span class="o">=</span><span class="n">shroom</span><span class="mi">@71</span><span class="o">-</span><span class="mi">221</span><span class="o">-</span><span class="mi">183</span><span class="o">-</span><span class="mf">99.</span><span class="n">bois</span><span class="p">.</span><span class="n">qwest</span><span class="p">.</span><span class="n">net</span><span class="p">]</span> <span class="n">has</span> <span class="n">quit</span> <span class="p">[</span><span class="n">Remote</span> <span class="n">closed</span> <span class="n">the</span> <span class="n">connection</span><span class="p">]</span>
+ <span class="n">aww</span><span class="p">,</span> <span class="n">heron</span> <span class="n">away</span>
+ <span class="n">Ibex</span> <span class="n">he</span><span class="err">&#39;</span><span class="n">ll</span> <span class="n">be</span> <span class="n">back</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">people</span> <span class="n">just</span> <span class="n">flamingo</span><span class="o">-</span><span class="n">ing</span> <span class="n">away</span> <span class="n">away</span> <span class="n">like</span> <span class="n">that</span> <span class="n">gets</span> <span class="n">my</span> <span class="n">goat</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">It</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">like</span> <span class="n">they</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">coming</span> <span class="n">the</span> <span class="n">raw</span> <span class="n">prawn</span><span class="p">.</span>
+ <span class="n">I</span> <span class="n">just</span> <span class="n">turn</span> <span class="n">the</span> <span class="n">other</span> <span class="n">chick</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">it</span> <span class="n">just</span> <span class="n">gets</span> <span class="n">to</span> <span class="n">me</span><span class="p">,</span> <span class="n">I</span> <span class="n">fillet</span> <span class="n">deep</span> <span class="k">in</span> <span class="n">my</span> <span class="n">heart</span><span class="p">.</span>
+ <span class="n">Dingo</span> <span class="n">let</span> <span class="n">off</span> <span class="n">some</span> <span class="n">steam</span>
+ <span class="n">no</span> <span class="n">use</span> <span class="n">letting</span> <span class="n">it</span> <span class="n">make</span> <span class="n">you</span> <span class="n">bittern</span> <span class="n">callous</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">damn</span><span class="p">,</span> <span class="n">you</span> <span class="n">two</span> <span class="n">are</span> <span class="n">pun</span> <span class="n">animals</span>
+ <span class="n">bullocks</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">ve</span> <span class="n">just</span> <span class="n">got</span> <span class="n">the</span> <span class="n">gift</span> <span class="n">of</span> <span class="n">the</span> <span class="n">crab</span><span class="p">.</span>
+ <span class="n">I</span> <span class="n">shouldp</span> <span class="n">robalby</span> <span class="n">go</span> <span class="n">to</span> <span class="n">lunch</span><span class="p">.</span>  <span class="n">I</span><span class="err">&#39;</span><span class="n">m</span> <span class="n">getting</span> <span class="n">a</span> <span class="n">bit</span> <span class="n">peckish</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="nl">Ng</span><span class="p">:</span> <span class="n">I</span> <span class="n">think</span> <span class="n">it</span><span class="err">&#39;</span><span class="n">s</span> <span class="n">your</span> <span class="n">tern</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">Once</span> <span class="n">bittern</span><span class="p">,</span> <span class="n">twice</span> <span class="n">shy</span> <span class="n">I</span> <span class="n">suppose</span><span class="p">.</span>
+ <span class="n">yous</span> <span class="n">guys</span> <span class="n">are</span> <span class="n">genus</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">guillemot</span> <span class="n">hold</span> <span class="n">it</span> <span class="n">against</span> <span class="n">you</span><span class="p">.</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">but</span> <span class="n">I</span> <span class="n">suppose</span> <span class="n">it</span> <span class="n">could</span> <span class="n">become</span> <span class="n">auk</span><span class="o">-</span><span class="n">ward</span><span class="p">.</span>
+ <span class="nl">kif</span><span class="p">:</span> <span class="n">enough</span> <span class="n">of</span> <span class="n">your</span> <span class="n">barbs</span>
+ <span class="n">gar</span><span class="o">-</span><span class="n">na</span> <span class="n">go</span> <span class="n">wolf</span> <span class="n">something</span> <span class="n">down</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="k">if</span> <span class="n">you</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">cooking</span><span class="p">,</span> <span class="n">make</span> <span class="n">sure</span> <span class="n">not</span> <span class="n">the</span> <span class="kt">char</span> <span class="n">anything</span><span class="p">.</span>
+ <span class="n">howver</span><span class="p">,</span> <span class="n">albino</span> <span class="n">catfish</span><span class="p">.</span>  <span class="n">I</span> <span class="n">can</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">abide</span> <span class="n">catfish</span>
+ <span class="n">stop</span> <span class="n">tigress</span><span class="o">-</span><span class="n">ing</span><span class="o">!</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">I</span> <span class="n">trout</span> <span class="n">they</span><span class="err">&#39;</span><span class="n">re</span> <span class="n">edible</span><span class="p">.</span>
+ <span class="n">of</span> <span class="n">horse</span> <span class="n">they</span> <span class="n">are</span>
+<span class="o">&lt;</span> <span class="n">cdavies</span><span class="o">&gt;</span> <span class="n">maybe</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">ll</span> <span class="n">cook</span> <span class="n">some</span> <span class="k">for</span> <span class="n">you</span><span class="p">,</span> <span class="n">salmon</span><span class="o">-</span><span class="n">chanted</span> <span class="n">evening</span><span class="o">!</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">I</span> <span class="n">hope</span> <span class="n">someone</span> <span class="n">is</span> <span class="n">logging</span> <span class="n">this</span> <span class="k">for</span> <span class="n">later</span> <span class="n">reproduction</span> <span class="n">as</span> <span class="n">a</span> <span class="kt">short</span> <span class="n">story</span> <span class="p">;)</span>
+ <span class="n">A</span> <span class="n">Big</span> <span class="n">Fish</span> <span class="n">story</span><span class="o">?</span>  <span class="n">or</span> <span class="n">a</span> <span class="n">Fairy</span> <span class="n">Tail</span><span class="o">?</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">lilyj</span><span class="p">:</span> <span class="n">definitely</span> <span class="n">a</span> <span class="n">shaggy</span> <span class="n">dog</span> <span class="n">story</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="nl">cdavies</span><span class="p">:</span> <span class="n">you</span> <span class="n">should</span> <span class="n">cook</span> <span class="n">up</span> <span class="n">some</span> <span class="n">rat</span><span class="o">-</span><span class="n">atouille</span> <span class="n">and</span> <span class="n">chick</span> <span class="n">peas</span> <span class="p">;)</span>
+ <span class="n">toad</span> <span class="k">in</span> <span class="n">the</span> <span class="n">hole</span>
+ <span class="n">great</span><span class="p">,</span> <span class="n">now</span> <span class="n">I</span> <span class="n">want</span> <span class="n">ratatouille</span> <span class="n">and</span> <span class="n">I</span> <span class="n">Don</span><span class="err">&#39;</span><span class="n">t</span> <span class="n">know</span> <span class="n">of</span> <span class="n">any</span> <span class="n">place</span> <span class="n">that</span> <span class="n">sells</span> <span class="n">it</span>
+ <span class="n">maybe</span> <span class="n">you</span> <span class="n">could</span> <span class="n">get</span> <span class="n">mouse</span><span class="o">-</span><span class="n">cerpone</span> <span class="n">instead</span><span class="o">?</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">ooh</span><span class="p">,</span> <span class="n">I</span> <span class="n">have</span> <span class="n">tara</span><span class="o">-</span><span class="n">mouse</span><span class="o">-</span><span class="n">lata</span> <span class="n">at</span> <span class="n">home</span>
+ <span class="n">moose</span><span class="o">-</span><span class="n">aka</span>
+ <span class="n">baabaa</span> <span class="n">ganoush</span>
+ <span class="o">*</span> <span class="n">Ng</span> <span class="n">had</span> <span class="n">bull</span><span class="o">-</span><span class="n">ognese</span> <span class="n">last</span> <span class="n">night</span>
+ <span class="n">haha</span><span class="p">,</span> <span class="n">terribull</span><span class="o">!</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">yeah</span><span class="p">,</span> <span class="n">it</span> <span class="n">was</span>
+<span class="o">&lt;</span> <span class="n">Ng</span><span class="o">&gt;</span> <span class="n">stupid</span> <span class="n">ready</span> <span class="n">meals</span> <span class="p">;)</span>
+ <span class="n">m</span><span class="o">-</span><span class="n">eels</span><span class="o">?</span>
+ <span class="n">maybe</span> <span class="n">I</span><span class="err">&#39;</span><span class="n">ll</span> <span class="n">get</span> <span class="n">some</span> <span class="n">hum</span><span class="o">-</span><span class="n">mouse</span>
+ <span class="n">with</span> <span class="n">a</span> <span class="n">side</span> <span class="n">of</span> <span class="n">PETA</span><span class="p">...</span><span class="n">mmmm</span> <span class="n">vegans</span>
+</pre></div>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2006/12/18/music-stuff.html">Music stuff</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Mon 18 December 2006</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I picked up the latest Hybrid album recently, called I Choose Noise. It's outstanding, if you are a fan of Hybrid you will definitely like it. If not, go and listen to them on last.fm or something and then go buy the albums!
+In the process of faffing around again with music libraries and ripping CDs and rhythmbox I found myself quite irritated that I couldn't control my music from my laptop (which I use more than my desktop these days), so I installed Music Player Daemon (mpd) and then a gnome client for it on my laptop. It rocks! The client UI could use some love, but it's fully capable of playing music, which is what I wanted :)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2006/12/13/ignore-this-post.html">Ignore this post</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 13 December 2006</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>This post is not here. Nothing to see. Move along.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2006/12/08/yay-for-linux-devices.html">yay for linux devices</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 08 December 2006</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <div class="highlight"><pre><span></span>BusyBox v1.00 (2006.11.07-01:40+0000) Built-in shell (ash)
+Enter &#39;help&#39; for a list of built-in commands.
+
+  _______                     ________        __
+ |       |.-----.-----.-----.|  |  |  |.----.|  |_
+ |   -   ||  _  |  -__|     ||  |  |  ||   _||   _|
+ |_______||   __|_____|__|__||________||__|  |____|
+          |__| W I R E L E S S   F R E E D O M
+ WHITE RUSSIAN (RC6) -------------------------------
+  * 2 oz Vodka   Mix the Vodka and Kahlua together
+  * 1 oz Kahlua  over ice, then float the cream or
+  * 1/2oz cream  milk on the top.
+ ---------------------------------------------------
+root@OpenWrt:~#
+</pre></div>
+
+
+<p>Hurray! Embedded Linux rocks.
+It's just something of a shame that I didn't actually mean to buy this particular model of LinkSys wireless thingy. Never mind, I'm sure I'll find a use for it :)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2006/12/06/all-your-pixels-are-belong-to-me.html">All your pixels are belong to me!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 06 December 2006</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>It's always kinda annoyed me when applications waste space with lots of menu bars and toolbars and stuff, when they could be using the space to show me useful stuff, or just be smaller.
+I appreciate that lots of people don't want information as densely packed as I do, but that's clearly not going to stop me trying. Up until now it's not been enough of an issue to do anything about, because I've had at least one big monitor for quite some time now.
+However, since I recently got a very portable laptop which only does 1024x768, my mind has been mulling over ways to save as much screen space as possible.
+With that in mind, I've collapsed down as much stuff as I can and present two screenshots, firstly of <a href="http://www.pointlessrubbish.net/waishou-2006-12-06-firefox.png">my firefox workspace</a> and secondly of <a href="http://www.pointlessrubbish.net/waishou-2006-12-06-thunderbird.png">my thunderbird one</a>. All the gnome stuff I care about is packed into one little toolbar at the top and since I always run these apps with the windows maximised, I use devilspie to strip the window borders. My main workspace just has four terminals at the maximum sizes they can be (which works out at about 82x29 with small fonts).
+Finally, as a challenge, can anyone suggest ways to save even more screen space?</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2006/11/26/year-on.html">A year on</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 26 November 2006</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I'd just like to say that, a year since I moved to London, things are seriously rocking.
+I have a great job as a sysadmin for Canonical (the Ubuntu people) and a fantastic girlfriend.</p>
+<hr>
+<p><img alt="Rike" src="http://gallery.tenshu.net/albums/2005_05-Dartmoor/thumb_100_0611.jpg"></p>
+<hr>
+<p>Dear The Universe,
+Thanks!
+Chris</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="././2006/08/08/big-chill.html">Big Chill</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 08 August 2006</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Over the weekend I was at Eastnor Castle with a bunch of friends for The Big Chill, a fantastic little music festival that happens every August. It's nice and small (I reckon about 30,000 people) and very friendly, with lots of very cool bands playing (mostly ones I haven't heard of, which is nice).
+I expect some pictures will appear sooner or later, but in the mean time, sucks to be all of you that didn't go! ;)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2006/08/08/ubuntu-dapper-606-lts-on-ibmlenovo.html">Ubuntu Dapper 6.06 LTS on an IBM/Lenovo Thinkpad x40</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 08 August 2006</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p><em>Note: This post is a work-in-progress, I will probably come back to this and change/update/rewrite it at will</em>
+I picked up a ThinkPad x40 recently to use with Dapper and I thought I'd chuck up a few notes from my experience thus far. I deliberately chose the ThinkPad because of the reputation of IBM's laptops and especially that they use very good hardware and it has to be said that on a modern distro, especially one that aims to work well with laptops, almost every bit of hardware works straight away after install. I would seriously recommend <a href="http://www.thinkwiki.org/">ThinkWiki</a> to anyone attempting ThinkPad/Linux shenanigans - they have a huge amount of information about the various bits of hardware, installation guides, tips and a bunch more, all nicely tagged so you can tell which bits are relevant to the machine you own.
+First off I'll run through some of the key steps of installation.
+1. Before doing anything else, I used the IBM tools in the pre-installed Windows XP to produce restore images and burn them to disc (one CD, one DVD). This is mostly a precaution in case I either have some insurmountable problem with Linux on the machine, or if I ever come to sell it and the buyer wants their licenced copy of Windows.
+2. After that I did a pretty much default install of Ubuntu. If you want to, you can set the BIOS to disable protection for the "hidden" IBM recovery partition, then use the whole disk in the Ubuntu installer. I chose to leave it there, but I may reclaim it at some point in the future. I read on a few pages/forums that suspending seems to be more reliable if you add <code>acpi_sleep=s3_bios</code> to the kernel command line, which is easy to do in Ubuntu. Edit <code>/boot/grub/menu.lst</code> (you can use <code>gksudo gedit /boot/grub/menu.lst</code> if you don't know otherwise) and place the above acpi_sleep option on the end of the <code>kopt=</code> line and running <code>sudo update-grub</code>.
+3. With the install done I set about installing a few bits and pieces to make the laptop more useful - things like Network Manager (so it's trivially easy to join wired/wireless networks from the desktop), various Bluetooth tools (install <code>gnome-bluetooth</code> and you get most of the bits you need), Java (<code>sun-java5-plugin</code>), mplayer, a few other multimedia libraries including Real Player (available, along with Opera, in the Add/Remove tool (see the Applications menu) if you enable the commercial repository).
+4. Start testing things - graphics work fine, wireless works fine with the madwifi driver (although there is some possibility that there is a kernel crashing bug in the version Dapper offers, see LaunchPad <a href="https://launchpad.net/distros/ubuntu/+source/linux-restricted-modules-2.6.15/+bug/37773">bug 37773</a>), wired ethernet is great, keyboard keys mostly seem to work (volume controls work by default, which is a nice touch).
+5. Configure it. The first thing I did was disable the Sound Server Daemon in Gnome (called Esound, or <code>esd</code>) because I really dislike it. I then stripped out all the interfaces from <code>/etc/network/interfaces</code> other than <code>lo</code> so that Network Manager will take responsibility.
+6. Tweak things. Mplayer always works better if you add an entry to <code>/etc/sysctl.conf</code> that says <code>dev/rtc/max-user-freq=1024</code> and the ThinkPad's wireless activity LED can be enabled with <code>dev/ath0/softled=1</code>. I fiddled with the settings in the Power Management options in Preferences, but these are personal choices, so I won't bother listing them. One thing I would recommend is setting it to only show an icon when it is charging or discharging - if you're on AC and the battery is full you don't really need an icon, so you get a few extra pixels of panel space (and because the screen is small I'd recommend ditching the lower panel and moving its applets to the top). On the subject of applets and screen estate, you can replace the "Applications Places System" menus with a single "Main Menu" applet, which shows an ubuntu logo on the panel - click on it and you get the Applications menu, with Places and System tacked onto it. Gnome's sensors applet can read the information provided by the <code>ibm-acpi</code> driver, so you can monitor the temperature of various bits of hardware and fan speeds. Also of some interest is the CPU Frequency Scaling applet (which shows you how much Linux is throttling your CPU when its idle). One final Gnome panel tip is that if you make it 25 pixels tall instead of the default 24, larger windows will get their window manager icons shown in the Workspace switcher applet. A trivial little detail, but it's kinda handy if (like me) you tend to run things fullscreen on their own workspace.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2006/04/08/yudee.html">Yudee!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 08 April 2006</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>A couple of years older, a couple of years wiser, I saw <a href="http://www.uglyduckling.us/">Ugly Duckling</a> again at the Jazz Cafe in cheery old Camden Town recently. Last time they were <a href="http://www.last.fm/music/Ugly+Duckling/Taste+the+Secret">Meat Shakin'</a>, but this time they had <a href="http://www.last.fm/music/Ugly+Duckling/Bang+for+the+Buck">Bang for The Buck</a> which is a really sweet album and makes for some very cool live performance.
+The venue is kinda small so it's *very* cosy, but the only people at UD gigs seem to be all other UD fans, so everyone is having a shitload of fun and is ignoring the inevitable game of "guess the body part" ;)
+From a weird, observational point of view, the typical demographic this time was older and more suburban than last time, which is...as I said, weird.
+If you're not familiar with UD, head to their site (link above) and it will play a track. Reload for another. Realise you want the rest ;)</p>
+  </div>
+</article>
+
+<div class="pagination">
+    <ul>
+        <li class="pagination__prev">
+            <a href="./index17.html">&laquo;</a>
+        </li>
+
+
+
+          <li>
+            <a  href="./index.html">1</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="./index15.html">15</a>
+          </li>
+
+
+          <li>
+            <a  href="./index16.html">16</a>
+          </li>
+
+
+          <li>
+            <a  href="./index17.html">17</a>
+          </li>
+
+
+          <li>
+            <a class="pagination__page--current" href="./index18.html">18</a>
+          </li>
+
+
+          <li>
+            <a  href="./index19.html">19</a>
+          </li>
+
+
+          <li>
+            <a  href="./index20.html">20</a>
+          </li>
+
+
+          <li>
+            <a  href="./index21.html">21</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="./index23.html">23</a>
+          </li>
+
+        <li class="pagination__next">
+            <a href="./index19.html">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

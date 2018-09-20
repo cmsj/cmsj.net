@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../../../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../../../">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+<meta name="keywords" content="">
+
+  <title>
+    cmsj.net
+&ndash; gtk icon cache search tool  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../../../archive.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../../../2010/05/13/gtk-icon-cache-search-tool.html">gtk icon cache search tool</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 13 May 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Earlier on this evening I was asking the very excellent Ted Gould about a weird problem with my Gtk+ icon theme - an app I'd previously installed by hand in /usr/local/, but subsequently removed, had broken icons because Gtk+ was looking in /usr/local/share/icons/ instead of /usr/share/icons/.
+We did a little digging and realised I had an icon theme cache file in /usr/local/ that was overriding the one in /usr/. A bit of deleting later and it's back, but in the process we whipped up a little bit of python to print out the filename of an icon given an icon name.</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># gtk-find-icon by Chris Jones &lt;cmsj@tenshu.net&gt;</span>
+<span class="c1"># Copyright 2010. GPL v2.</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">gtk</span>
+
+<span class="n">THEME</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">IconTheme</span><span class="p">()</span>
+<span class="n">ICON</span> <span class="o">=</span> <span class="n">THEME</span><span class="o">.</span><span class="n">lookup_icon</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+ <span class="n">gtk</span><span class="o">.</span><span class="n">ICON_SIZE_MENU</span><span class="p">,</span>
+ <span class="n">gtk</span><span class="o">.</span><span class="n">ICON_LOOKUP_USE_BUILTIN</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">ICON</span><span class="p">:</span>
+ <span class="k">print</span> <span class="s2">&quot;None found&quot;</span>
+<span class="k">else</span><span class="p">:</span>
+ <span class="k">print</span><span class="p">(</span><span class="n">ICON</span><span class="o">.</span><span class="n">get_filename</span><span class="p">())</span>
+</pre></div>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

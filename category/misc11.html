@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../">
+  <link rel="stylesheet" type="text/css" href="../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Category: misc  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../archive.html"><i class="fas fa-archive"></i> Archive</a>
+&gt; Category: misc
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../2008/11/19/foo-fighters-wembley-concert-tale-of.html">Foo Fighters Wembley Concert, the tale of a weekend like no other</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 19 November 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>It seems like I have failed utterly to comment on the towering totem of raw awesome that was the Foo Fighters concert on a balmy Saturday in June.
+To put the event in context, I spent a few hours during the day with Rike, Alex and Simon in Hyde Park at the Red Bull Flügtag. We ate, we drank, we watched ridiculous people flinging themselves from a raised platform into The Serpentine in craft that almost invariably were capable solely of an ungraceful and undignified plunge. The notable exception being a poor attempt at a basic hangglider design, which somehow stalled and dived its way to a distance record.
+We then said goodbye to Alex and headed half way across London toWembley Stadium, where we arrived to a bigger queue for the toilet than for the gates, so we were inside in a jiffy. We'd missed the support acts nonsense and things were gearing up for the Foos. It was a pretty impressive sight and sound to walk out onto what would normally be the pitch, amongst an almost capacity crowd (Dave Grohl seemed to think there were 86,000 people there).
+Then noise, then cheering, then rock. Twenty minutes of rock go by before they take so much as a beat of a break to say hello. More rocking. Rock. Rockity rock. Rock. Special appearance by Jimmy Paige and John Paul Jones from Led Zepplin. Rock. Good night. Massive firework show.
+Best gig I've ever been to, and I'm not expecting it to ever be beaten.
+I would describe the show in more detail, but if you weren't there then you lose, sorry.
+Except you don't lose! You can now buy a DVD or a Bluray of the show, and I am here to tell you that you absolutely should, especially if you own a Bluray player.
+My copy of the Bluray arrived yesterday and I've watched the entire 2 hour show twice so far. There seem to be cameras everywhere and they're edited together well, so it's a treat to watch. The show was presented in conjunction with BBC Radio One and they broadcast it, so the sound recording is very good. What else do you care about? There are no extras, but who cares.
+As if the weekend hadn't offered up enough excitement already, Simon and I went to Silverstone on the Sunday to see a day of Renault motorsport.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2008/10/24/using-inotify-in-pygtk-application.html">Using inotify in a pygtk application without pyinotify</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 24 October 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I am lazy. There's no denying it, it's simple fact.
+That means, for example, when I am working with pygtk and I look at the API for pynotify, I am sad, because it's a polling API and I hate polling.
+What I like is GTK's event model. I like telling it what to run when things happen and letting it take care of all the pain for me. Obviously it's possible to write some code which will do the polling and then trigger an event, but that compromises my freedom to be lazy.
+Step in pygobject, which contains the bindings for GIO. Within the bowels of this beastie are the required components to monitor a file for changes in a very few lines of python:</p>
+<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
+ 2
+ 3
+ 4
+ 5
+ 6
+ 7
+ 8
+ 9
+10
+11
+12</pre></div></td><td class="code"><div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="kn">import</span> <span class="nn">gtk</span>
+<span class="kn">import</span> <span class="nn">gio</span>
+
+<span class="k">def</span> <span class="nf">file_changed</span> <span class="p">(</span><span class="n">monitor</span><span class="p">,</span> <span class="nb">file</span><span class="p">,</span> <span class="n">unknown</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+  <span class="k">if</span> <span class="n">event</span> <span class="o">==</span> <span class="n">gio</span><span class="o">.</span><span class="n">FILE_MONITOR_EVENT_CHANGES_DONE_HINT</span><span class="p">:</span>
+    <span class="k">print</span> <span class="s2">&quot;file finished changing&quot;</span>
+
+<span class="nb">file</span> <span class="o">=</span> <span class="n">gio</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="s1">&#39;/path/to/some/file&#39;</span><span class="p">)</span>
+<span class="n">monitor</span> <span class="o">=</span> <span class="nb">file</span><span class="o">.</span><span class="n">monitor_file</span> <span class="p">()</span>
+<span class="n">monitor</span><span class="o">.</span><span class="n">connect</span> <span class="p">(</span><span class="s2">&quot;changed&quot;</span><span class="p">,</span> <span class="n">file_changed</span><span class="p">)</span>
+<span class="n">gtk</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
+</pre></div>
+</td></tr></table>
+
+<p>That's it. I don't know what the "unknown" argument for the callback is, probably the optional user_data connect() argument and this is but a small part of what inotify/GIO can do, but if you just care about being told when a file is updated, it'll do (with caveats that you can never really know when a file has finished being changed, so be careful to validate it before you trust its contents).</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2008/10/09/openssh-51-chrootdirectory-permissions.html">openssh 5.1 chrootdirectory permissions issue</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 09 October 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>If you're playing with the excellent new <em>ChrootDirectory</em> and <em>internal-sftp</em> options in recent OpenSSH releases (such as 5.1 which is in Ubuntu 8.10 Intrepid), you may have hit an error like:</p>
+<div class="highlight"><pre><span></span><span class="n">fatal</span><span class="o">:</span> <span class="n">bad</span> <span class="n">ownership</span> <span class="n">or</span> <span class="n">modes</span> <span class="k">for</span> <span class="n">chroot</span> <span class="n">directory</span>
+</pre></div>
+
+
+<p>You may also have searched on Google for what to do about it and come away with very little useful information.
+Well no more! I did the same thing and got bored of reading mailing list posts, so read the source code instead. The relevant section is in <em>session.c</em>:
+        if (stat(component, &amp;st) != 0)
+          fatal("%s: stat(\"%s\"): %s", <strong>func</strong>,
+              component, strerror(errno));
+        if (st.st_uid != 0 || (st.st_mode &amp; 022) != 0)
+          fatal("bad ownership or modes for chroot "
+              "directory %s\"%s\"",
+              cp == NULL ? "" : "component ", component);</p>
+<p>This is quite simple really, it's <em>stat()</em>ing the directory specified for "<em>ChrootDirectory</em>" and <strong>all its parents up to /</strong> and checking that they are:
+-   owned by <em>root</em>
+-   not <em>group</em> or <em>other</em> writable
+-   (it also checks they are actually directories, but I'm going to assume you're not stupid enough to try and chroot into a file ;)</p>
+<p>Note my emphesis that these checks apply to the chroot directory itself and its parents and <em>/</em>, so if you are chrooting users into /srv/chroot/ then you need to ensure that <em>/</em>, <em>/srv</em> and <em>/srv/chroot</em> are owned by root and not writable by the group (even if it's root, bizarrely) or other users.
+Sorted.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2008/10/09/quick-guide-to-saving-power-with-usb.html">Quick guide to saving power with USB devices</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 09 October 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I have a laptop with some USB stuff built in. Some devices (such as Bluetooth) can be made to entirely disappear from the USB bus, however, the fingerprint reader and webcam can't, but they sit on the USB bus and draw power.
+Fortunately the USB specs allow devices to be put to sleep if they're not being used and support that feature. Unfortunately many devices advertise they support it when they really don't, so Linux is unable to automatically put every USB device to sleep.
+Fortunately you can control the setting by hand, and this is how. Firstly, start off with a Terminal and run the command "lsusb":</p>
+<p><code>cmsj@kodachi:~$ lsusbBus 005 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hubBus 007 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hubBus 006 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hubBus 003 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hubBus 002 Device 002: ID 0483:2016 SGS Thomson Microelectronics Fingerprint ReaderBus 002 Device 001: ID 1d6b:0001 Linux Foundation 1.1 root hubBus 004 Device 002: ID 17ef:4807 LenovoBus 004 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hubBus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hubcmsj@kodachi:~$</code>
+You can ignore the "<em>root hub</em>" entries, the interesting two are "<em>SGS Thomson Microelectronics Fingerprint Reader</em>" (guess which device that is ;), and "<em>Lenovo</em>" (this is the webcam).
+So now we need to poke at those devices to enable their autosleeping. If we look at the entry for the webcam:</p>
+<p>Bus 004 Device 002: ID 17ef:<strong>4807</strong> Lenovo</p>
+<p>I've highlighted "<em>4807</em>". This is the Product value for this USB device (if you're curious, the "<em>17ef</em>" part is the Vendor value and uniquely identifies the maker of this device).
+Now we need to find out where abouts the webcam lives in the <em>/sys/</em> filesystem (which is something the kernel provides to give applications lots of information about the hardware in your system).
+The following command will put us on the right path:</p>
+<div class="highlight"><pre><span></span>grep 4807 /sys/devices/*/*/usb*/*/idProduct
+</pre></div>
+
+
+<p>Which, on my laptop, returns:</p>
+<div class="highlight"><pre><span></span>/sys/devices/pci0000:00/0000:00:1d.7/usb4/4-5/idProduct:4807
+</pre></div>
+
+
+<p>Take that information you get, and chop the "<em>idProduct:4807</em>" bit off the end, just leaving "<em>/sys/devices/pci0000:00/0000:00:1d.7/usb4/4-5/</em>" (yours will look a little different to this) and add "<em>power/level</em>" to the end.
+You should now have something that looks pretty much like "<em>/sys/devices/pci0000:00/0000:00:1d.7/usb4/4-5/power/level</em>" and if you get the current setting:</p>
+<div class="highlight"><pre><span></span>cmsj@kodachi:~/Desktop$ cat /sys/devices/pci0000:00/0000:00:1d.7/usb4/4-5/power/level
+on
+cmsj@kodachi:~/Desktop$
+</pre></div>
+
+
+<p>you can see it is "on", which means it will not be automatically put to sleep. To change that, run:</p>
+<div class="highlight"><pre><span></span>echo &quot;auto&quot; | sudo tee /sys/devices/pci0000:00/0000:00:1d.7/usb4/4-5/power/level
+</pre></div>
+
+
+<p>and test if your device still works (so if it's a webcam, fire up "<em>cheese</em>", or if it's a fingerprint scanner that you use, test if it still accepts your finger). If everything is good then you can put something in /etc/rc.local so the power saving will be set up every time you reboot your computer:</p>
+<div class="highlight"><pre><span></span>echo &quot;auto&quot; &gt; /sys/devices/pci0000:00/0000:00:1d.7/usb4/4-5/power/level
+</pre></div>
+
+
+<p>and that's it! Repeat this for all the USB devices in your laptop and enjoy the power saving (run "<em>powertop</em>" about 10 minutes before you start doing this so it has time to get a good average of your power usage, then see how much difference this makes. It could be up to 0.5Watts per device). Note that this won't work particularly well for external USB devices you plug in, becuase the /sys/ path won't exist until you plug the device in, so you'd need to do the above steps every time you connect it.
+Hopefully HAL will start whitelisting devices which can be suspended, but I don't know of any work in this direction at the moment.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2008/10/09/ubuntu-810-intrepid-power-performance.html">Ubuntu 8.10 (Intrepid) power performance</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 09 October 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>In one word: wow.
+Out of sheer curiosity last night I fired up the excellent <em>powertop</em> and decided to see how my system was doing. It was producing a couple of hundred fewer interrupts per second than it did in 8.04 (Hardy), and was using 1-2Watts less power.
+Previously I have always resisted applying tweaks to my laptop that would attempt to reduce power, but since things were improving, the temptation was simply too great and I started digging out all the resources on this (by far the most useful being the tips on Intel's grammatically horrific <a href="http://www.lesswatts.org/">http://www.lesswatts.org/</a>. I had two reasons for not doing this previously - firstly I didn't want to deviate too much from a default install of Ubuntu (if only because it makes it much harder to reproduce bugs), but secondly I kept running into little weirdnesses. The most inconvenient of these was enabling AHCI link power management (which basically puts the hard disk bus to sleep when there is no IO); Enabling this and then suspending the laptop produced a 5 second delay on resuming because the kernel was forgetting it had put the bus to sleep and so had to wait for it to time out and be reset.
+This particular niggle is fixed in 2.6.27 and so my 3-4 second resume times are preserved and I can save power! \o/
+After a little while tweaking disk, AHCI, USB, filesystem, wireless, sound and ethernet options I ended up with a system which runs between 8 and 9 Watts when idle, down from 10-14 Watts, which I think is a pretty impressive saving and I'm very curious to find out from other Thinkpad X300 owners how well Windows performs in the power usage stakes - we always hear that Linux is a bit worse, but I'd be really quite surprised if the machine can run with very much less - it's spending (when idle, obviously) 99% of its time in the deepest processor sleep state and is only generating about a hundred interrupts per second (about 70-80% of which are due to my using a 3D desktop and wireless).</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2008/09/21/terminator-011-released_20.html">Terminator 0.11 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 21 September 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Head over to the <a href="http://www.tenshu.net/terminator" title="Terminator">Terminator Homepage</a> to get the goodness that is version 0.11. Mostly just bugfixes this time, for things which hurt 0.10 users. Also present is support for X Session Management, although until we have proper profiling support, this is of limited use.
+The source tarball is up, of course, and the Hardy/Intrepid PPAs should have packages by the time you read this.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2008/09/20/terminator-011-released.html">Terminator 0.11 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 20 September 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>The only new feature this time is X Session Management support, but there are also a few important bug fixes for things that crept into 0.10, and some updated/new translations.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2008/09/19/script-for-funky-ssh-titles-in-gnu.html">Script for funky SSH titles in GNU Screen</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 19 September 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I just uploaded a script that I've been using and refining for some while, with help from a variety of people too numerous to mention.
+Basically the deal is that when you ssh somewhere from inside a GNU Screen session, the screen's title is set to the hostname you ssh'd to. Simple.
+The page for the script is <a href="http://www.tenshu.net/screen_ssh/">here</a></p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2008/08/29/terminator-010-released_28.html">Terminator 0.10 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 29 August 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>It's been a week or so shy of two months since we pushed 0.9 out of the door and originally we planned on following up with a 0.9.1 release shortly after to clear up some bugs, but for a variety of not particularly good reasons this never happened.
+Instead we've got a new release for you... 0.10.
+It doesn't have any shiny whizz-bang features like 0.9 had, but it does bring a bunch of bug fixes and the groundwork necessary for our 1.0 release.
+As usual, head over to the <a href="http://www.tenshu.net/terminator/">homepage</a>, or <a href="http://launchpad.net/terminator/">Launchpad</a> to get the goodness.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2008/08/28/terminator-010-released.html">Terminator 0.10 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 28 August 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Another release rolls in and this time it's not very exciting for you, but we have a bunch of bug fixes and the groundwork of the config/layout editing/saving work we want to do for 1.0. Please let us know if you find any bugs in this.</p>
+  </div>
+</article>
+
+<div class="pagination">
+    <ul>
+        <li class="pagination__prev">
+            <a href="../category/misc10.html">&laquo;</a>
+        </li>
+
+
+
+          <li>
+            <a  href="../category/misc.html">1</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../category/misc8.html">8</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc9.html">9</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc10.html">10</a>
+          </li>
+
+
+          <li>
+            <a class="pagination__page--current" href="../category/misc11.html">11</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc12.html">12</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc13.html">13</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc14.html">14</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../category/misc23.html">23</a>
+          </li>
+
+        <li class="pagination__next">
+            <a href="../category/misc12.html">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

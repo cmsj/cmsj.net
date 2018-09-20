@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../">
+  <link rel="stylesheet" type="text/css" href="../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Category: misc  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../archive.html"><i class="fas fa-archive"></i> Archive</a>
+&gt; Category: misc
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/07/17/some-keyboard-maestro-macros.html">Some Keyboard Maestro macros</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 17 July 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I've started using <a href="http://www.keyboardmaestro.com/main/">Keyboard Maestro</a> recently and it is one impressive piece of software.
+Here are a couple of the macros I've written that aren't completely tied to my system:</p>
+<p><a href="https://dl.dropboxusercontent.com/u/20103940/Type%20current%20Safari%20URL.kmmacros">Type current Safari URL</a>
+-   This will type the URL of the frontmost Safari tab/window into your current application. Handy if you're chatting with someone and want to paste them a hilarious YouTube URL without switching apps, copying the URL to the clipboard and switching back.
+-   It does not use the clipboard, it actually types the URL into the current application, so any modifier keys you hold will change what is being typed. I've configured the macro to fire when the specified hotkey is released, to minimise the chances of this happening.</p>
+<p><a href="https://dl.dropboxusercontent.com/u/20103940/Toggle%20Caffeine.kmmacros">Toggle Caffeine</a>
+-   Very simple, just toggles the state of <a href="http://lightheadsw.com/caffeine/">Caffeine</a> with a hotkey.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/06/10/the-case-against-new-mac-pro-at-wwdc.html">The (simplest) case against a new Mac Pro at WWDC</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Mon 10 June 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>This is pretty simple really - unless Apple wants to launch a new Mac Pro and have it be out of date almost immediately, they need to wait until Intel has released Ivy Bridge Xeons, which won't be until next month at the earliest (and given the delays with Haswell, July seems unlikely). Also coming later this year on Intel's roadmap is the introduction of Thunderbolt 2.</p>
+<p>Both of these things would seem like an excellent foundation for a new line of professional Macs.</p>
+<p>Given the very short list of hardware model numbers that leaked ahead of today's WWDC keynote, my guess is that Apple is going to hold a pro focused event in 2-4 months and refresh MacBook Pros, Mac Pros and hopefully the surrounding halo like Thunderbolt displays (which are crying out for the new iMac style case, the newer non-glossy screen, USB3.0 and soon, Thunderbolt 2) and the pro software Apple sells.</p>
+<p>Having a pro-only event would also help calm the worries that Apple has stopped caring about high-value-low-volume professional users.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/06/10/thoughts-on-modular-mac-pro.html">Thoughts on a modular Mac Pro</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Mon 10 June 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>There have been some rumours recently that the next iteration of the Mac Pro is going to be modular, but we have had very little information about how this modularity might be expressed.
+In some ways the current Mac Pro is already quite modular - at least compared to every other Mac/MacBook. You have easy access to lots of RAM slots, you have multiple standards-compliant disk bays, PCI slots and CPU sockets.
+This affords the machine an extremely atypical level of upgradeability and expandability, for a Mac. Normal levels for a PC though.
+Even with that modularity in mind, the machine itself is fairly monolithic - if you do need more than 4 disk drives, or more PCI cards than it can take, you have limited or no expansion options. You could burn a PCI slot for a hardware disk controller and attach some disks to it externally, but you are quickly descending into an exploding mess of power supplies, cables and cooling fans.
+If Apple decides to proceed along that route, the easiest and most obvious answer is that they slim down the main Pro itself and decree that all expansion shall take place over Thunderbolt (currently 10Gb/s bidirectional, but moving to 20Gb/s bidirectional later this year when the Thunderbolt 2 Falcon Ridge controllers launch). This is a reasonable option, but even though Thunderbolt is essentially an external PCI-Express bus, its available bandwidth is considerably lower than the peak levels found on an internal PCI-E bus (currently around 125Gb/s).
+A much better option, it would seem to me, would be to be able to go <strong><em>radically</em></strong> modular and expand the Mac itself, but how could that be possible? How can you just snap on some more PCI slots if you want those, or some more disks if that's what you need?
+I will say at this point that I have absolutely no concrete information and I am not an electronic engineer, so what you read below is poorly informed speculation and should be treated as that :)
+I think the answer is Intel's QuickPath Interconnect (QPI), a high bandwidth (over 200GB/s), low latency point-to-point communication bus for connecting the main components of an Intel based computer.
+If you have any Intel CPU since around 2009, you probably have a QPI bus being used in your computer. Looking at the latest iteration of their CPUs, QPI is always present - on the uniprocessor CPUs it is used on the chip package to connect the CPU core to the elements of the northbridge that have migrated into the CPU package (such as the PCI-Express controller), however, on these chips the QPI bus is not presented externally.
+On the multiprocessor-capable chips, it is, and is the normal way to interconnect the CPUs themselves, but it can be used for other point-to-point links, such as additional north bridges providing PCI-Express busses.
+So you could buy a central module from Apple that contains 1, 2 or 4 CPUs (assuming Ivy Bridge Xeons) and all of the associated RAM slots, with maybe two minimal disk bays for the core OS to boot from, and a few USB3.0 and Thunderbolt ports. For the very lightest of users, this would likely be a complete computer - you have some disk, some RAM, CPUs and assuming the Xeons carry integrated GPUs, the Thunderbolt ports can output video. It would not be much of a workstation, but it would essentially be a beefed up Mac Mini.
+I would then envision two kinds of modules that would stack on to the central module. The simplest kind would be something like a module with a disk controller chip and a load of disk bays and, not needing the raw power of QPI, this would simply connect to the existing PCI-Express bus of the main module.
+There would clearly be a limit to how many of these modules you could connect, since there are a limited number of PCI-E lanes provided by any one controller (typically around 40 lanes on current chipsets), but with the second type of module, you could then take the expansion up a considerable number of notches.
+That second kind would have a large and dense connector that is a QPI. These modules could then attach whatever they wanted to the system - more CPUs (up to whatever maximum is supported by that generation of Xeon - likely 8 in Ivy Bridge), or very very powerful IO modules. My current working example of this is a module that is tasked with capturing multiple 4K video streams to disk simultaneously.
+This module would provide its own PCI-Express controller (linked back to the main module over QPI), internally connected to a number of video capture chips/cards and to one or more disk controller chips/cards which would connect to a number of disk bays. It sounds a lot like what would happen inside a normal PC, just without the CPU/RAM and that's because it's exactly that.
+This would allow for all of the video capture to be happening within the module. It would be controlled as normal from the software running in the main module, which would be issuing the same instructions as if the capture hardware was on the main system PCI-E bus, causing the capture cards to use DMA to write their raw video directly to the disk controller exactly as if they were on the main system PCI-E bus. The difference would be that there would be no other hardware on the PCI-E bus, so you would be able to make reasonable promises around latency and bandwidth, knowing that no user is going to have a crazy extra set of cards in PCI slots, competing for bandwidth. Even if you have two of these modules capturing a really silly amount of video simultaneously. It's a model for being able to do vast amounts of IO in parallel in a single computer.
+There would almost certainly need to be a fairly low limit on the number of QPI modules that could attach to the system, but being able to snap on even two or three modules would elevate the maximum capabilities of the Pro to levels far beyond almost any other desktop workstation.
+As a prospective owner of the new Mac Pro, my two reasonable fears from this are:</p>
+<ul>
+<li>They go for the Thunderbolt-only route and my desk looks like an awful, noisy mess</li>
+<li>They go for the radical modularity and I can't afford even the core module</li>
+</ul>
+<p>(While I'm throwing around random predictions, I might as well shoot for a name for the radical modularity model. I would stick with the Lightning/Thunderbolt IO names and call it Super Cell)
+Edit: I'd like to credit Thomas Hurst for helping to shape some of my thinking about QPI.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/05/01/my-attempt-at-ipad-repair.html">My attempt at iPad repair.</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 01 May 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>[<a href="//storify.com/cmsj/my-attempt-at-ipad-repair">View the story "My attempt at iPad repair" on Storify</a>]</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/04/30/alfred-2-clipboard-history.html">Alfred 2 clipboard history</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 30 April 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>The toweringly awesome Alfred 2 app for OS X has a great clipboard history browser. This is how I suggest you configure and use it:</p>
+<ul>
+<li>Map a hotkey to the viewer (I suggest making it something involving the letter V, since Cmd-V is a normal Paste. I use Cmd-Shift-Option-Ctrl V because I have my Caps Lock key mapped to Cmd-Shift-Option-Ctrl)</li>
+<li>Turn off the option to show snippets at the top of the Clipboard History, because snippets are a whole different thing and not relevant to pasting history</li>
+<li>Turn on the option to auto-paste when you hit Enter on a given item</li>
+</ul>
+<p>With these options all configured, all you have to do is hit the hotkey, select the old clipboard item you want and hit Enter. It will then be pasted into the active window.</p>
+<p>This is also useful to preview the current contents of the clipboard before pasting (which is always a good idea if you're pasting into a sensitive terminal or a work IRC channel and want to avoid spamming some random/harmful nonsense in).</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/04/30/terminator-097-released.html">Terminator 0.97 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 30 April 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <h2>The present:</h2>
+<p>It's been a very long road since Terminator 0.96 back in September 2011, but I'm very happy to announce that Terminator 0.97 was released over breakfast this morning.
+There's a reasonable amount of change, but almost all of it is bug fixes and translations.
+Here is the changelog:
+-   Allow font dimming in inactive terminals
+-   Allow URL handler plugins to override label text for URL context menus
+-   When copying a URL, run it through the URL handler first so the resulting URL is copied, rather than the original text
+-   Allow users to configure a custom URL handler, since the default Gtk library option is failling a lot of users in non-GNOME environments.
+-   Allow rotation of a group of terminals (Andre Hilsendeger)
+-   Add a keyboard shortcut to insert a terminal's number (Stephen J Boddy)
+-   Add a keyboard shortcut to edit the window title (Stephen J Boddy)
+-   Add an easy way to balance terminals by double clicking on their separator (Stephen J Boddy)
+-   Add a plugin to log the contents of terminals (Sinan Nalkaya)
+-   Support configuration of TERM and COLORTERM (John Feuerstein)
+-   Support reading configuration from alternate files (Pavel Khlebovich)
+-   Allow creation of new tabs in existing Terminator windows, using our DBus API
+-   Support the Solarized colour palettes (Juan Francisco Cantero Hutardo)
+-   Translation support for the Preferences window
+-   Lots of translation updates (from our fantastic translation community)
+-   Lots of bug fixes</p>
+<p>My sincere thanks to everyone who helped out with making this release happen.</p>
+<h2>The future:</h2>
+<p>So. Some of you might be wondering why this release isn't called 1.0, as it was tagged for a while in the development code. The main reason is that I just wanted to get a release out, without blocking on the very few remaining bugs/features targeted for the 1.0 release. I hope we'll get to the real 1.0 before very long (and certainly a lot quicker than the gap between 0.96 and 0.97!)</p>
+<p>However, I do think that the Terminator project is running out of steam. Our release cadence has slowed dramatically and I think we should acknowledge that. It's entirely my fault, but it affects all of the userbase.</p>
+<p>I am planning on driving Terminator to the 1.0 release, but the inevitable question is what should happen with the project after that.</p>
+<p>The fact is that, like the original projects that inspired Terminator (gnome-multi-term, quadkonsole, etc.), technology is moving under our feet and we need to keep up or we will be obsolete and unable to run on modern open source desktops.</p>
+<p>There is a very large amount of work required to port Terminator to using both Gtk3 and the GObject Introspection APIs that have replaced PyGtk. Neither of these porting efforts can be done in isolation and to make matters more complicated, this also necessitates porting to Python 3.</p>
+<p>I am not sure that I can commit to that level of effort in a project that has, for my personal needs, been complete for about 5 years already.</p>
+<p>With that in mind, if you think you are interested in the challenge, and up to the task of taking over the project, please talk to me (email cmsj@tenshu.net or talk to Ng in #terminator on Freenode). My suggestion would be that a direct, feature-complete port to Python3/Gtk3/GObject would immediately bump the version number to 2.0 and then get back to thinking about features, bug fixes and improving what we already have.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/04/11/some-more-awesome-alfred-2-workflows.html">Some more awesome Alfred 2 workflows</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 11 April 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I keep finding super handy little things to do with Alfred 2 and so I thought I'd post some more:</p>
+<ul>
+<li><a href="http://www.alfredforum.com/topic/1582-alleyoop-update-alfred-workflows/?hl=alleyoop">Alleyoop</a> - updates installed plugins (if the workflow author supports it, which many currently do not).  I hope this will be a temporary workaround until a centralised workflow repository is created.</li>
+<li><a href="http://www.alfredforum.com/topic/1211-battery-view-summary-stats-about-your-laptop-battery/?hl=battery">Battery</a> - shows all the vital stats of your MacBook's battery without having to run an app or a Terminal command.</li>
+<li><a href="http://www.alfredforum.com/topic/1805-share-using-mountain-lion-built-in-sharing-version-17/?hl=%2Bbuilt+%2Bsharing">Built-in Sharing</a> - lets you share files directly to all the social services that OS X supports.</li>
+<li><a href="http://www.alfredforum.com/topic/1551-paste-current-url-from-safari-into-focussed-application/?hl=%2Bpaste+%2Bcurrent+%2Bsafari">Paste current Safari URL</a> - a workflow I wrote, which pastes the URL of Safari's currently visible webpage, into the application you are using. No need to flip back and forth to copy and paste the URL</li>
+<li><a href="https://github.com/bevesce/unicode-symbols-search/raw/master/Symbols.alfredworkflow">Symbols</a> - very easy, visual way to search the Unicode tables for a symbol you're looking for (e.g. arrows, hearts, snowmen, biohazard warning signs, etc)</li>
+<li><a href="https://github.com/LeEnno/alfred-terminalfinder/blob/master/TerminalFinder.alfredworkflow?raw=true">TerminalFinder</a> - lets you quickly get a Terminal for the Finder window you're looking at.</li>
+</ul>
+<p>I imagine there will be more to come, the total number of workflows is <strong>exploding</strong> at the moment!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/03/16/alfred-2-workflows.html">Alfred 2 workflows</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 16 March 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Since I started using OS X as my primary desktop, I've loved Spotlight for launching apps and finding files. I resisted trying any of the replacement apps, for fear of the bottomless pit of customisation that they seemed to offer.
+With the very recent release of Alfred 2, I was finally tempted to try it by the previews of their Workflow feature.
+The idea is that you can add new commands to Alfred by writing scripts in bash/python/ruby/php and then neatly package them up and share them with others. I was expecting to write a few myself and share them, but the user community has been spinning up so quickly that they've already covered everything I was going to write.
+Instead, I decided to use some time to write about the workflows I'm using so far:</p>
+<ul>
+<li><a href="http://www.alfredforum.com/topic/940-google-search-in-line-results-workflow/">Google Search</a> - get live results from Google as you type. It's not always what I want when I'm searching, but it's a very quick way to get some insight into the results available.</li>
+<li><a href="http://www.alfredforum.com/topic/1041-create-new-task-in-omnifocus-inbox/">New OmniFocus Inbox Task</a> - Very quick way to create a new task for later triage</li>
+<li><a href="http://www.alfredforum.com/topic/826-ssh-with-smart-hostname-autocompletion/">Open SSH</a> - This collects up all your hosts from SSH's known_host file, config file and local network, then opens terminal windows for you to ssh to the host you choose.</li>
+<li><a href="http://www.alfredforum.com/topic/202-parallels-desktop-workflow/">Parallels Desktop</a> - Easy way to start/resume your Parallels virtual machines.</li>
+<li><a href="http://www.alfredforum.com/topic/375-rate-itunes-track/">Rate iTunes Track</a> - does what it sounds like, rate the current iTunes track.</li>
+<li><a href="http://www.alfredforum.com/topic/942-screen-sharing-with-automatic-network-discovery/">Screen Sharing</a> - quickly VNC to the hosts on your network that are advertising it (including iCloud hosts if you have Back To My Mac configured)</li>
+<li><a href="http://www.alfredforum.com/topic/476-toggle-vpn/">VPN Toggle</a> - get on/off your corporate network quickly.</li>
+</ul>
+<p>Lots more on the Alfred 2 forums. At some point it would be nice to see this unified into some kind of integrated search/download feature of Alfred 2.</p>
+<hr>
+<p>Update: (2012-04-12) I've written a <a href="http://www.tenshu.net/2013/04/some-more-awesome-alfred-2-workflows.html">second post</a> that covers a few more workflows I've discovered since this one.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/03/14/how-death-of-google-reader-looked-in-my.html">How the death of Google Reader looked in my Twitter timeline</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 14 March 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>[<a href="//storify.com/cmsj/how-the-death-of-google-reader-looked-in-my-twitte">Read this post on Storify</a>]</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/02/06/lcd-and-crazy-disk-chassis.html">LCD and a crazy disk chassis</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 06 February 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>If you saw my <a href="http://www.tenshu.net/2013/01/funky-lcd4linux-python-module.html">recent post</a> on some preparatory work I'd been doing for the arrival of an LCD status panel for my HP Microserver, it's probably no surprise that there is now a post talking about its arrival :)</p>
+<p>Rather than just waste the 5.25" bay behind the LCD, I wanted to try and put some storage in there, particularly since the Microserver's BIOS can be <a href="http://www.avforums.com/forums/networking-nas/1521657-hp-n36l-microserver-updated-ahci-bios-support.html">modified</a> to enable full AHCI on the 5th SATA port.</p>
+<p>I recently came across the Icy Box <a href="http://www.raidsonic.de/en/products/ssd.php?we_objectID=8206">IB-RD2121StS</a>, a hilarious piece of hardware. It's the size and shape of a normal 3.5" SATA disk, but the back opens up to take two 2.5" SATA disks. These disks can then be exposed either individually, or as a combined RAID volume (levels 0 or 1). Since I happen to have a couple of 1TB 2.5" disks going spare, this seemed like the perfect option, as well as being so crazy that I couldn't not buy it!</p>
+<p>The LCD is a red-on-black pre-made 5.25" bay insert from <a href="http://www.lcdmodkit.com/">LCDModKit</a>. It has an <a href="http://www.harbaum.org/till/lcd2usb/index.shtml">LCD2USB</a> controller, which means it's very well supported by projects like <a href="http://ssl.bulix.org/projects/lcd4linux/">lcd4linux</a> and <a href="http://www.lcdproc.org/">lcdproc</a>. It comes with an internal USB connector (intended to connect directly to a motherboard LCD port), except the Microserver's internal USB port is a regular external Type A port. Fortunately converters are easy to come by.</p>
+<p>Something I hadn't properly accounted for in my earlier simulator work is that the real hardware only has space for 8 user-definable characters and I was using way more than that (three of my own custom icons, but lcd4linux's split bars and hollow graphs use custom characters too). Rather than curtail my own custom icons, I chose to stop using hollow graphs, which seems to have worked.</p>
+<p><img alt="Icy Box enclosure" src="../images/IMG_5588.jpg">
+<em>The Icy Box enclosure</em></p>
+<p><img alt="Ta-da! The back opens up" src="../images/IMG_5592.jpg">
+<em>Ta-da! The back opens up</em></p>
+<p><img alt="Selector switch" src="../images/IMG_5590.jpg">
+<em>Selector switch for which type of volume/RAID you want</em></p>
+<p><img alt="Icy Box and LCD" src="../images/IMG_5598.jpg">
+<em>Marrying the Icy Box and the LCD. Only a small amount of metalwork required</em></p>
+<p><img alt="Box and LCD installed" src="../images/IMG_5600.jpg">
+<em>Icy Box and LCD being installed</em></p>
+<p><img alt="Finished installed" src="../images/IMG_5606.jpg">
+<em>Finished install!</em></p>
+  </div>
+</article>
+
+<div class="pagination">
+    <ul>
+        <li class="pagination__prev">
+            <a href="../category/misc2.html">&laquo;</a>
+        </li>
+
+
+
+          <li>
+            <a  href="../category/misc.html">1</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc2.html">2</a>
+          </li>
+
+
+          <li>
+            <a class="pagination__page--current" href="../category/misc3.html">3</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc4.html">4</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc5.html">5</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc6.html">6</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../category/misc23.html">23</a>
+          </li>
+
+        <li class="pagination__next">
+            <a href="../category/misc4.html">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

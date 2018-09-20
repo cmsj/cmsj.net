@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../">
+  <link rel="stylesheet" type="text/css" href="../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Category: misc  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../archive.html"><i class="fas fa-archive"></i> Archive</a>
+&gt; Category: misc
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../2005/06/29/glastonbury-2005.html">Glastonbury 2005</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 29 June 2005</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Woo! Ok, so the torrential rain and inches of mud were a bit of a pain, but didn't dampen many spirits and the festival was still a lot of fun :)
+I saw some groovy acts play (Jools Holland, Van Morisson, Royksopp, etc.) and saw some funny sights (the guy in the tent near us who made a habit of walking around naked, for example) and generally communed with hippies for a few days.
+I hope the 2007 festival is as good, if not better!
+My pics are <a href="http://gallery.tenshu.net/thumbnails.php?album=29">here</a>, mooks's are <a href="http://www.zoze.co.uk/gallery/Glastonbury">here</a> and Tam's are <a href="http://tamsin.moye.me.uk/pics/gallery/Glastonbury05/">here</a></p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2005/06/12/happenings.html">Happenings</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 12 June 2005</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I forgot to mention that I saw The Chemical Brothers live recently. They're touring at the moment, so a few of us caught them at the Brighton Centre (not the best gig venue in the world ever, it has to be said). They rock a bunch :)
+Up and coming musical happenings are my trips to Glastonbury and Big Chill festivals - expect lots of photos unless some pikey half-inches my camera ;)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2005/06/01/zend-studio-64bitness.html">Zend Studio 64bitness</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 01 June 2005</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I'm quite a big fan of the Zend Studio development environment for PHP - I use it quite extensively at work and generally speaking it's a very capable tool and makes developing PHP a lot easier/quicker.
+However, it's closed source and quite expensive, which is a bit of a downside, but at the same time it should give me some leverage to get the features I want into future versions, right? Probably not.
+I've been bugging the Zend support guys about AMD64 support for near enough 10 months now, with little success. Now, this might not seem too surprising, what with it being closed source, but the important difference here is that Zend's Studio is written in <em>Java</em>.
+Given that Java is supposed to be a platform agnostic virtual machine, precisely why is it that Zend only ship binaries for a few platforms? The answer appears to be that the installer they use to install said binaries on customer machines is a complete nightmare.
+Specifically they appear to be using InstallAnywhere, which is becoming quite common for installing java programs, especially on Linux. Sadly it has some pretty serious flaws. Firstly it's one of those godawful self-extracting/installing shell scripts, so modifying the installer is exceptionally hard. It also knows almost nothing about AMD64, despite the fact that it ought to be really quite compatible with 32bit code (especially for something as library-free as java) and triggers a lovely glibc bug (set "<code>LD_ASSUME_KERNEL=2.2.5</code>" on an AMD64 machine and then try to run anything ;)
+So basically that all sucks and anyone using InstallAnywhere is cutting themselves off from potential customers for no particularly good reasons. Obviously I can't accept that, so knowing that Zend Studio is really just a Java program I went at it with a copy of vim and a lot of scribbling notes until I figured out how InstallAnywhere's crazy LAX configuration system worked. With that out of the way I was able to determine that all you need to do to make this thing run *perfectly* on AMD64 is make two tiny changes to two not-so-tiny text files. Simple!
+Here's how:</p>
+<ol>
+<li>Install Zend Studio somewhere (a 32bit machine or a 32bit chroot), copy the folder to your 64bit install</li>
+<li>Look in the directory Studio is installed in (e.g. "<code>/usr/local/Zend/ZendStudioClient-4.0.2/</code>") and edit "<code>bin/ZDE.lax</code>", you need to have "<code>lax.nl.current.vm</code>" point to your 64bit Java VM binary (e.g. "<code>/usr/bin/java</code>").</li>
+<li>Now edit "<code>bin/ZDE</code>" and comment out the line "<code>export LD_ASSUME_KERNEL=2.2.5</code>"</li>
+</ol>
+<p>That should be it, fire up <code>bin/ZDE</code> and you should be hacking PHP in 64bits of goodness (be aware you may need to reconfigure where Zend Studio finds external binaries like cvs - see the ZDE configuration window).
+<strong>Update</strong>
+I've spoken with Zend since writing this and although they are still not committing to supporting AMD64, they did provide me with a handy link to download the Zend Studio installer without the 32bit JVM in it, which (with some work) makes a native 64bit install possible. Hurrah!
+So, what to do, well firstly you will need the tarball (I'm not going to link to it, ask Zend) and to extract it. This should leave you with a single file called <code>ZendStudio-4_0_2.bin</code> (in the case of 4.0.2, current release at the time of writing). Run the command:
+<code>cat ZendStudio-4_0_2.bin | sed -e 's/=2.2.5/=a.a.a/g' &gt;ZendStudio-4_0_2.bin.1</code>
+Then run "<code>sh ./ZendStudio-4_0_2.bin.1</code>" and the installer should start. Once it has completed you still won't actually be able to start ZDE because the same LD_ASSUME nonsense is going on there, so edit "bin/ZDE". Above I showed the quick and hacky way to make this work - comment out the "<code>LD_ASSUME_KERNEL=2.2.5</code>" - however there is a way that is probably better, so I will encourage you to do this instead... Edit line 1326 so instead of reading simply:
+<code>if [ `uname` = "Linux" ]; then</code>
+it now reads:
+<code>if [ `uname` = "Linux" -a `uname -m` != "x86_64" ]; then</code>
+and all will be well :o)
+<strong>Update 2</strong>
+One thing I hadn't noticed because it was working transparently is that not all of ZDE is Java, for example the code analyzer binary in Zend's bin/ folder appears to be a native 32bit binary. These should still work fine if you have some 32bit compatibility libraries installed (Fedora should install these by default on AMD64, Debian based systems may need to install the ia32-libs package).</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2005/05/05/walkies.html">Walkies!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 05 May 2005</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Last weekend I went up to Edale in Derbyshire with Simon, Tam, Marky and Tom. We had a most excellent time (albeit a bit muddy and smelly). My photos are <a href="http://gallery.tenshu.net/thumbnails.php?album=26">here</a>, Tam's are <a href="http://tamsin.moye.me.uk/pics/gallery/peaks/">here</a> and marky's are <a href="http://photos.mark.section.me.uk/edalex/">here</a>.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2005/04/21/last-bongo-in-brighton.html">Last bongo in Brighton</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 21 April 2005</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p><img alt="DJ Format" src="http://www.tenshu.net/wp-content/format_gig.jpg" title="DJ Format (left), Abdominal (centre), D-Sicive (right)">Last night I went to a DJ Format gig at the most excellent Concorde 2 here in Brighton, with Alex and Simon.
+In short, it rocked!
+Format is a great DJ and Abdominal is a great rapper. D-Sisive was ok, but doesn't seem to be as good as Abdominal.
+They played some tunes off their new album, "If you can't join em, beat em" as well as some classics from "Music for the Mature B-Boy", including a very funny version of Vicious Battle Raps with most of the lyrics reversed from the original.
+There was a bunch of crowd interaction, including getting a guy to race against Abdominal; he had to eat a breadstick and then whistle in the same amount of time it took Abdominal to rap out 8 bars at full speed (which isn't very many seconds). Personally I think he lost, but they gave him the CD anyway ;)
+If Format and friends are playing anywhere near you (click <a href="http://www.ents24.com/web/artist/63206/DJ_Format.html">here</a> to find out), you should go see them :)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2005/04/09/clearing-logitech-jungle.html">Clearing the Logitech jungle</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 09 April 2005</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I have uploaded a mini HOWTO into my <a href="http://docs.tenshu.net/">techie documents</a> section that covers configuring a Linux machine running Xorg to make best possible use of a Logitech keyboard and mouse (the Elite and MX700 respectively) and the bundles they are sold together in (the Duo MX and Cordless Desktop MX).
+It requires a fairly recent distro because it uses some features/data only available in Xorg so far. Personally I am using these settings without problems on my Ubuntu Hoary machine.
+A direct link to the HOWTO is <a href="http://docs.tenshu.net/Logitech-MX-Duo-mini-HOWTO/">here</a>.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2005/04/09/grab-hedgehog.html">Grab a hedgehog</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 09 April 2005</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Congratulations to the <a href="http://www.ubuntulinux.org">Ubuntu</a> team, who released Hoary today. If you haven't tried it yet, do :)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2005/03/06/quick-gt4-review.html">Quick GT4 review</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 06 March 2005</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I should start out by saying that I am a big fan of GT3, but I only played GT2 a little bit and hardly played GT at all.
+With that out of the way, I think GT4 is a fantastic game. To be fair though it is only really the culmination of what GT3 could have been and isn't a huge leap forward. That is ok though, GT3 was released 4 years ago and probably took a couple of years at least to write, so a lot will have been learned since then about exploiting the PS2 to the fullest. The addition of a huge library of cars and a good number of tracks only improves the experience. Disappointingly absent is online play, instead we get LAN play and a particularly silly photo mode.
+Very few games have equalled even the performance of GT3, but GT4 goes better in looks, sounds and feel and will certainly be tough to beat.
+I happen to have a Logitech GT Force wheel, which was the official GT3 wheel and it makes any racing game many times more fun than with a controller, but the Gran Turismo games get a particular boost because they are so technical. Snow and rally tracks are something of a challenge to whip the wheel round for opposite lock, but that tradeoff buys you exceptional control for drifting round the corners and seems to be well worth it. I just got a gold on the IA license snow track after getting a bronze first time and then two silvers, so the wheel must definitely be helping because I'm not normally that good ;)
+Therefore, if you are looking for a really good, but quite serious driving game, look no further. If you enjoyed GT3 a lot, this would be a good time to refresh the memory with a slightly new twist :)
+In addendum, it is said that engineering samples of the PS3 have been produced, so let's hope that one is on its way to Polyphony Digital so they can blow us away with a stunning evolution in the GT series to launch with the PS3 (including full and amazing online support damnit!)
+<a href="http://www.tenshu.net/wp-content/img0000.jpg"><img alt="GT4 - IA license - snow track" src="http://www.tenshu.net/wp-content/thumb-img0000.jpg"></a>
+GT4 - IA license - snow track (Gold).
+Click for a larger version</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2005/03/01/gt4.html">GT4!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 01 March 2005</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I got fed up of waiting for Gran Turismo 4, the very finest of driving games, to come out here so I ordered a copy from the States for slightly less than the recommended retail price here (although still more than the cheaper outlets); hurrah for the free market I guess. According to the scarily efficient FedEx, it should arrive by midday tomorrow. Woo!
+Right now it's about an hour outside Paris, having come from California via Indianapolis. I'm really not sure why FedEx think I need to know this, but I can imagine it must greatly appease overbearing execs waiting for shipments ;)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2004/12/18/more-on-comments.html">More on comments</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 18 December 2004</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I've re-enabled comments with an additional plugin that requires you to type a short code from a randomly generated image. That should keep the spammers at bay and let any real people comment here, not that they're likely to ;)</p>
+  </div>
+</article>
+
+<div class="pagination">
+    <ul>
+        <li class="pagination__prev">
+            <a href="../category/misc19.html">&laquo;</a>
+        </li>
+
+
+
+          <li>
+            <a  href="../category/misc.html">1</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../category/misc17.html">17</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc18.html">18</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc19.html">19</a>
+          </li>
+
+
+          <li>
+            <a class="pagination__page--current" href="../category/misc20.html">20</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc21.html">21</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc22.html">22</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc23.html">23</a>
+          </li>
+
+        <li class="pagination__next">
+            <a href="../category/misc21.html">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

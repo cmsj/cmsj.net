@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="./theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="./">
+  <link rel="stylesheet" type="text/css" href="./theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="./theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="./theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="./theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="./archive.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/13/screen-titles-from-ssh.html">screen titles from ssh</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 13 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I usually have at least 4 terminals visible on my screen at once. Each one is running screen(1), and each screen has probably at least 3 or 4 different things going on in it (usually sshing to servers).
+Once you are up to about a dozen or so shells spread across 4 terminals it can get quite interesting to remember where you left the one you are looking for.
+Since screen can have a status line which lists its screens, and it is possible to change their names, I figured it ought to be possible to have ssh set the title of a screen when it connects to a remote machine. This would make things a lot easier to find, as well as being a cute hack.
+It turns out that it is indeed possible.... to a degree.
+ssh lets you specify a command to be run on the local machine after a connection is established, which is the ideal place to do this kind of thing. Sadly it doesn't help you out by setting any useful environment variables (such as the machine you just ssh'd to). You're probably thinking "but you know which one it is, you just ssh'd there!" and while that is true, it's not very easy to handle programatically. Mainly because it means parsing the arguments to ssh, which is no fun at all.
+So, rather than do that, I am making the blanket assumption that the final word on ssh's command line is the host you are sshing to. If that is not true (e.g. you are doing "ssh someserver rm /etc/foo") you will get whatever the last word actually is, sucks to be you.
+Also, if you use ProxyCommand, you really don't want the second ssh to do this, because it will confuse the first one and you'll never establish a connection, so detecting the type of output ssh is connected to is necessary.
+Thanks to the many, many people I've consulted in the process of figuring this out. It doesn't seem like anyone has done this before (at least I can't find an example on google. There are some very similar things though), so after running out of ideas myself I started polling the community and got enough nuggets of inspiration back to produce a workable solution.
+You will need to make sure screen is configured to show a status line (otherwise you won't see the screen names, except in a C-A-" or similar). Then drop this into ~/.ssh/config:
+<code>PermitLocalCommand yes  LocalCommand tty -s &amp;&amp; cat /proc/$PPID/cmdline | xargs -0 | awk '{ printf ("\033k%s\033\\", $NF) }'</code>
+(yes, that is hacky and disgusting. I am tempted to look at patching ssh to provide the hostname to the spawned LocalCommand shell, but right now the above config seems to be the best way of doing this).</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/09/more-ps3-video-stuff.html">More PS3 video stuff</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 09 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I came across a python script called <a href="http://can.homeunix.org/sw/vepp/">vepp</a>, which aims to be a simple way of transcoding files for portable media devices. Why not also use it for very unportable media devices such as the PS3? :)
+Initially I've just added a target for fairly high bitrate 720p H.264/AVC, 1080 and MPG-SP targets still to come.
+If you want to track my development version, you can do so <a href="https://code.launchpad.net/~cmsj/+junk/ps3tools">via Launchpad</a>. You will need to use <a href="http://www.bazaar-vcs.org">bzr</a> thus: bzr branch http://bazaar.launchpad.net/~cmsj/+junk/ps3tools
+You'll need a capable version of ffmpeg, as discussed <a href="http://www.tenshu.net/archives/2007/06/03/transcoding-video-for-the-ps3-in-ubuntu/">previously</a>. Output files will be written to the current directory (I'm looking at adapting the current behaviour to be able to automatically direct the output to either attached media that is PS3 compatible (CF/SD/MS/USB) or sending it straight to a directory you are <a href="http://mediatomb.cc/">sharing via UPnP</a> (far more useful than ferrying things about with SD cards!)
+Here is my current patch against vepp:
+<code>=== modified file 'vepp-2.0.1.py' (properties changed)--- vepp-2.0.1.py       2007-06-09 01:01:48 +0000+++ vepp-2.0.1.py       2007-06-09 03:12:21 +0000@@ -4,8 +4,8 @@ from math import sqrt # defaults-remove = True-target = 'psp-oe'+remove = False+target = 'ps3-avc-720p' vbr = True audio = None@@ -85,6 +85,22 @@         'qmax': 24,         'channels': (2, 1),         },+    'ps3-avc-720p': { # Only tested with firmware 1.80+        'maxx': 1280,+        'maxy': 720,+        'stepx': 8, # FIXME: lower?+        'stepy': 8, # FIXME: lower?+        'pixels': 1280 * 720,+        'namedfiles': True,+        'thumb': False, # FIXME: Can this be True?+        'ext': "mp4",+        'video': ["-vcodec", "h264", "-f", "mp4", "-bufsize", "14000k", "-maxrate", "14000k", "-coder", "1", "-level", "31", "-r", "24000/1001", "-g", "300"],+        'audio': ["-acodec", "aac", "-ab", "160k"],+        'bitrate': lambda x,y: "3072000",+        'qscale': 18,+        'qmax': 24,+        'channels': (2, 1),+        },     's60': {         'maxx': 352,         'maxy': 288,</code>
+It would be nice to be able to push content to the PS3 from a LAN, but I have no idea how they could do it sanely. Maybe I can push files via Bluetooth.
+Of course, if the rumours are true, this is going to all be immaterial shortly...</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/07/installing-ubuntu-on-ps3.html">Installing Ubuntu on the PS3</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 07 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I've yet to complete this, because I stopped my attempts last night when I reached an unusual situation.
+Specifically, I was doing the partitioning manually, but the two visible disks had no partition tables. Not wanting to trash the PS3 disk I didn't let it create the tables, so had to abort.
+After consulting with the very helpful Colin Watson, it turns out that the disk Ubuntu sees as sda is not the whole PS3 disk, it's the Other OS partition virtualised to look like a whole disk. It is therefore fine to create a partition table and proceed with the install, which I will do tonight.
+(I'm not sure yet what sdb is, it smells like the PS3s internal flash and again I'm not sure if it's wise to mess with it)
+<em>UPDATE:</em> The disks that Linux sees are virtualised by the PS3 (they're actually just partitions made to look like whole disks), so it is fine to make the partition tables (or indeed let the installer do automatic partitioning). <a href="https://bugs.launchpad.net/ubuntu/+source/ubiquity/+bug/106683">The bug</a> where the installer hangs at 15% is due to the low RAM in the PS3. Stop some services (cupsys and hplip are good candidates) and remove some things from your session (update-manager and gnome-cups-icon, for example). Removing applets from the panel is not a bad idea either, and don't run anything else while you are installing. Of course you could plug in a disk of some kind and set up swap, but <a href="https://bugs.launchpad.net/ubuntu/+source/linux-source-2.6.20/+bug/102044">this bug</a> makes that quite hard at the moment.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/05/ps3-movie-icons.html">PS3 movie icons</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 05 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Games on the PS3 are displayed as a little icon, but it can be animated and some games take advantage of that. Strangely, the PS3 does not even attempt to automatically thumbnail or live-preview the movies stored on it (another thing Sony could easily fix if they choose to. The Cell can decode literally dozens of movies simultaneously).
+However, the lazyweb rides to the rescue with the news that the PS3 can generate animated thumbnails, but you have to do it yourself. I like that I can do this, but I think it should do it by default and I can choose to override it if I don't like what it auto-captured.
+Basically the trick is to pause the video at the point you want the thumbnail animation to start, then hit Triangle and choose "Change Icon". The next 15 seconds of video are rendered to a little thumbnail in not very much time.
+This is it running on my ps3:
+Full instructions and the author's video are <a href="http://www.tech-recipes.com/rx/2256/ps3_create_video_thumbnails">here</a>.
+Bonus points to anyone who figures out how to replace the thumbnail of one movie with another. The reason? Movie Trailers make great thumbnails because these days they usually flash the locations and characters at you rapidly</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/04/watching-ps3.html">Watching the PS3</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Mon 04 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I don't even remotely have space at the moment for a large TV (even a flatscreen one), also they are still a little expensive (I figure if it's worth doing, it's worth getting a 40" Sony which does 1080p, but that's 1200 quid at the moment).
+I really really didn't want to buy a small TV because they are overpriced (compared to higher resolution monitors) and the thing wouldn't be useful to me when I eventually get a proper TV.
+Instead I went with the dirt cheap Dell SE198WFP 19" widescreen monitor. It's an inch smaller than the E207WFP I use for my PC, and consequently only supports slightly smaller resolutions (1440x900 being its maximum). However, it does have some features which make it particularly well suited to the PS3.
+<img alt="Dell SE198WFP" src="http://www.tenshu.net/wp-content/uploads/2007/06/littledell.png">
+First off, it supports HDCP (the DRM system being used in the HDtv world), so I should be able to play back protected content without the PS3 refusing to trust me or downscaling it to an annoyingly low resolution.
+900 rows of pixels means the maximum resolution falls somewhere between 720p and 1080i/1080p, however, the monitor supports both. This was especially surprising to me as I had expected to be "limited" to 720p (many/most PS3 games at the moment don't go higher than 720p anyway, and it's still a massive leap over standard definition TV). I need to do some more exhaustive comparisons, but I think I will be going with 720p rather than 1080i (it doesn't seem to support 1080p) because it's an uninterlaced mode, so there is absolutely no flickering. Either way the monitor is scaling the image - the question is, which direction is better? scaling 720 rows up to 900, or scaling 1080 rows down to 900. Time will tell (as will this blog!)
+For anyone wondering how I managed to connect a monitor which only has DVI and VGA inputs to the PS3 which only has HDMI, component and composite outputs - fear not, HDMI is actually a combination of DVI signals, audio and probably some other gumpf), so it is entirely possible to convert the HDMI output of the PS3 to DVI. That means no analogue signal/conversion at all, so the picture quality is superb and the cables to do it can be obtained easily and cheaply online (don't splash out on a stupidly expensive gold cable, it's a digital signal so cable quality matters a lot less. Just avoid the inexplicably cheap ones on ebay from the far east, they look very dodgy!).
+If you're looking to put a PS3 in a bedroom and don't really care for a TV, I would thoroughly recommend this monitor, especially since you'll still have the VGA port free for other things.
+I'm sure you won't care, but it also just happens to fit exactly into the only appropriate place for it on my desk!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/03/flow.html">flOw</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 03 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>This is a fantastic little game ported and improved from an original Flash version.
+You play a tiny micro-organism living in some kind of watery world. You swim about by tilting the ps3 controller in the direction you want to move, which is usually towards some food (ie smaller micro-organisms). As you eat more food, you grow and develop new features and can dive to deeper levels. When you hit the bottom you change into a different kind of micro-organism and start again, facing different challenges and growing in different ways. This happens a few times and then the game starts all over.
+It's accompanied by an excellent ambient soundtrack which is largely controlled by what you are doing (very much like the fantastic Rez), and it has a distinctive yet calming visual style.
+It's simple, relaxing and fun; It's not very hard and it doesn't take very long to complete. Perfect for under £4 and a few minutes of downloading.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/03/gaming-returns.html">Gaming returns</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 03 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I've been missing my PS2 a lot recently. Sure I have a copy of Windows lying around for when i want to play some games there, but rebooting is much hassle and then I have to fight with Windows. Console games are generally more to my tastes too.
+I flirted with a PSP for a while, but I was really dissatisfied with the games available for it (in that they are postly either not my kind of thing, or cut down PS2 games) and so traded it with a friend for a little Linux PDA.
+It therefore seemed reasonable to look at the latest round of consoles: Wii, Xbox 360 and PS3. I think it's fair to say that I quite like Sony, so I started out with a heavy bias to the PS3. I've seen the wii in action and I completely understand why it's selling like it was illegal, but it's not really for me so I discounted that idea fairly quickly. Microsoft have done a great job with the 360, I've played about with one quite a bit and it seems like they have gone a long way to solve the various mistakes of the original Xbox. The final option is the PS3, which despite Sony's best managerial efforts, has also turned out to be a pretty stonking machine.
+Ultimately the PS3 won out and I'll be posting some vague musings as I explore it (actually I'm writing this a few days after getting it, so I've already got some stuff to fill in).</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/03/motorstorm.html">Motorstorm</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 03 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>One of the games I picked up with the PS3 was Motorstorm, which is a dirt racing game with nitrous boosting. You've probably played games like it. It's good fun though, and very easy on the eye. Online play is great, even if it does make me look bad almost every race!
+I asked for this one from the second hand shelf (which most games shops seem to offer) - it's very good fun, but I'm not sure it's worth paying full whack for.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/03/ps3-setup-and-barebones-review.html">PS3 setup and barebones review</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 03 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>To expedite getting the thing set up, I used the supplied AV cable (3 RCA jacks for video, left audio and right audio. They're probably on the front of your TV under a flap) and a Sony TV to start with.
+The initial setup was pretty straight forward, I really like that I get to choose exactly where video and audio are sent - especially since I want my final setup to use the HDMI port to output video and the AV port to output audio. There are too many steps required to do all this setup, especially agreeing to EULAs, but it's all pretty simple and I quickly got the thing connected to my wireless network (builtin wifi is an excellent touch), registered on the Playstation Network and updated to the recently released 1.80 firmware.
+I'm not going to touch on games here, just what you can do with the PS3 out of the box once you are setup and registered.
+The most obvious thing is play Blu-ray movies, but I don't have any of those and don't especially care about buying stupidly high definition movies for considerably more than I get DVDs for. It's going to be a fair while before I have a decent sized TV to take advantage of it anyway and who knows, maybe HD-DVD will destroy Blu-ray before then. It plays DVDs fine too of course, and it does so fairly well. A nice touch is that it remembers where you were in a movie if you quit the player, letting you do something else and come back exactly where you were.
+It plays Audio CDs too (and probably DVD audio discs, but I don't even know anyone who owns such a thing, let along have them myself), and can rip tracks from them onto the internal hard disk. You get a choice of various formats all of which were irrelevant apart from the de-facto mp3. The importing is pretty quick, but can't be done in the background. It can look up the artist/album/track information about the CD on the Internet, but it doesn't seem to download a picture of the disc (or at least it didn't for the Hybrid album I tested it with).
+There's a vaguely useful web browser which at least has enough Flash™ support to work with YouTube. I have my laptop next to me, so I haven't tested the browser very thoroughly at all. I imagine it's significantly better with a USB keyboard and mouse (which are supported in most of the PS3, from what I can see).
+Unusual things lurk about, like Folding@Home. It's not listed as a game (which it isn't), so it shows up in a fairly unusual place. I guess it's nice that people can contribute to health research by leaving their consoles on overnight, but it's not very interesting to me and seems somewhat wasteful and likely to shorten the PS3s useful life.
+The Playstation Store lets you download full games, game demos, and videos. It doesn't have a particularly great interface at the moment and there's not a very wide selection of content, but this side of the next-gen consoles is very important - being able to download content either for free or for money makes trying and buying games easier, but also makes it practical to release small games. I have bought flOw and Tekken 5:DR for about £10. Neither would make sense on shop shelves at regular PS3 game prices, they're too small/simple to justify it, but for a few quid each and a short download, everybody wins. I hope this trend explodes into a vibrant marketplace and community, and gets some UI love from Sony!
+As well as those two games, I grabbed a bunch of demos and some very pretty HD movie trailers. All very nice and shows much potential for the future.
+Printers and digital cameras are supported somehow, but I lack the equipment and inclination (respectively) to test them.
+Throughout the media related sections of the PS3 it offers a tantalising "Search for media servers" option. This probably refers to some Sony thing you can buy, but I discovered online that the PS3 supports UPnP (a way for media devices on a network to announce themselves). A quick setup of MediaTomb on my Ubuntu Feisty desktop (which holds all my music/media) and I could browse all of my media through the PS3. Note that I said browse and not play. It plays my mp3s fine, but it can only play MPEG1, MPEG2 and H.264 movies (plus some basic MPEG-4 that isn't H.264). It doesn't play divx, xvid, Real or Quicktime. Still, the formats it does play are available and easily converted to, so I can make some things playable on the PS3 (usually with a recent SVN version of ffmpeg).
+I don't really think the UI for browsing media scales well to the amount of media I have on my computer, but would be fine for stuff copied onto the PS3 itself. I hope this changes over time as digital media density continues to increase.
+The menu system you get when you turn the PS3 on is called XMB (Cross Media Bar) and is basically the same as the one on the PSP, but it lacks some features at the moment (RSS/Podcast and Themes, most obviously). Some other bits from the PSP are also missing which make much less sense, such as network connection profiles. I will quite likely take my PS3 to other peoples' houses, so it's a pain to have to re-enter all the wifi details every time (or even if I just want to quickly move it to the wired network to copy a big file). Lots of things you can do from the XMB can't be done as background tasks (ripping CDs as mentioned previously, which really has to change. It's not like the PS3 isn't powerful enough to rip a CD, download files, install a downloaded game and browse the web at the same time. Network updates make this all entirely fixable, but who knows what Sony will choose to do.
+The settings menus are comprehensive and useful, but fairly boring. There are CompactFlash, SecureDigital/MMC and MemoryStick interfaces, plus 4 USB ports. Media from any of these can be played (if you organise them correctly). Another nice touch is Bluetooth, which can at least be used for in-game voice chat via a headset (which come with many phones these days, so you may already have one).
+Adding "friends" to the Playstation Network stuff is pretty basic and the games don't all seem to hook into it, which is a shame. This is something Microsoft have been doing better since the original Xbox and Sony should really have worked harder here, but they don't want to run a big, centralised server operation like Microsoft does with Xbox Live (which also means you don't have a pay a subscription, like you do with Xbox Live).
+Local users can be added too, presumably to separate media out between members of the family. It's my PS3, and mine alone, so I don't care about this either. If you want to put media on a PS3, get your own! ;)
+I think that about covers all the stuff you can do at the moment that isn't playing a game. It's a pretty impressive list of stuff too and has so much potential for more. It also looks nice, and changes colour slightly during the day.
+As a side note, the unit itself is huge, heavy and hot. It does look nice though.
+I'm happy so far :)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2007/06/03/tekken-5-dark-revolution.html">Tekken 5: Dark Revolution</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 03 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>This is a PSP game which has been ported to the PS3 and had its graphics restored to the original arcade levels.
+It's a Tekken game, what do you want, poetry? You fight people in the traditional rounds system. When you beat one, you fight another and it gets a bit harder. That's it.
+There are a couple of slightly different fight modes, but nowhere near what it should be to be considered a full and complete game.
+It's a small download for about 6 quid and it's fast, Tekken fun. I can't argue with that. That is until Soul Caliber comes out in a few months. That most certainly ought to be worth a full game.</p>
+  </div>
+</article>
+
+<div class="pagination">
+    <ul>
+        <li class="pagination__prev">
+            <a href="./index16.html">&laquo;</a>
+        </li>
+
+
+
+          <li>
+            <a  href="./index.html">1</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="./index14.html">14</a>
+          </li>
+
+
+          <li>
+            <a  href="./index15.html">15</a>
+          </li>
+
+
+          <li>
+            <a  href="./index16.html">16</a>
+          </li>
+
+
+          <li>
+            <a class="pagination__page--current" href="./index17.html">17</a>
+          </li>
+
+
+          <li>
+            <a  href="./index18.html">18</a>
+          </li>
+
+
+          <li>
+            <a  href="./index19.html">19</a>
+          </li>
+
+
+          <li>
+            <a  href="./index20.html">20</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="./index23.html">23</a>
+          </li>
+
+        <li class="pagination__next">
+            <a href="./index18.html">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

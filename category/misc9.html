@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../">
+  <link rel="stylesheet" type="text/css" href="../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Category: misc  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../archive.html"><i class="fas fa-archive"></i> Archive</a>
+&gt; Category: misc
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/10/20/rise-of-floating-fonters.html">Rise of the Floating Fonters</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 20 October 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>For about two years now I've been using a 127dpi laptop screen as my primary computer display. It's a comfortable thing to be looking at, and after much playing around I've settled on 6.5pt as my ideal application font size.
+No problems with that, right? Fontconfig says font sizes are a double (a high precision floating point number), but not all libraries/applications follow this.
+In my testing of Karmic I've found two such things that particularly stick out:</p>
+<ul>
+<li>
+<p>notify-osd</p>
+<ul>
+<li>Assumes font sizes are whole numbers, so ends up using a tiny font</li>
+</ul>
+</li>
+<li>
+<p>Gwibber</p>
+<ul>
+<li>Assumes font sizes are integers and completely fails to run if they are not</li>
+</ul>
+</li>
+</ul>
+<p>Obviously this won't do, so I've checked that we have <a href="https://bugs.launchpad.net/ubuntu/+source/notify-osd/+bug/396736">filed</a> <a href="https://bugs.launchpad.net/gwibber/+bug/383759">bugs</a> (and in the case of Gwibber, a patch), but I seem to be meeting some resistance, or this just isn't considered to be a high priority.
+Thus a new Launchpad team is born, <a href="https://launchpad.net/~floatingfonters">The Floating Fonters</a>, for exiles such as myself who won't kowtow to the integers. We even have <a href="https://launchpad.net/~floatingfonters/+archive/floatingfixes">a PPA with fixed versions</a> of notify-osd and Gwibber, but no guarantees are included!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/10/17/thinkpad-usb-keyboard.html">Thinkpad USB keyboard</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 17 October 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Yesterday I took delivery of a new Thinkpad USB keyboard because I've started putting my laptop up on a stand to be next to it's external monitor.
+In so doing I needed a keyboard and the ten quid Logitech was making me very sad, hence the Thinkpad one.
+If you've ever typed on a thinkpad you immediately know why this keyboard is awesome :)</p>
+<p><img alt="keyboard" src="http://www.tenshu.net/wp-content/uploads/2009/10/l_1600_1200_865448E8-0EFC-41CC-A0F3-82920E4CD51E.jpeg">
+<img alt="keyboard" src="http://www.tenshu.net/wp-content/uploads/2009/10/l_1600_1200_F60F9354-27C3-4F49-A275-021CAC524592.jpeg"></p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/10/06/i-waving-i-waving.html">I'm waving I'm waving</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 06 October 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Do you wave? If so, apply some superposition to cmsjtenshu@googlewave.com</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/09/29/you-know-that-alan-pope.html">You know that Alan "popey" Pope?</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 29 September 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I've always said he's a really amazing guy, you know.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/09/25/lifesaver-11-released.html">Lifesaver 1.1 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 25 September 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>This release incorporates some bug fixes and some new features: Animation, FriendFeed support, Configuration via gconf keys, Improved visual layout.</p>
+<p>Visit <a href="http://launchpad.net/lifesaver">http://launchpad.net/lifesaver</a> for downloads and information about packages for Ubuntu 9.10 (Karmic)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/09/24/double-posts.html">Double posts</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 24 September 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I've just chucked in a new wordpress plugin to syndicate my Launchpad project announcements (so Lifesaver and Terminator) as regular posts here so I don't need to keep writing release announcements in two places. This does mean that all the old Terminator announcements are doubled up here. I'm not sure if I'll leave it or go back and remove the dupes. Probably nobody cares anyway ;)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/09/18/thinkpad-kernel-module-in-ubuntu-910.html">Thinkpad kernel module in Ubuntu 9.10 (Karmic)</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 18 September 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>The Ubuntu Kernel Team has decided to remove the tp_smapi module from our kernel for 9.10 (Karmic Koala) because the author chooses to remain anonymous and it is therefore impossible to be sure that the code is not based on incorrectly obtained information.
+Slightly annoying perhaps, but ultimately a decision that's hard to argue with and fortunately one that's pretty easy to work around. I wish the author would clear things up once and for all because the tp_smapi module is desperately important for Thinkpad owners wishing to protect the life of their laptop battery. Given that my new X301 is tasked with a lifetime of 3 years, I am particularly keen to protect its battery!
+The source for the module is still in the archive (and my understanding is that it will stay there, we just don't want to ship it by default) as tp-smapi-source, packaged by Evgeni Golov (a thoroughly decent chap who is the current owner of the Thinkpad X300 I've posted about previously). You can install it with the command:</p>
+<div class="highlight"><pre><span></span>sudo apt-get install tp-smapi-source
+</pre></div>
+
+
+<p>Then run:
+    sudo module-assistant</p>
+<p>and select the tp-smapi module to build and install. You are now just a quick:
+    sudo modprobe tp_smapi</p>
+<p>away from having battery charge control options in /sys/devices/platform/smapi/BAT0/
+Woo! If I get a chance I'll try and produce a version of the package which uses DKMS (Dell's Kernel Module management system which makes sure that additional modules like this are rebuilt automagically whenever you get a kernel update).</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/09/16/brewing-lifesaver-11.html">Brewing Lifesaver 1.1</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 16 September 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>If you're using the Livesaver PPA I mentioned in my previous post you should shortly get offered a package of 1.1 which I'm almost ready to release.
+I want to push it into the PPA first to get a little testing before officially tagging the release. Please file bugs if you spot any!
+There are a few little bug fixes, the first external code contribution, and configuration is now done via gconf so you can change the fonts/colours and search keywords. I did also add a source for FriendFeed, but it's currently disabled because I don't want to extend the amount of time it takes to collect data from the web too much.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/09/15/new-project-released-lifesaver.html">New project released - Lifesaver</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 15 September 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>For a few days now I've been hacking away on a new project: Lifesaver.
+The idea is really simple - it's a screensaver for GNOME that displays recent posts about Ubuntu from Twitter and Identi.ca. That's it!
+The code and bugs and downloads live <a href="https://launchpad.net/lifesaver">on Launchpad</a>, and packages for Ubuntu 9.10 (Karmic) are in <a href="https://launchpad.net/~cmsj/+archive/lifesaver">my PPA</a>.
+Please let me know what you think!
+Obligatory screenshot:
+<img alt="Lifesaver" src="/wp-content/uploads/2009/09/2009-09-14-lifesaver.png">
+<strong>Update</strong>: I had to remove the Jaunty package from the PPA because it turns out that I've been using GooCanvas features that aren't available in the Jaunty version of GooCanvas. Sorry Jaunty users, you'll have to wait until next month when Karmic is released and you upgrade!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/09/14/lifesaver-10-released.html">Lifesaver 1.0 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Mon 14 September 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>This is mainly a release to get some wider testing, so I expect to make a new release soon fixing any problems. Give it a try!</p>
+  </div>
+</article>
+
+<div class="pagination">
+    <ul>
+        <li class="pagination__prev">
+            <a href="../category/misc8.html">&laquo;</a>
+        </li>
+
+
+
+          <li>
+            <a  href="../category/misc.html">1</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../category/misc6.html">6</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc7.html">7</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc8.html">8</a>
+          </li>
+
+
+          <li>
+            <a class="pagination__page--current" href="../category/misc9.html">9</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc10.html">10</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc11.html">11</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc12.html">12</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../category/misc23.html">23</a>
+          </li>
+
+        <li class="pagination__next">
+            <a href="../category/misc10.html">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

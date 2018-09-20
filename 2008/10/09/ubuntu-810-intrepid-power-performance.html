@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../../../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../../../">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+<meta name="keywords" content="">
+
+  <title>
+    cmsj.net
+&ndash; Ubuntu 8.10 (Intrepid) power performance  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../../../archive.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../../../2008/10/09/ubuntu-810-intrepid-power-performance.html">Ubuntu 8.10 (Intrepid) power performance</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 09 October 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>In one word: wow.
+Out of sheer curiosity last night I fired up the excellent <em>powertop</em> and decided to see how my system was doing. It was producing a couple of hundred fewer interrupts per second than it did in 8.04 (Hardy), and was using 1-2Watts less power.
+Previously I have always resisted applying tweaks to my laptop that would attempt to reduce power, but since things were improving, the temptation was simply too great and I started digging out all the resources on this (by far the most useful being the tips on Intel's grammatically horrific <a href="http://www.lesswatts.org/">http://www.lesswatts.org/</a>. I had two reasons for not doing this previously - firstly I didn't want to deviate too much from a default install of Ubuntu (if only because it makes it much harder to reproduce bugs), but secondly I kept running into little weirdnesses. The most inconvenient of these was enabling AHCI link power management (which basically puts the hard disk bus to sleep when there is no IO); Enabling this and then suspending the laptop produced a 5 second delay on resuming because the kernel was forgetting it had put the bus to sleep and so had to wait for it to time out and be reset.
+This particular niggle is fixed in 2.6.27 and so my 3-4 second resume times are preserved and I can save power! \o/
+After a little while tweaking disk, AHCI, USB, filesystem, wireless, sound and ethernet options I ended up with a system which runs between 8 and 9 Watts when idle, down from 10-14 Watts, which I think is a pretty impressive saving and I'm very curious to find out from other Thinkpad X300 owners how well Windows performs in the power usage stakes - we always hear that Linux is a bit worse, but I'd be really quite surprised if the machine can run with very much less - it's spending (when idle, obviously) 99% of its time in the deepest processor sleep state and is only generating about a hundred interrupts per second (about 70-80% of which are due to my using a 3D desktop and wireless).</p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

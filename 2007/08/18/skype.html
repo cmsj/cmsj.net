@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../../../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../../../">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+<meta name="keywords" content="">
+
+  <title>
+    cmsj.net
+&ndash; Skype  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../../../archive.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../../../2007/08/18/skype.html">Skype</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 18 August 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Skype has been having network issues in the last few days. I don't like the fact that I've been using Skype, but I have. Why? Because it's the easiest way to talk to my girlfriend while she's away.
+That is, it's easy while it works. It has many downsides, but to be fair to it, it's very good at dealing with firewalls and NAT, something that Ekiga really (really really) isn't.
+With Skype broken, and wanting to talk to Ulrike, I suggested we try WengoPhone. She grabbed the windows binary, I grabbed the Linux binary. After a few false starts we got connected and for bonus points, it supports webcams in Windows and Linux, which dramatically improves the value of talking to her (and it's very cool that Ubuntu supports my tiny little Creative laptop webcam out of the box).
+To my utter surprise, not only is Wengo GPL'd, it's also really just a SIP client. This is fantastic and it's just a bit of a shame that the interface uses Qt (the Wengo guys say they would love to see a Gtk port. So would I!). I was able to call her Wengo address (translated into the underlying SIP address) from Ekiga, but it took ages to arrange the call, even longer to connect the audio/video to it and even then it got the video wrong.
+I know Ekiga has been making great strides in their development version and I very much look forward to being able to use it as a swiss army knife of VoIP. Having said that, I kind of suspect that I will be more tempted by some kind of Telepathy VoIP interface which hides all the tediousness of different forms of instant communication and just lets me type to, talk with, and look at people.
+As a result of the Wengo transition, I have just been able to do this:
+<code>-(cmsj@waishou)-(~)- sudo dpkg -P skype(Reading database ... 144578 files and directories currently installed.)Removing skype ...Purging configuration files for skype ...-(cmsj@waishou)-(~)-</code></p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

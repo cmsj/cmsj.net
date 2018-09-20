@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../../../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../../../">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+<meta name="keywords" content="">
+
+  <title>
+    cmsj.net
+&ndash; getting information out of a badly broken debian installer  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../../../archive.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../../../2008/04/08/getting-information-out-of-badly-broken.html">getting information out of a badly broken debian installer</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 08 April 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>You have new hardware (most likely server).
+You pop in a debian/ubuntu installer CD, tell it what kind of keyboard you have and expect it to scan the CDROM for packages, but....uh-oh, it can't find the CD!
+What do you do?! Well, realistically there's not a lot you can do to make it work, but you can do a lot to help get it fixed.
+You need to pull off /var/log/syslog, the output of lspci, lspci -v and lspci -vvnn.
+You may very well find yourself having a problem with that though, because you're still pretty early in a typical linux boot process, so you probably don't have any disks mounted and you may find yourself missing any modules to make that happen.
+You should have usb-storage.ko though. That and isofs.ko.
+Can you see where this is going? :)
+find the .udeb's on your install CD with a working computer, <code>ar -x</code> the core fs modules one and pull out ext3 (and jbd and mbcache), or vfat and its dependencies. put them in a directory, then do <code>mkisofs -o /dev/usbstick1 /path/to/modules</code>.
+You now have a partition on your USB stick that is an ISO9660 filesystem (ie a CD). Obviously make sure you don't do this on a USB stick you care about the contents of.
+Chuck the USB stick into the broken server, <code>modprobe usb-storage</code>, mount the newly appeared partition and copy the modules over to the right place in /lib/modules/. Unmount the USB stick, modprobe the drivers and now you can put in an ext3/vfat formatted USB stick and you have somewhere to write the debugging information to!
+Easy! :) Now file a bug with the debugging information you collected.</p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

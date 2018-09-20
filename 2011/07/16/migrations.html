@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../../../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../../../">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+<meta name="keywords" content="">
+
+  <title>
+    cmsj.net
+&ndash; Migrations  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../../../archive.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../../../2011/07/16/migrations.html">Migrations</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 16 July 2011</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>To the cloud!
+I'm officially done hosting my own Wordpress blog. Not because it's particularly hard, but because it's quite boring. I would have done a straight export/import into a wordpress.com blog, but their options for hosting on a personal domain are pretty insane - if you want to host your blog on domain.com or www.domain.com you have to just point the entire domain at the wordpress.com DNS servers.
+I'm not prepared to trust my domain to a bunch of PHP bloggers, so instead I've shoved the blog over to Blogger (by way of a very helpful <a href="http://wordpress2blogger.appspot.com/">online conversion tool</a>), but this still presents a few niggles around URLs.
+You can have Blogger send 404s to another vhost, so for now I just have a tiny little vhost somewhere else which uses mod_rewrite to catch the old page names and attempt to catch the blog post names. Ideally I'd fetch all the old post URLs and make a proper map to the new ones, but I can't really be bothered to do that, so I just went for the approximate:</p>
+<div class="highlight"><pre><span></span>RewriteRule ^/archives/(\[0-9\]{4})/(\[0-9\]{2})/(\[0-9\]{2})/(\[a-zA-Z0-9\\-\]{1,39}).\*$ http://www.tenshu.net/$1/$2/$4.html \[R=301,L\]
+</pre></div>
+
+
+<p>Another obvious sticking point is that Wordpress categories become Blogger labels, so another rewrite rule can take care of them (although not so much if you've used nested categories, but again I can't really be bothered to account for that):</p>
+<div class="highlight"><pre><span></span>RewriteRule ^/archives/category/(.)(.\*) http://www.tenshu.net/search/label/<span class="cp">${</span><span class="n">upmap</span><span class="p">:</span><span class="err">$</span><span class="mi">1</span><span class="cp">}</span>$2 \[R=301,L\]
+</pre></div>
+
+
+<p>Also cloudified so far is the DNS for tenshu.net - I'm trying out Amazon's Route53 and it seems to be pretty good so far. Next up will be email and then I can pretty much entirely stop faffing around running my own infrastructure :)</p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

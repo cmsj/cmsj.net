@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../">
+  <link rel="stylesheet" type="text/css" href="../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Category: misc  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../archive.html"><i class="fas fa-archive"></i> Archive</a>
+&gt; Category: misc
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../2017/07/28/happy-10th-terminator.html">Happy 10th Birthday Terminator!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 28 July 2017</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Today marks 10 years since the <a href="https://launchpad.net/terminator/+milestone/0.1">very first public release</a> of <a href="https://gnometerminator.blogspot.co.uk/p/introduction.html">Terminator</a>, a multiplexing terminal emulator project.</p>
+<p>I started working on Terminator as a simple way to get 4 terminals to not overlap on my laptop screen. In the following years it grew many features and attracted a userbase I am very proud of.</p>
+<p>As much as I would like to, I cannot claim most of the credit for Terminator surviving for a decade - I stepped away from the project a few years ago and handed the reigns over to Stephen Boddy at a very crucial time - gtk2 was becoming ever more obsolete and our work on a gtk3 port was very incomplete. Stephen has driven the project forward and it now has a very good gtk3 version :)</p>
+<p>So, thank you to Stephen and everybody else who contributed code/docs/translations/suggestions/bugs/etc over the last 10 years (you can see the most active folk <a href="https://launchpad.net/terminator/+topcontributors">here</a>).</p>
+<p>I'd also like to note that according to Ubuntu's <a href="http://popcon.ubuntu.com">Popularity Contest</a> data, Terminator is installed on at least 56000 Ubuntu machines. Debian also has PopCon data, but the numbers there are <a href="https://qa.debian.org/popcon.php?package=terminator">a little less impressive</a> ;)</p>
+<p>This was the first project of mine that reached any kind of significant audience, and is the first project of mine to have achieved a decade of active maintenance, so I am feeling pretty happy today!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2017/06/30/usb-c-is-awful.html">USB Type C is awful</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 30 June 2017</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Intentionally inflammatory title there, but there are some valid reasons to be annoyed at USB Type C.</p>
+<p>Firstly, I have discovered (the hard way) that although there are many cables on sale, the majority of Type C cables do not support even USB 3.0 speeds (so 5Gb/s) let alone USB 3.1gen2 (so 10Gb/s) speeds. They are actually USB 2.0 (so 480Mb/s) cables.</p>
+<p>I can understand that some <em>devices</em> with Type C connectors may only need USB 2.0 speeds, but for the <em>cables</em> to not all be USB 3.x seems crazy to me. Even <a href="https://www.apple.com/shop/product/MLL82AM/A/usb-c-charge-cable-2-m">Apple is doing this</a> - the charging cables for MacBooks (12" and Pros) with Type C ports, only support USB 2.0 speeds. If I had to guess, I'd say it's because they wanted the cables to be thin and easily bendable, which full USB 3.1 cables tend not to be.</p>
+<p>Secondly, unlike Type A, which marks USB 3.x cables by having blue plastic inside the connectors, there is no way to tell what speed a Type C cable is by looking at it.</p>
+<p>Thirdly, and perhaps most importantly, USB Type C is a <em>vastly</em> more powerful beast than previous versions - a modern Type C port can be capable of:</p>
+<ul>
+<li>40Gb/s Thunderbolt 3</li>
+<li>DisplayPort</li>
+<li>10Gb/s USB 3.1gen2</li>
+<li>100W of (actively negotiated) power delivery in either direction</li>
+</ul>
+<p>The DisplayPort "alternate mode" can deliver 4K at 60Hz with USB3.1 at the same time, or 5K with USB2.0 at the same time, or 8K (compressed). When used as Thunderbolt, Type C can carry 5K video as well as the PCI data.</p>
+<p>So while one tiny <em>connector</em> can do a whole bunch of really impressive things, the <em>cables</em> are now expected to do vastly more than even USB3.0 Type A cables, let alone USB 2.0, and it seems like that advanced capability isn't currently aligned with the history of USB as being an ultra-cheap, mass market affair.</p>
+<p>Various awesome folk have put together <a href="https://docs.google.com/spreadsheets/u/1/d/1vnpEXfo2HCGADdd9G2x9dMDWqENiY2kgBJUu29f_TX8/pubhtml#">a spreadsheet</a> of the chargers/cables they've tested, and it seems like a serious chunk of the Type C cables currently on the market, are junk. This is bad for everyone, especially users, who can buy what looks like the right cable, only to discover that their devices either don't work at all, or work to slowly, or won't charge properly.</p>
+<p>This post exists because I needed a USB3.0, three metre, Type A to Type C cable, and I bought one on Amazon, only to discover that it only supported USB2.0. After <em>far</em> too much searching, I eventually found an Anker cable which meets my requirements:</p>
+<ul>
+<li>3m/10ft: <a href="http://amzn.to/2t7scp2">UK</a>|<a href="http://amzn.to/2trgUyd">US</a></li>
+<li>2m/6ft: <a href="http://amzn.to/2t82PU0">UK</a>|<a href="http://amzn.to/2s8DRm8">US</a></li>
+<li>1m/3ft: <a href="http://amzn.to/2stsrbV">UK</a>|<a href="http://amzn.to/2snLzwR">US</a></li>
+</ul>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2017/06/22/home-pro-part-1-nas.html">Home networking like a pro - Part 1 - Network Storage</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 22 June 2017</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <h2>Introduction</h2>
+<p>This is part one in a series of posts about some hardware I recommend (or otherwise!) for people who want to bring some semi-professional flair to their home network.</p>
+<p>The first topic is storage - specifically, Network Attached Storage.</p>
+<h2>Background</h2>
+<p>For the last few years, I was running a Mac Mini with two 3TB drives in a RAID1 array in a LaCie 2big Thunderbolt chassis (<a href="https://www.amazon.com/gp/product/B00KQD0HM2/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=9325&amp;creativeASIN=B00KQD0HM2&amp;linkCode=as2&amp;tag=cmsj-20&amp;linkId=263d4ed10fb9c73f39e787d9266f3851">US</a> <a href="https://www.amazon.co.uk/gp/product/B00KYFU5YM/ref=as_li_tl?ie=UTF8&amp;camp=1634&amp;creative=6738&amp;creativeASIN=B00KYFU5YM&amp;linkCode=as2&amp;tag=cmsj-21&amp;linkId=9290f58318a0bfd748de49c6e53c8f2c">UK</a>), with the Mac running macOS Server to provide file sharing (AFP and SMB), and Time Machine backups for the rest of the network.</p>
+<p>This was a very nice solution, in that the Mac was a regular computer, so I could make it do whatever I wanted, but it did have the drawbacks that the Thunderbolt chassis only had two drive bays, and I had trouble getting the Mac to run reliably for months at a time (I ran into GPU related kernel panics, perhaps because it was attached to a TV rather than a monitor).</p>
+<p>Around the time I was selecting the Mac/LaCie, most NAS devices in a similar price range were very underpowered ARM devices, and could do little more than share files, but in 2017 almost all NAS devices are much more powerful x86 devices that often have extensive featuresets (e.g. running containers, VMs, hardware accelerated video transcoding, etc.) so I decided it was time to switch.</p>
+<h2>Solution</h2>
+<p>I ended up choosing a Synology DS916+ (<a href="https://www.amazon.com/gp/product/B01EMZHLZU/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=9325&amp;creativeASIN=B01EMZHLZU&amp;linkCode=as2&amp;tag=cmsj-20&amp;linkId=4bc9ac2f2590480e49aef6993329eb39">US</a> <a href="https://www.amazon.co.uk/gp/product/B01EMZHLZU/ref=as_li_tl?ie=UTF8&amp;camp=1634&amp;creative=6738&amp;creativeASIN=B01EMZHLZU&amp;linkCode=as2&amp;tag=cmsj-21&amp;linkId=a5a66e7532a51fb5478e07202daa05d2">UK</a>), popped one of the 3TB drives (Western Digital Red (<a href="https://www.amazon.com/gp/product/B008JJLW4M/ref=as_li_tl?ie=UTF8&amp;camp=1789&amp;creative=9325&amp;creativeASIN=B008JJLW4M&amp;linkCode=as2&amp;tag=cmsj-20&amp;linkId=d2d3d7db9bcd9bdf879a213d405a343b">US</a> <a href="https://www.amazon.co.uk/gp/product/B008JJLW4M/ref=as_li_tl?ie=UTF8&amp;camp=1634&amp;creative=6738&amp;creativeASIN=B008JJLW4M&amp;linkCode=as2&amp;tag=cmsj-21&amp;linkId=c644f89fe12d6b3d39794ca77b65cb9a">UK</a>)) out of the LaCie and into the Synology, and set about migrating my data over. I then moved the other drive, and put in two more 3TB drives, all of which are running as a single Synology Hybrid RAID volume with a BTRFS filesystem (note that the Hybrid RAID really seems to just be RAID5).</p>
+<p>I configured the Synology to serve files over both AFP and SMB, and enabled its support for Time Machine via AFP. I was also able to connect both of its Ethernet ports to my switch (a ZyXEL GS1900 24 port switch, which I will cover in an upcoming post) and enabled LACP on each end to bond the two connections into a single 2Gb link.</p>
+<p>So, how did it work out?</p>
+<p>The AFP file sharing is great, and works flawlessly. SMB is a little more complex, because recent versions of macOS tend to enforce encryption on SMB connections, which makes them go much slower, but this <a href="https://dpron.com/os-x-10-11-5-slow-smb/">can be disabled</a>. I tested Time Machine over SMB, which is officially supported by Synology, but is a very recent addition, and it proved to be unreliable, so that is staying on AFP for now.</p>
+<p>Something I was particularly keen on, with the Synology, was that it has an "app store" and one of the available applications is Docker. I was running a few UNIX daemons on the Mac Mini which I wanted to keep, and Docker containers would be perfect for them, however, I discovered that the version of Docker provided by Synology is pretty old and I ran into a strange bug that would cause dockerd to consume all available CPU cycles.</p>
+<p>For now, the containers are running on an Intel NUC (which will also be covered in an upcoming post) and the Synology is focussed on file sharing.</p>
+<h2>Open Source</h2>
+<p>Synology's NAS products are based on Linux, Samba, netatalk and a variety of other Open Source projects, with their custom management GUI on top. They do <a href="https://sourceforge.net/projects/dsgpl/files/Synology%20NAS%20GPL%20Source/">publish source</a>, but it's usually a little slow to arrive on the site, and it's not particularly easy (or in some cases even possible) to rebuild in a way that lets you actively customise the device.</p>
+<h2>Conclusion</h2>
+<p>Overall, I like the Synology, but I think if I'd known about the Docker issue, I might have built my own machine and put something like <a href="http://www.freenas.org/">FreeNAS</a> on it. More work, less support, but more flexibility.</p>
+<p>The recent 5-8 drive Synologies now support running VMs, which seems like a very interesting prospect, since it ought to isolate you from Synology's choices of software versions.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2017/06/13/karabiner-elements-sierra-hyper.html">Hyper Key in macOS Sierra with Karabiner Elements</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 13 June 2017</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Over the last few years, <a href="http://brettterpstra.com/2012/12/08/a-useful-caps-lock-key/">various</a> <a href="https://www.nadeau.tv/configure-hyper-key-osx/">people</a> have used <a href="https://pqrs.org/osx/karabiner/">Karabiner</a> to remap Caps Lock to cmd+shift+opt+ctrl, which is such an unusual combination of modifier keys, that it effectively makes Caps behave as a completely new modifier (which we have collectively called "Hyper", in reference to old UNIX workstation keyboards).</p>
+<p>And for a time, it was good.</p>
+<p>Then came macOS Sierra, which changed enough of the input layers of its kernel, that Karabiner was unable to function. Thankfully, Karabiner's author, Fumihiko Takayama, began work on a complete rewrite of Karabiner, which is currently called <a href="https://github.com/tekezo/Karabiner-Elements">Karabiner Elements</a>.</p>
+<p>Initially, Elements only supported very simple keyboard modifications - you could swap one key for another, but that was it. Various folk quickly got to work offering <a href="https://github.com/tekezo/Karabiner-Elements/pull/170">quick hacks</a> to get a Hyper key to work, and others started to try to <a href="http://brettterpstra.com/2016/09/29/a-better-hyper-key-hack-for-sierra/">work around</a> the missing support, with other tools.</p>
+<p>I'm very glad to say that it is now possible to do a proper Hyper remap with Karabiner Elements (and to be clear, none of this is my work, all credit goes to Fumihiko).</p>
+<p>Here's how you can get it:</p>
+<ul>
+<li>Download and install <a href="https://pqrs.org/latest/karabiner-elements-latest.dmg">https://pqrs.org/latest/karabiner-elements-latest.dmg</a></li>
+<li>Launch the Karabiner Elements app, go to the Misc tab and check which version you have, if it's less than 0.91.1, click either <code>Check for updates</code> or <code>Check for beta updates</code> until you get offered 0.91.1 or higher, then install that update and re-launch the Karabiner Elements app.</li>
+<li>You probably want to remove the example entry in the Simple Modifications tab.</li>
+<li>Edit <code>~/.config/karabiner/karabiner.json</code></li>
+<li>Find the <code>simple_modifications</code> section, and right after it, paste in:</li>
+</ul>
+<div class="highlight"><pre><span></span><span class="s2">&quot;complex_modifications&quot;</span><span class="err">:</span> <span class="p">{</span>
+    <span class="nt">&quot;rules&quot;</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="nt">&quot;manipulators&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="p">{</span>
+                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Change caps_lock to command+control+option+shift.&quot;</span><span class="p">,</span>
+                    <span class="nt">&quot;from&quot;</span><span class="p">:</span> <span class="p">{</span>
+                        <span class="nt">&quot;key_code&quot;</span><span class="p">:</span> <span class="s2">&quot;caps_lock&quot;</span><span class="p">,</span>
+                        <span class="nt">&quot;modifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+                            <span class="nt">&quot;optional&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                <span class="s2">&quot;any&quot;</span>
+                            <span class="p">]</span>
+                        <span class="p">}</span>
+                    <span class="p">},</span>
+                    <span class="nt">&quot;to&quot;</span><span class="p">:</span> <span class="p">[</span>
+                        <span class="p">{</span>
+                            <span class="nt">&quot;key_code&quot;</span><span class="p">:</span> <span class="s2">&quot;left_shift&quot;</span><span class="p">,</span>
+                            <span class="nt">&quot;modifiers&quot;</span><span class="p">:</span> <span class="p">[</span>
+                                <span class="s2">&quot;left_command&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;left_control&quot;</span><span class="p">,</span>
+                                <span class="s2">&quot;left_option&quot;</span>
+                            <span class="p">]</span>
+                        <span class="p">}</span>
+                    <span class="p">],</span>
+                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;basic&quot;</span>
+                <span class="p">}</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">}</span><span class="err">,</span>
+</pre></div>
+
+
+<ul>
+<li>As soon as you save the file, Elements will notice it has changed, and reload its config. You should immediately have a working Hyper key 😁</li>
+</ul>
+<p>If you're not confident at your ability to hand-merge JSON like this, and don't need anything from Elements other than the basic defaults, plus Hyper, feel free to grab <a href="https://gist.githubusercontent.com/cmsj/23ca8a570c060e8ccb2a36cee70ed28b/raw/60cb590411193f24a56fb8f52f96093c5191ba22/karabiner.json">my config</a> and drop it in <code>~/.config/karabiner/</code>.</p>
+<p><em>Supplemental note for High Sierra</em></p>
+<p>I've only tested this very briefly on High Sierra, but I had to disable SIP to get the Elements <code>.kext</code> to load. I'm not quite sure what's going on, but I reported it <a href="https://github.com/tekezo/Karabiner-Elements/issues/777">on GitHub</a>. (Note that you can re-enable SIP after the kext has been loaded successfully once)</p>
+<p><em>Update</em></p>
+<p>Many people like to turn Caps into Hyper, but also have it behave as Escape if it is tapped on its own. As of Karabiner Elements 0.91.3 <a href="https://twitter.com/ttscoff/status/875029764377108480">this appears</a> to be possible by adding this to the manipulator:</p>
+<div class="highlight"><pre><span></span><span class="s2">&quot;to_if_alone&quot;</span><span class="err">:</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="nt">&quot;key_code&quot;</span><span class="p">:</span> <span class="s2">&quot;escape&quot;</span><span class="p">,</span>
+        <span class="nt">&quot;modifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="nt">&quot;optional&quot;</span><span class="p">:</span> <span class="p">[</span>
+                <span class="s2">&quot;any&quot;</span>
+            <span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">]</span><span class="err">,</span>
+</pre></div>
+
+
+<p>(thanks to <a href="http://brettterpstra.com/">Brett Terpstra</a> for the sample of this</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2017/06/09/new-blog.html">New blog setup</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 09 June 2017</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Bye bye Blogger, hello GitHub Pages. This means no more comments, and probably a bunch of posts have terrible formatting at the moment, but at least my blog is now just static Markdown files I can edit nicely 😁</p>
+<p>(Also the domain has changed, cmsj.net is the new tenshu.net :)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2016/08/30/changing-gpg-key.html">Changing GPG key</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 30 August 2016</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>It's been 15 years and my GPG key is now looking hilariously out of date - 1024bit DSA key. Yuck.
+So, time to start over. Below is a statement about the change, with details of my new and old keys, signed by both keys. Since it will almost certainly not paste properly out of a browser, I have also uploaded it to GitHub: <a href="https://gist.githubusercontent.com/cmsj/3093f03e085239de0e64ea33d1b2bfab/raw/82c2cb9110e83f0aae4a8155aec954c3aa9aab3b/gpg-migration.txt.asc.asc">here</a>.</p>
+<div class="highlight"><pre><span></span>-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+- -----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA256
+
+Hello world
+
+My name is Chris Jones and I am changing my GPG key.
+The original key fingerprint is: 6C99 9021 9B3A EC6D 4A28  7EE7 C574 7646 7313 2D75
+The new key fingerprint is: 79D2 2E89 6591 210E 45F3  75D3 BCA2 36E2 E19F 727D
+
+You should find this message signed by the new key, and that combined message signed by the old key, as proof that I am doing this. I have also updated my keybase.io account and secured a couple of signatures on the new key to start rebuilding my place in the web of trust.
+
+Thank you for your time,
+
+Chris
+- -----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0
+
+iQIcBAEBCAAGBQJXxffoAAoJECwUb1eIgw1qUMEP+wfaB84vYC4tHdo9OS9szaQv
+cmNW0sIuDx/RQr4iYrcs+8QTQf2I3FPXUc6auhyF4J7Lntu67sTKI9zyfsDm0IW9
+NbIzysTP1Y35lJPA12VM9O9IRaf5G7J57BKAmAuUbpnY7icIzA0MoD4SwCgcRXtA
+QPZd8JVPDLaNpwb1O5rdQLBAdo+OUjF+bB8jZzzoORX0oVVdGhaGJFVhuq8aV1dY
+0YB/nZr71ZApUVnvSZBfj1FHsgXZ5Fai70iI+oAox/Gj6BJ0IJhBIk5hLAzAiXoR
+8EMmtqkWkKc8Jd3NonMzKRGF+qT+G3YuZIDmSptOZWjJ5volT25bYFknEBxPslwC
+TiBGSs6rKz9RhfxGxCmM350zBIVFFCn+RNCWrgn/z4OJp4xSvZJ0IwqB/CwkrmUb
+0ZhG44O2W5lpuSCDh1dhCsiryq4JeSiUy1GENyHl8eIkXjzDOjKTt6OT8wYFFPL7
+XheyIfvMbRNh86o79Skch6Qoyh7nvVALAwsLVHKSDtQRzHbVF6ED9h2ISxdABiZ2
+CkiJ95bf8JQeNVoqLJ78uwSYN96AyGPXfMQKG45SavgkzNLyqeoI1iMJE2yYuVIy
+Z9XUaKhoDI9ERLps+Fw6NY+v2BVSKTvl5MDEDHmfvjK0m3x6C4tF3/QdgwRsJmvE
+2XMWXLrBkcZx9tnYNFIG
+=9PwA
+- -----END PGP SIGNATURE-----
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG/MacGPG2 v2.0
+
+iQEcBAEBCAAGBQJXxff1AAoJEPH//8xn2jUBNOcIAL4fqY/DViwNj2/Va4ePEg1w
+9uUWhGnMUcG4CsQGkhtODU6Qg45inrWnG0VE8jwhGilP4w5tQoIe+m53cUp5m/Rv
+ueRBvfDxBw/SrF6eFZ1SGkXv6kcUkOYjueKsDtxObaX9dN7PrDUljtZWpGTzE77k
+5EWPGfUT89oXa2eGwYnr6t7t9f76cO9eKFck7rIWT+p1tzmF6amm7IjoS8gsjfSb
+lPk3PoC0G71wSseh7iesIgw+vZRZ7tYg59RdpwWLmZjQJVhMzW/QpX87CPAM2m0A
+OcyivXLlbaSZ58AsHZSIA4ZjeoDnlWNsFHemBUSAOMa03b4JtgnGbTaHTZhiLc8=
+=/lkZ
+-----END PGP SIGNATURE-----
+</pre></div>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2015/12/08/raspberry-pi-project-pibus.html">Raspberry Pi project: PiBus</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 08 December 2015</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>The premise of this project is simple - my family lives in London, there's a bus route that runs along our road, and we use it a lot to take the kids places.
+The reality of using the bus is a little more complex - getting three kids ready to go out, is a nightmare and it's not made any easier by checking a travel app on your phone to see how close the bus is.</p>
+<p>I don't think there is much I can do to make the preparation of the children any less manic, but I can certainly do something about the visibility of information about buses, mainly thanks to the excellent open APIs/data provided by <a href="https://tfl.gov.uk/info-for/open-data-users/">Transport For London</a>.</p>
+<p>So, armed with their API, a Python 3 interpreter and a <a href="https://www.raspberrypi.org/">Raspberry Pi</a>, I set out to make a little box for the kitchen wall which will show when the next 3 buses are due to arrive outside our house.</p>
+<p><a href="https://github.com/cmsj/pibus">The code itself</a> is easy enough to throw together because Python has libraries for everything (it also helps if you don't bother to design a decent architecture!). <a href="http://docs.python-requests.org/en/latest/">Requests</a> to fetch the bus data from TfL, <a href="https://docs.python.org/3/library/json.html">json</a>/<a href="https://pypi.python.org/pypi/iso8601">iso8601</a> to parse the data, <a href="https://python-pillow.github.io/">Pillow</a> to render it as an image, and <a href="https://apscheduler.readthedocs.org/en/latest/">APScheduler</a> to give it a simple run-loop.</p>
+<p>The question then becomes, how to display the data. The easiest answer would be a little LCD screen, but that brings with it the downside of having a backlight in the kitchen, which would be ugly and distracting, and it also raises the question of viewing angles. Another answer would be some kind of physical indicator, but that requires skills I don't have time for. Instead, I decided to look for an E-Ink display (think <a href="https://kindle.amazon.com/">Kindle</a>) - it would let me display simple images without producing light.</p>
+<p>The first option I looked at was the <a href="https://www.kickstarter.com/projects/pisupply/papirus-the-epaper-screen-hat-for-your-raspberry-p">PaPiRus</a>, but it's in the window between its crowdfunding drive having finished, and being available to buy. The only other option I could find was the <a href="http://www.percheron-electronics.uk/shop/e-paper-hat/">E-Paper HAT</a>, from Percheron Electronics, which also started life as a crowdfunding project, but is actually available to buy.</p>
+<p>Unfortunately, these displays are super fragile, which I discovered by destroying the first one, but Neil at Percheron was super helpful and I quickly had a new display and some tips about how to avoid cracking it.</p>
+<p>My visualisation of this data isn't going to win any awards for beauty, but it serves its purpose by showing a big number to tell us how many minutes we have, and I managed to minimise the number of times you see the white-black-white refresh cycle of the eInk display with partial screen updates.
+Here are some photos of the project in various stages of construction:</p>
+<p><img alt="Freshly assembled out of the box" src="../images/IMG_6856.JPG">
+<em>Freshly assembled out of the box</em></p>
+<p><img alt="The smallest USB WiFi adapter I've ever seen" src="../images/IMG_6857.JPG">
+<em>The smallest USB WiFi adapter I've ever seen!</em></p>
+<p><img alt="Modified PiBow case" src="../images/IMG_6858.JPG">
+<em>Sadly I had to make some modifications to the PiBow case to fit this particular rPi</em></p>
+<p><img alt="Running an eInk test program" src="../images/IMG_6864.JPG">
+<em>Running one of the eInk display test programs</em></p>
+<p>Initially I was rather hoping I could use the famous font that TfL (and London Transport before it) use, which is known as Johnston, but sadly they will not licence the font outside their own use and use by contracted partners. There is a third party clone of the font, but it may have legal issues, presumably because TfL values their braaaaaand. Instead, I decided to just drop the idea of shipping a font with the code, and exported Courier.ttf from my laptop to the Pi directly.</p>
+<p><img alt="TfL font" src="../images/IMG_6897.JPG">
+<em>This would have been nice, but I cannot have nice font things</em></p>
+<p>I did briefly try Ubuntu Mono, which is a lovely font, but the zeros look like eyes and it freaked me out.</p>
+<p><img alt="PIBUS IS WATCHING YOU" src="../images/Screenshot_2015-12-08_14.03.28.png">
+<em>PIBUS IS WATCHING YOU</em></p>
+<p>The display needs to handle various different situations, most obviously, when no data can be fetched from the API. Rather than get too bogged down in the details of whether our Internet connection is down, TfL's API servers are down, London is on fire, or it's just night time and there are no buses, I went for a simple message with a timestamp. Once this has been displayed, the code skips any further screen updates until it has valid data again. This makes it easy to see when a problem occurred.</p>
+<p><img alt="Date message" src="../images/IMG_7010.JPG">
+<em>Maybe aliens stole the Internet, maybe it's a bus strike. It doesn't matter.</em></p>
+<p>I also render a small timestamp on valid data screens too, showing when the last data fetch happened. This is mostly so I can be sure that the fetching code isn't stuck somehow. Once I trust the system a bit more, this can probably come out.</p>
+<p><img alt="Final design" src="../images/IMG_7012.JPG">
+<em>The final design, showing a fallback for when there is data for  0 &lt; x &lt; 3 buses</em></p>
+<p><img alt="Three buses" src="../images/IMG_7013.JPG">
+<em>Data for three buses, plenty of time to get ready for the second one!</em></p>
+<p>So there it is, project completed! Grab the code from <a href="https://github.com/cmsj/pibus">https://github.com/cmsj/pibus</a>, install the requirements on a Pi, give money to the awesome Percheron Electronics for the E-Paper HAT (and matching PiBow case), throw a font in the directory and edit the scripts for the bus stop and bus route that you care about!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2015/02/20/send-imessage-and-sms-with-applescript.html">Sending iMessages and SMS through Messages.app with AppleScript</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 20 February 2015</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I was searching around for ways to automate sending iMessages, so I could write a plugin for <a href="http://www.hammerspoon.org/">Hammerspoon</a>. I found various scripts lurking around the place for sending iMessages, but I also found one that can send SMS if you have SMS Relay enabled (which means you need OS X 10.10 and an iPhone running iOS 8.1).
+I figured I'd collect them as a single post, to help future searchers, so without further ado, here are two stripped down AppleScript snippets that let you control Messages.app to send either an iMessage, or an SMS.
+Firstly, sending an iMessage:</p>
+<div class="highlight"><pre><span></span><span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Messages&quot;</span>
+  <span class="nv">send</span> <span class="s2">&quot;This is an iMessage&quot;</span> <span class="k">to</span> <span class="nv">buddy</span> <span class="s2">&quot;foo@bar.com&quot;</span> <span class="k">of</span> <span class="p">(</span><span class="nv">service</span> <span class="mi">1</span> <span class="nb">whose</span> <span class="nv">service</span> <span class="nv">type</span> <span class="ow">is</span> <span class="nv">iMessage</span><span class="p">)</span>
+<span class="k">end</span> <span class="k">tell</span>
+</pre></div>
+
+
+<p>The buddy address can be either an email or a phone number that's registered with Apple for use with iMessage.
+Secondly, sending an SMS:</p>
+<div class="highlight"><pre><span></span><span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Messages&quot;</span>
+  <span class="nv">send</span> <span class="s2">&quot;This is an SMS&quot;</span> <span class="k">to</span> <span class="nv">buddy</span> <span class="s2">&quot;+1234567890&quot;</span> <span class="k">of</span> <span class="nv">service</span> <span class="s2">&quot;SMS&quot;</span>
+<span class="k">end</span> <span class="k">tell</span>
+</pre></div>
+
+
+<p>Here, the buddy address should be a phone number.
+Simple!
+(and for the Hammerspoon users, you'll find hs.messages available in the next release, 0.9.23)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/08/02/quick-thought-on-moto-x.html">The curious Moto X pricing</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 02 August 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Comparing the Moto X to the Nexus 4 is interesting in one particular respect - the price.
+The Nexus 4 (made by LG, sold by Google) had very respectable specs when it was launched, but its price was surprisingly low ($300 off contract). We were told this was because it was being sold very close to cost price.
+The Moto X (made by Motorola, which is owned by Google) has mid-range specs, but its price is surprisingly high ($200 up front *and* an expensive two year contract).
+Overall Motorola is probably getting something like $400-$600 for each Moto X sold, when you factor in the carrier subsidy.
+The inevitable question is why Google is happy to make almost no money off the Nexus 4, but wants to have its Motorola division make a respectable margin on the Moto X.</p>
+<ul>
+<li>Is it because doing otherwise would undermine the carriers' abilities to sell other phones, so they would refuse to do it?</li>
+<li>Is it because Google wants the Motorola division to look good in their accounts, which is easier if you are selling mid-range phones for the kind of money that an iPhone sells for?</li>
+<li>Something else?</li>
+</ul>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2013/07/17/moving-on-from-terminator.html">Moving on from Terminator</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 17 July 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Anyone who's been following Terminator knows this post has been a long time coming and should not be surprised by it.</p>
+<p>As of a few days ago, I have handed over the reigns of the project to the very capable Stephen J Boddy (a name that will be no stranger to followers of the Terminator changelogs - he has contributed a great deal over the last few years).</p>
+<p>We're still working out the actual details of the handover, so for now the website is still here and I am still technically the owner of the Launchpad team that runs the project, but going forward all code/release decisions will come from Stephen and we'll move the various administrivia over to new ownership in due course.</p>
+<p>Everyone please grab your bug trackers and your python interpreters and go send Stephen patches and feature requests! :D</p>
+  </div>
+</article>
+
+<div class="pagination">
+    <ul>
+        <li class="pagination__prev">
+            <a href="../category/misc.html">&laquo;</a>
+        </li>
+
+
+
+          <li>
+            <a  href="../category/misc.html">1</a>
+          </li>
+
+
+          <li>
+            <a class="pagination__page--current" href="../category/misc2.html">2</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc3.html">3</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc4.html">4</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc5.html">5</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../category/misc23.html">23</a>
+          </li>
+
+        <li class="pagination__next">
+            <a href="../category/misc3.html">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

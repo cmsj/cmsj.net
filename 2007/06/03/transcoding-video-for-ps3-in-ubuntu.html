@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../../../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../../../">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+<meta name="keywords" content="">
+
+  <title>
+    cmsj.net
+&ndash; Transcoding video for the PS3 in Ubuntu  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../../../archive.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../../../2007/06/03/transcoding-video-for-ps3-in-ubuntu.html">Transcoding video for the PS3 in Ubuntu</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 03 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>The title says it all really. I've banged on about games a bit and now it's time to do something involving curiosity!
+So I know how to, should i want to for any reason, this is how you can make videos that are playable on a PS3 (only tested on firmware 1.80). Note that it doesn't transcode to H.264, but instead uses a lesser MPEG4 profile of some kind (mpeg4 appears to be entirely too complicated to figure out!).
+This mostly comes from <a href="http://po-ru.com/diary/bleeding-edge-ffmpeg-on-ubuntu-feisty/">here</a>, but the gist is that you grab a specific version of ffmpeg from SVN and compile it against a variety of media libraries from multiverse. This makes me think ubuntu should have a bleeding edge version of ffmpeg in multiverse that links against the libraries there - if licences allow for it.
+For what it's worth, this is the command line I've been using with it (note that it will strip surround audio down to 2 channel stereo. That's all i have, so I haven't bothered to figure out anything better).
+<code>ffmpeg -y -i /path/to/source.avi -acodec aac -ab 192kb -vcodec mpeg4 -b 1500kb -mbd 2 -flags +4mv+trell -aic 2 -cmp 2 -subcmp 2 -title "Blah 2: The blahing" /path/to/output.mp4</code></p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

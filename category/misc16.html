@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../">
+  <link rel="stylesheet" type="text/css" href="../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Category: misc  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../archive.html"><i class="fas fa-archive"></i> Archive</a>
+&gt; Category: misc
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../2007/09/21/terminator-hits-ppa.html">Terminator hits PPA</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 21 September 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>If you've been over to my <a href="http://www.tenshu.net/terminator/">Terminator</a> page you may have noticed that I use Launchpad for basically all of the services of releasing.
+Taking this one step further, I have been building packages for Ubuntu Gutsy with Launchpad's excellent PPA service. Details for how to get your Terminator goodness from PPA have been added to the <a href="http://www.tenshu.net/terminator/">Terminator Homepage</a>.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2007/09/12/terminator-04-released.html">Terminator 0.4 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 12 September 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Terminator 0.4 is out. It's more of a bugfix release than the expected feature (per-terminal profiles). That is still some way off unless anyone feels like working up a patch? ;)
+As usual, please head over <a href="http://www.tenshu.net/terminator/">here</a> for the goodness.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2007/08/22/ubuntu-consistent-network-hackery.html">Ubuntu consistent network hackery</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 22 August 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I use a docking station with my laptop. When it's in the dock it has a wired connection, otherwise it's just wireless.
+Since most of my work involves ssh and I tend to have several long running ssh sessions at a time, it's quite annoying if I quickly undock to go and work in another room and have to reconnect everything.
+Of course, this is entirely fixable in Linux (albeit by way of some slightly dodgy hackery). Network Manager is just about quick enough to pick up a new connection before TCP connections time out, and Linux's routing stack is somewhat forgiving about connections switching interface. So, with that in mind, and using a DHCP network - all you need to do to preserve a connection across switching interfaces is have the same IP address on both. Sure you could go and hack at the DHCP config to make sure it serves the same IP to both of your MAC addresses, or you could just have both interfaces share the same MAC. I'm quite sure this breaks all manner of rules, conventions and RFCs, but the point is that it works and it makes my life easier :)
+I'll happily take suggestions for a better way to override the MAC address, but this is how I do it:
+<code>-(cmsj@waishou)-(~)- cat /etc/modprobe.d/localinstall ipw2200 /sbin/modprobe --ignore-install ipw2200 ; ifconfig eth1 hw ether XX:XX:XX:XX:XX:XX</code>
+So in this case I am setting my wireless card's MAC address to that of my wired interface (replace the XX:XX bit with the MAC from your other interface).
+This worked fine for me in feisty, but was failing in gutsy and my wireless interface was coming up as eth1_rename. Obviously something new and strange was going on.
+It turns out that, in the same way we handle disks by UUID, we now handle network interfaces by MAC address, so udev was getting a little confused.
+A quick change of <code>/etc/udev/rules.d/70-persistent-net.rules</code> to stop recognising them by MAC address and start looking at the driver name instead, and it's all fixed. This is how the file looks now:
+<code>-(cmsj@waishou)-(~)- cat /etc/udev/rules.d/70-persistent-net.rules# This file was automatically generated by the /lib/udev/write_net_rules# program, probably run by the persistent-net-generator.rules rules file.## You can modify it, as long as you keep each rule on a single line.</code>
+# PCI device 0x8086:0x1077 (e1000)
+SUBSYSTEM=="net", DRIVERS=="e1000", NAME="eth0"
+# PCI device 0x8086:0x4220 (ipw2200)
+SUBSYSTEM=="net", DRIVERS=="ipw2200", NAME="eth1"
+I'd be wary about doing this on a desktop system where interfaces are more likely to change, but this is a laptop and I am quite certain the e1000 NIC isn't going to move on the PCI bus!
+So there you have it :)
+<strong>Update:</strong> It's worth noting that sometimes this will confuse some networks (e.g. I recently confused a hotel wired&amp;wifi network into not talking to my laptop anymore and had to change both the wired and wireless MAC address to different addresses)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2007/08/18/skype.html">Skype</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 18 August 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Skype has been having network issues in the last few days. I don't like the fact that I've been using Skype, but I have. Why? Because it's the easiest way to talk to my girlfriend while she's away.
+That is, it's easy while it works. It has many downsides, but to be fair to it, it's very good at dealing with firewalls and NAT, something that Ekiga really (really really) isn't.
+With Skype broken, and wanting to talk to Ulrike, I suggested we try WengoPhone. She grabbed the windows binary, I grabbed the Linux binary. After a few false starts we got connected and for bonus points, it supports webcams in Windows and Linux, which dramatically improves the value of talking to her (and it's very cool that Ubuntu supports my tiny little Creative laptop webcam out of the box).
+To my utter surprise, not only is Wengo GPL'd, it's also really just a SIP client. This is fantastic and it's just a bit of a shame that the interface uses Qt (the Wengo guys say they would love to see a Gtk port. So would I!). I was able to call her Wengo address (translated into the underlying SIP address) from Ekiga, but it took ages to arrange the call, even longer to connect the audio/video to it and even then it got the video wrong.
+I know Ekiga has been making great strides in their development version and I very much look forward to being able to use it as a swiss army knife of VoIP. Having said that, I kind of suspect that I will be more tempted by some kind of Telepathy VoIP interface which hides all the tediousness of different forms of instant communication and just lets me type to, talk with, and look at people.
+As a result of the Wengo transition, I have just been able to do this:
+<code>-(cmsj@waishou)-(~)- sudo dpkg -P skype(Reading database ... 144578 files and directories currently installed.)Removing skype ...Purging configuration files for skype ...-(cmsj@waishou)-(~)-</code></p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2007/08/01/terminator-03-released.html">Terminator 0.3 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 01 August 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Terminator 0.3 is out, with the expected Terminal closing feature. This really makes the Splitting from 0.2 much more useful.
+As usual, please head over <a href="http://www.tenshu.net/terminator/">here</a> for the goodness.
+<strong>NOTE:</strong> There is a bug preventing zsh users from using terminator. See <a href="https://bugs.launchpad.net/terminator/+bug/129104">the bug on Launchpad</a> for full details.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2007/07/29/terminator-02-released.html">Terminator 0.2 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 29 July 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Two days in a row! This is not going to be a continuous thing, but since it's the weekend I have been hacking on Terminator a lot.
+This is a big release for me, it finally brings in one of the crucial features required to make this more than just a script for 4 terminals in a window - you can now split terminals on demand. Right click on one and you can turn it into two terminals, horizontally or vertically.
+My roadmap currently is to have 0.3 allow you to remove terminals. 0.4 will then concentrate on loading/saving some kind of profile so you don't have to do a complex splitting procedure each time you start Terminator. I'm not sure if many other features will get in between 0.4 and 1.0, because there is lots to do on the gconf and gnome-terminal emulation.
+Head on over to <a href="http://www.tenshu.net/terminator/">Terminator's page</a> for various links, including the download link.
+<a href="http://www.tenshu.net/wp-content/uploads/2007/07/2007-07-29-terminator-02.png" title="Terminator 0.2"><img alt="Terminator 0.2" src="http://www.tenshu.net/wp-content/uploads/2007/07/2007-07-29-terminator-02.thumbnail.png"></a></p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2007/07/28/firefox-bad-for-linux.html">Firefox bad for Linux?</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 28 July 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Firefox is a very popular piece of software. Claims run up to 100 million users, which is really good and on the whole I think it's a very good browser.
+However.
+What Firefox isn't, is integrated. Sure it renders using gtk (and Cairo, if not already then soon) and gnome actions involving URLs spawn Firefox, but it's still trapped away in its own little universe - Marc Andreeson's gift to the world, a platform agnostic application architecture. Clearly Mozilla has built itself a highly capable cross-platform application architecture, but that necessarily isolates them on every platform.
+The trigger behind this post is the patches that recently appeared to let Epiphany use Webkit (Apple's fork of KHTML, as used n Safari). Epiphany isn't a bad browser, but it's not flexible like the fox (purely because there aren't enough extensions). The problem here is that if GNOME is going to achieve the online desktop integration they have been talking about, reliable HTML widgets seem quite vital. GtkMozEmbed (I say having never used it) appears to be very painful to work with.
+A high quality GNOME widget based on Webkit that makes displaying HTML really easy would be so extraordinarily useful to the project. It would allow the browser to disappear into the desktop - want to visit a page? click/press something to type some stuff which is an address or search keywords. Out slides the appropriate web page. It gets rid of the necessity to go Applications-&gt;Internet-&gt;Firefox before typing a URL (and yes I know things like deskbar can launch a browser in these circumstances). Mostly it massively lower the barrier to writing apps which partly rely on the internet, or HTML in general, which can only be a good thing for a more online world.
+What's holding it back though is Firefox. It's a very popular piece of software, even on Windows. Maybe too popular, if Ubuntu were to drop Firefox by default in favour of an integrated future version of Epiphany it could hurt Ubuntu - one of its selling points is no longer that it uses the much vaunted Firefox thingy people have heard of.
+(I also wonder if GTK should support CSS ;)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2007/07/28/terminator-01-released.html">Terminator 0.1 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 28 July 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I've just pushed out the first release ever of Terminator, a python script to make a window have multiple Terminals in it.
+It's still very rough around the edges. And the middle. But it's there!
+Rather than repeat myself here, just click over to the <a href="http://www.tenshu.net/terminator/">Terminator</a> page for full details.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2007/07/11/hacky-root-partition-resizing.html">hacky root partition resizing</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 11 July 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>How would you shrink the root file system of a remote machine? Of course the easy answer is to boot into a rescue environment and do it (because you can't shrink ext3 online).
+If you have a good KVM or ILO setup, you already have a rescue environment of sorts - initramfs.
+Chuck "break=mount" on your kernel commandline and the initramfs will drop out to a shell before it mounts the root filesystem. You can now mount the root fs manually and copy out the required tools/libs (e2fsck, resize2fs, fdisk and their libraries, in this case), then unmount the root fs.
+Now, with appropriate $LD_LIBRARY_PATH mangling you can run the extracted binaries and operate on your root partition with impunity</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2007/06/30/computing-nostalgia.html">Computing nostalgia</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 30 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>It's pretty much exactly a decade since I started using Linux, so it seems like a good time to look back at what I used to use before.
+Immediately prior to jumping into the FOSS world, I was using Windows 98, but I don't really want to talk about that because I never really liked it and it hated my hardware, so it was a very brief partnership.
+The 7 or 8 years before that though, were computing heaven because I was a devoted <a href="http://www.amiga.org/">Amiga</a> user. Initially I was using an <a href="http://en.wikipedia.org/wiki/Amiga_500">A500</a>, which I added a second floppy drive to (I think the Cumana drive I bought cost me about £80!), as well as a couple of MB of Fast RAM (some of which I hacked into being Chip RAM for better graphics). Eventually the 500 was getting far too restrictive and even my 2-disk boot environment was getting hard to live with, so I got a job in a supermarket to earn some money to buy a shiny new <a href="http://en.wikipedia.org/wiki/Amiga_1200">A1200</a>, which was a pretty big leap forward over the 500. After a while I put the much faster 68030 CPU in it (thanks to phase5's excellent <a href="http://www.amiga-hardware.com/showhardware.cgi?HARDID=151">1230 IV</a> expansion card), a 16MB SIMM and a 120MB 2.5" hard disk. Later I swapped the 030 card for an <a href="http://www.relec.ch/CarteAcc68k.html#Carte%20turbo%20Blizzard%201240T/ERC">040</a> card, for even more blazing performance.
+Anyway, enough boring hardware reminiscing, on to the fun stuff!
+For a while now I've wanted to rescue everything on the last Amiga hard disk I owned (a Western Digital 1.2GB monster!), but since my A1200 had something of a small accident (here's a tip kids, never use the inside of a computer as a footrest) that wasn't going to be hugely easy. Had I not broken the 1200, things would have been fine - by the time I stopped using the Amiga it had an Ethernet interface and a fair whack of UNIX programs on it like scp.
+A few months back I fished the disk out of the remains of the Amiga (now forever consigned to the past, as I took the carcass to the local dump), hooked it up to an external USB-IDE interface and took a raw image of the disk. I then bought <a href="http://www.amigaforever.com/">Amiga Forever</a>, a distribution of various Amiga Emulators and a pretty much complete set of officially licenced ROMs and system disks (lacking working hardware there was no way I could get dumps of my ROMs or transfer the contents of the PC-incompatible floppy system disks). I briefly dallied with the included emulator for UNIX (the venerable UAE), but it was pretty unstable and on further investigation it turns out that most of the development work these days goes into the Windows fork (WinUAE). This was quite disappointing and I never really looked into it all further.
+That was, until last night when I started tidying up all the crap on my desktop and got to the Amiga Forever folder. The pangs of nostalgia grabbed me again and I decided to have another stab at things. This time I used <a href="http://www.rcdrummond.net/uae/">e-UAE</a>, another fork of UAE, maintained by <a href="http://www.rcdrummond.net/">Richard Drummond</a> (any Amiga user will recognise that name). He has been diligently pulling in the improvements from WinUAE, and it really shows. It's much more stable than vanilla UAE (although I can still provoke it into crashing).
+This was a good start, but I was still left with the problem of how to extract the data from the disk image I had. After battling with the uae configs a little, I discovered that there was something wrong - I could only persuade the Amiga to see 1 of the 4 partitions. Fortunately it was the one with all my data on - except my old programming stuff, but the point of this exercise was not to rescue data as I had copied the stuff I really cared about off before I stopped using it. The point was to get *my* Amiga running again, even if the hardware was now just some software.
+I conversed with some of the long time Amiga stalwarts I still converse with on IRC and one of them pointed me at some <a href="http://www.seebs.net/log/archives/000390.html">really simple code</a> to extract partitions from an Amiga disk image. This proved to be part of the key to making everything Just Work™. The other part being that Linux can read <a href="http://en.wikipedia.org/wiki/Amiga_Fast_File_System">AFFS</a> formatted partitions.
+I quickly mounted them and pointed e-UAE at the mountpoints and bam! off it went. Ok so I had to spend a few minutes hacking out the various hardware hacks I had from the Startup-sequence, but with that done, I was left with a pretty much exact copy of what I used to use 10 years ago.
+It's a very strange experience, leaping back in time like this. You look over your old code, email, pictures and so on and while one part of you thinks "hey I remember this!", another part things "damn what was I thinking" ;)
+As <a href="http://www.jwz.org/">Jamie Zawinski</a> found when he tried to do a similar (but unfortunately for him, much more painful) <a href="http://www.jwz.org/gruntle/amiga.html">operation</a> a while back, the best way to keep data from being obsoleted is to keep it on a live computer. Sooner or later all hardware fails, but if you always transfer all of your data from one computer to your new one, you'll never have a huge gap to cross (this is <strong>exactly</strong> how <a href="http://en.wikipedia.org/wiki/Speciation">speciation</a> works, by the way).
+Emulation and FOSS suggest that there is no real reason why my Amiga now can't live on forever, virtually. That's hardly the hugest achievement of mankind, but it makes me happy.
+I'd like to say thank you to everyone who made the Amiga, everyone who made its community such a fantastic place, and everyone who still works on making it live on.
+(As a side note, this all serves to make me think what a natural predecessor to the current Linux ecosystem the Amiga was. It had a powerful shell, a friendly GUI, but most crucially, an active and dedicated community)</p>
+  </div>
+</article>
+
+<div class="pagination">
+    <ul>
+        <li class="pagination__prev">
+            <a href="../category/misc15.html">&laquo;</a>
+        </li>
+
+
+
+          <li>
+            <a  href="../category/misc.html">1</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../category/misc13.html">13</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc14.html">14</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc15.html">15</a>
+          </li>
+
+
+          <li>
+            <a class="pagination__page--current" href="../category/misc16.html">16</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc17.html">17</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc18.html">18</a>
+          </li>
+
+
+          <li>
+            <a  href="../category/misc19.html">19</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../category/misc23.html">23</a>
+          </li>
+
+        <li class="pagination__next">
+            <a href="../category/misc17.html">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

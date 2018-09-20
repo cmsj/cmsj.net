@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../">
+  <link rel="stylesheet" type="text/css" href="../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Posts by: Chris Jones  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../archive.html"><i class="fas fa-archive"></i> Archive</a>
+&gt; Author: Chris Jones
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../2010/06/03/python-decisions.html">Python decisions</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 03 June 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Every time I find myself hacking on some Python I find myself second guessing all sorts of tiny design decisions and so I figure the only way to get any kind of perspective on them is to talk about them. Either I'll achieve more clarity through constructing explanations of what I was thinking, or people will comment with useful insights. Hopefully the latter, but this is hardly the most popular blog in the world ;)
+So. What shall we look at first. Well, I just hacked up a tiny script last night to answer a simple question:</p>
+<p><em>Is most of my music collection from the 90s?</em></p>
+<p>Obviously what I want to do here is examine the ID3 tags of the files in my music collection and see how they're distributed. A quick search with apt showed that Ubuntu 10.04 has two python libraries for dealing with ID3 tags and a quick play with each suggested that the one with the API most relevant to my interests was <a href="apt:python-eyed3" title="Install eyeD3">eyeD3</a>. After a few test iterations of the script I was getting bored of waiting for it to silently scan the roughly 4000 MP3s I have, so I did another quick search and found a <a href="apt:python-progressbar" title="Install progressbar">progress bar</a>library.
+So that's all of the motive and opportunity established, now let's examine the means to the end. If you want to follow along at home, the whole script is <a href="/wp-content/uploads/2010/06/musicdecades.py_.txt" title="musicdecades.py.txt">here</a>.</p>
+<div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+  <span class="kn">import</span> <span class="nn">eyeD3</span>
+  <span class="kn">import</span> <span class="nn">progressbar</span> <span class="kn">as</span> <span class="nn">pbar</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+  <span class="k">print</span><span class="p">(</span><span class="s2">&quot;You should make sure python-eyed3 and python-progressbar are installed&quot;</span><span class="p">)</span>
+ <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+
+
+<p>First off this is the section where I'm importing the two non-default python libraries that I depend on. I want to provide a good experience when they're not installed, so I catch the exception and tell people the Debian/Ubuntu package names they need, and exit gracefully. I rename the progressbar module as I import it just because "progressbar" is annoyingly long as a name, and I don't like doing "from foo import *".
+Skipping further on, we find the code that extracts the ID3 year tag:</p>
+<div class="highlight"><pre><span></span><span class="n">year</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">getYear</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;Unknown&#39;</span>
+</pre></div>
+
+
+<p>This is something I'm really not sure about the "correctness" of; One of the reasons I went with the eyeD3 library was that the getYear() method returns None if it can't find any data, but I don't really want to capture the result, then test the result explicitly and if it's None set the value to "Unknown", so I went with the above code which only needs a single line and is (IMHO) highly readable.
+This is ultimately the crux of the entire program - we've now collected the year, so we can work out which decade it's from:</p>
+<div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">year</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">:</span>
+ <span class="n">year</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">0s&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
+</pre></div>
+
+
+<p>If this isn't an unknown year we chop the final digit off the year and replace it with a zero. Job done!
+Next up, another style question. Rather than store the year we just processed I want to know how many of each decade have been found, so the obvious choice is a dict where the keys are the decades and the values are the number of times each decade has been found. One option would be to pre-fill the dict with all the decades, each with a value of zero, but that seems redundant and ugly, so instead I start out with an empty dict. This presents a challenge - if we find a decade that isn't already a key in the dict (which will frequently be the case) we need to notice that and add it. We could do this by pre-emptively testing the dict with its has_key() method, but that struck me as annoyingly wordy, so I went with:</p>
+<div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+  <span class="n">years</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+<span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+  <span class="n">years</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+</pre></div>
+
+
+<p>If we are incrementing a year that isn't already in the dict, python will raise a KeyError, at which point we know what's happened and know the correct value is 1, so we just set it explicitly. Seems like the simplest solution, but is it the sanest?
+The only other thing I wanted to say is a complaint - having built up the dict I then want to print it nicely, so I have a quick list comprehension to produce a list of strings of the format "19xx: yy" (i.e. the decade and the final number of tracks found for that decade), which I then join together using:</p>
+<div class="highlight"><pre><span></span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">OUTPUT</span><span class="p">)</span>
+</pre></div>
+
+
+<p>which I hate! Why can't I do:</p>
+<div class="highlight"><pre><span></span><span class="n">OUTPUT</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+</pre></div>
+
+
+<p>(where "OUTPUT" is the list of strings). If that were possible, what I'd actually do is tack the .join() onto the end of the list comprehension and a single line would turn the dict into a printable string.
+So there we have it, my thoughts on the structure of my script. I'd also add that I've become mildly obsessive about getting good scores from pylint on my code, which is why it's rigorously formatted, docstring-ed and why the variable names in the __main__ section are in capitals.
+What are your thoughts?
+Oh, and the answer is no, most of my music is from the 2000s. The 1990s come in second :)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2010/05/13/gtk-icon-cache-search-tool.html">gtk icon cache search tool</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 13 May 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Earlier on this evening I was asking the very excellent Ted Gould about a weird problem with my Gtk+ icon theme - an app I'd previously installed by hand in /usr/local/, but subsequently removed, had broken icons because Gtk+ was looking in /usr/local/share/icons/ instead of /usr/share/icons/.
+We did a little digging and realised I had an icon theme cache file in /usr/local/ that was overriding the one in /usr/. A bit of deleting later and it's back, but in the process we whipped up a little bit of python to print out the filename of an icon given an icon name.</p>
+<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<span class="c1"># gtk-find-icon by Chris Jones &lt;cmsj@tenshu.net&gt;</span>
+<span class="c1"># Copyright 2010. GPL v2.</span>
+
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">import</span> <span class="nn">gtk</span>
+
+<span class="n">THEME</span> <span class="o">=</span> <span class="n">gtk</span><span class="o">.</span><span class="n">IconTheme</span><span class="p">()</span>
+<span class="n">ICON</span> <span class="o">=</span> <span class="n">THEME</span><span class="o">.</span><span class="n">lookup_icon</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+ <span class="n">gtk</span><span class="o">.</span><span class="n">ICON_SIZE_MENU</span><span class="p">,</span>
+ <span class="n">gtk</span><span class="o">.</span><span class="n">ICON_LOOKUP_USE_BUILTIN</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="ow">not</span> <span class="n">ICON</span><span class="p">:</span>
+ <span class="k">print</span> <span class="s2">&quot;None found&quot;</span>
+<span class="k">else</span><span class="p">:</span>
+ <span class="k">print</span><span class="p">(</span><span class="n">ICON</span><span class="o">.</span><span class="n">get_filename</span><span class="p">())</span>
+</pre></div>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2010/04/19/hybrid-disappear-here.html">Hybrid - Disappear Here</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Mon 19 April 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>It's a while since I wrote anything in the Music category of this blog, and since everything has been about my software projects recently, I figure it's time to mix things up a little. It's also just a few weeks since the release of the latest studio album by probably my favourite band of the last few years, <a href="http://www.hybridsoundsystem.com/" title="Hybrid">Hybrid</a>.
+The album is called Disappear Here and it's pretty damn good - I was going to describe the tracks individually, but that's what reviewers typically do and it always sounds insufferably poncy, so I suggest you just go to the <a href="http://www.disappearhere.info" title="Disappear Here">album's site</a> and listen to the damn thing yourself ;)
+They also post semi-frequent hour long DJ mixes on their <a href="http://soundcloud.com/hybridsoundsystem">Soundcloud page</a>, which I would recommend!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2010/04/18/writing-terminator-plugins.html">Writing Terminator plugins</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sun 18 April 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <h2>Terminator Plugin HOWTO</h2>
+<p>One of the features of the new 0.9x series of Terminator releases that hasn't had a huge amount of announcement/discussion yet is the plugin system. I've posted previously about the decisions that went into the design of the plugin framework, but I figured now would be a good time to look at how to actually take advantage of it.
+While the plugin system is really generic, so far there are only two points in the Terminator code that actually look for plugins - the Terminal context menu and the default URL opening code. If you find you'd like to write a plugin that interacts with a different part of Terminator, please let me know, I'd love to see some clever uses of plugins and I definitely want to expand the number of points that plugins can hook into.
+The basics of a plugin</p>
+<hr>
+<p>A plugin is a class in a .py file in terminatorlib/plugins or ~/.config/terminator/plugins, but not all classes are automatically treated as plugins. Terminator will examine each of the .py files it finds for a list called 'available' and it will load each of the classes mentioned therein.
+Additionally, it would be a good idea to import terminatorlib.plugin as that contains the base classes that other plugins should be derived from.
+A quick example:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="kn">as</span> <span class="nn">plugin</span>
+<span class="n">available</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;myfirstplugin&#39;</span><span class="p">]</span>
+<span class="k">class</span> <span class="nc">myfirstplugin</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">SomeBasePluginClass</span><span class="p">):</span>
+  <span class="n">etc</span><span class="o">.</span>
+</pre></div>
+
+
+<p>So now let's move on to the simplest type of plugin currently available in Terminator, a URL handler.
+URL Handlers</p>
+<hr>
+<p>This type of plugin adds new regular expressions to match text in the terminal that should be handled as URLs. We ship an example of this with Terminator, it's a handler that adds support for the commonly used format for Launchpad. Ignoring the comments and the basics above, this is ultimately all it is:</p>
+<div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">LaunchpadBugURLHandler</span><span class="p">(</span><span class="nx">plugin</span><span class="p">.</span><span class="nx">URLHandler</span><span class="p">)</span><span class="o">:</span>
+  <span class="nx">capabilities</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;url_handler&#39;</span><span class="p">]</span>
+  <span class="nx">handler_name</span> <span class="o">=</span> <span class="s1">&#39;launchpad_bug&#39;</span>
+  <span class="nx">match</span> <span class="o">=</span> <span class="s1">&#39;\\b(lp|LP):?\s?#?[0-9]+(,\s*#?[0-9]+)*\\b&#39;</span>
+</pre></div>
+
+
+<div class="highlight"><pre><span></span>  def callback(self, url):
+    for item in re.findall(r&#39;[0-9]+&#39;, url):
+      return(&#39;https://bugs.launchpad.net/bugs/%s&#39; % item)
+</pre></div>
+
+
+<p>That's it! Let's break it down a little to see the important things here:
+-   inherit from plugin.URLHandler if you want to handle URLs.
+-   include 'url_handler' in your capabilities list
+-   URL handlers must specify a unique handler_name (no enforcement of uniqueness is performed by Terminator, so use some common sense with the namespace)
+-   Terminator will call a method in your class called callback() and pass it the text that was matched. You must return a valid URL which will probably be based on this text.</p>
+<p>and that's all there is to it really. Next time you start terminator you should find the pattern you added gets handled as a URL!
+Context menu items</p>
+<hr>
+<p>This type of plugin is a little more involved, but not a huge amount and as with URLHandler we ship an example in terminatorlib/plugins/custom_commands.py which is a plugin that allows users to add custom commands to be sent to the terminal when selected. This also brings a second aspect of making more complex plugins - storing configuration. Terminator's shiny new configuration system (based on the excellent ConfigObj) exposes some API for plugins to use for loading and storing their configuration. The nuts and bolts here are:</p>
+<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="kn">as</span> <span class="nn">plugin</span>
+<span class="kn">from</span> <span class="nn">terminatorlib.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="n">available</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CustomCommandsMenu&#39;</span><span class="p">]</span>
+<span class="k">class</span> <span class="nc">CustomCommandsMenu</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">MenuItem</span><span class="p">):</span>
+  <span class="n">capabilities</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;terminal_menu&#39;</span><span class="p">]</span>
+  <span class="n">config</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+    <span class="n">myconfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">plugin_get_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="c1"># Now extract valid data from sections{}</span>
+  <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menuitems</span><span class="p">,</span> <span class="n">menu</span><span class="p">,</span> <span class="n">terminal</span><span class="p">):</span>
+    <span class="n">menuitems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gtk</span><span class="o">.</span><span class="n">MenuItem</span><span class="p">(</span><span class="s1">&#39;some jazz&#39;</span><span class="p">))</span>
+</pre></div>
+
+
+<p>This is a pretty simplified example, but it's sufficient to insert a menu item that says "some jazz". I'm not going to go into the detail of hooking up a handler to the 'activate' event of the MenuItem or other PyGTK mechanics, but this gives you the basic detail. The method that Terminator will call from your class is again "callback()" and you get passed a list you should add your menu structure to, along with references to the main menu object and the related Terminal. As the plugin system expands and matures I'd like to be more formal about the API that plugins should expect to be able to rely on, rather than having them poke around inside classes like Config and Terminal. Suggestions are welcome :)
+Regarding the configuration storage API - the value returned by Config.plugin_get_config() is just a dict, it's whatever is currently configured for your plugin's name in the Terminator config file. There's no validation of this data, so you should pay attention to it containing valid data. You can then set whatever you want in this dict and pass it to Config().plugin_set_config() with the name of your class and then call Config().save() to flush this out to disk (I recommend that you be quite liberal about calling save()).
+Wrap up</p>
+<hr>
+<p>Right now that's all there is to it. Please get in touch if you have any suggestions or questions - I'd love to ship more plugins with Terminator itself, and I can think of some great ideas. Probably the most useful thing would be something to help customise Terminator for heavy ssh users (see the earlier fork of Terminator called 'ssherminator')</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2010/04/15/terminator-093-released.html">Terminator 0.93 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Thu 15 April 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Another week, another release focused on squashing as many bugs as possible. There's also one feature in this release - a patch from Kees Cook to add a preferences UI for the alternate_screen_scroll setting.
+Please keep those bug reports coming, the response to the 0.9x series has been fantastic!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2010/04/07/terminator-092-released.html">Terminator 0.92 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 07 April 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Hot on the heels of 0.91 we have a new release for you. This is another bugfix release, stomping on as many regressions from 0.14 as we can find. Many, many thanks to all of the people who have been in touch with the project to tel us about the things that are affecting them. If you find more regressions/bugs, please let us know!
+Also in this release the Palette section of the Profile editor in the Preferences GUI is now fully active, which means that all of the config file options should now be fully editable in the GUI.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2010/03/31/terminator-090-released.html">Terminator 0.90 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 31 March 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>After lots of work we're really very proud to announce that the completely re-worked Terminator 0.90 is now available! Hopefully we haven't introduced too many new bugs in exchange for the much requested features of being able to save layouts!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2010/03/31/terminator-091-released.html">Terminator 0.91 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 31 March 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Unfortunately I overlooked some very annoying bugs during the 0.90 release process. This is a quick release to address them. apologies to those affected.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2010/03/30/heads-up-new-terminator-incoming.html">Heads up, new Terminator incoming</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 30 March 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Ok folks, I suck for not getting Terminator 0.90 released earlier and I suck for not having a bunch of bug fixes for 0.14 in Ubuntu Lucid.
+I'm going to fix both tonight by releasing 0.90 and begging the lovely Ubuntu Universe folks to grant an exception to get it into Lucid.
+Here's hoping everything goes smoothly!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2010/03/15/adventure-with-hp-printerscanner-and.html">An adventure with an HP printer/scanner and Ubuntu</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Mon 15 March 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>For a while now I've been thinking about some ideas for a project that will require a scanner. No problem you think, scanners of various kinds have been supported in Linux for a long time.
+I dislike ordering hardware online because of the shipping lag and because I'm a sucker for the retail experience, so I was checking out which devices would work with Ubuntu and which devices were on sale in my local computer supermarket. The latter was a depressingly short list, and the former was getting annoying to search for, but I stumbled on the idea of a multi-function printer. It turns out that it's cheaper to buy a scanner as part of a printer than it is to buy a scanner on its own (granted the resolution of the scanner isn't quite as good, but it's more than sufficient for my needs). The reason for this is undoubtedly that the manufacturers are expecting to make up their money by selling me ink cartridges every few months.
+As I started to look at models of multi-function printers, one thing became apparent almost immediately - HP have done a lot of leg work on this. I quickly found a bunch of info on their site about how they basically support all of their stuff on Linux, including a page which specifically listed popular distros and which versions worked with which printers.
+I decided pretty much immediately that I wanted to support this, so off I went to the shop to buy an HP. They had the decent looking F4580 for around £40, so I nabbed that and set off home.
+When I got home I fired up my laptop running Lucid and plugged the new device in. Less than 10 seconds later I was told it was ready for printing, and I fired up Robert Ancell's excellent new Simple Scan to see what configuration I would need to do to make that work.... the answer being none, it scanned a page first time.
+Now smug with the ease with which that had worked I started installing the HP driver software on a popular proprietary operating system so I could use it to configure the printer's WiFi feature (something I assumed I couldn't do from within Ubuntu - an assumption that turns out to have been wrong). Ten minutes later it was still finishing off the install process, but eventually I did get the printer hooked up to our wireless network.
+Back to the Lucid machine, I told it to add a new printer, it immediately saw the HP announcing itself on the network and let me quickly add that and I could print over wifi. Pretty nifty stuff.
+Then I started poking around with HP's Linux Imaging and Printing software (HPLIP) and noticed that there was an "hp-toolbox" that wasn't installed. This is the tool I should have used to configure the wifi network on the printer; It also shows the ink levels and lets you kick off scanning/printing/cleaning type jobs. Out of sheer curiosity I went into hp-toolbox's preferences and changed it from using xsane to simple-scan, and told it to start a Scan. I wasn't expecting it to work because the device wasn't connected via USB, but it turns out that not only does the device support scanning over WiFi, it works in Linux. It's not quite as fast as a direct hookup, but it's certainly significantly more convenient!
+So there we have it, out of the box I was up and running within 10 seconds of plugging the device in, and if I'd known to just install hp-toolbox I would have had everything running wirelessly a few minutes later. This being compared to installing CDs and dealing with great gobs of driver/application mess (I've seen HP's Windows drivers and it's no fun trying to persuade them to update themselves, or to persuade them not to prompt you to register every week). A huge, epic victory for Linux and Ubuntu - and one that I seem to find with much random consumer hardware these days. A few years ago this post would have been full of complicated commands and scripts and compilation as I described how to make the device work, but now all I can do is be smug about how easy it was :D
+Win.</p>
+  </div>
+</article>
+
+<div class="pagination">
+    <ul>
+        <li class="pagination__prev">
+            <a href="../author/chris-jones6.html">&laquo;</a>
+        </li>
+
+
+
+          <li>
+            <a  href="../author/chris-jones.html">1</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../author/chris-jones4.html">4</a>
+          </li>
+
+
+          <li>
+            <a  href="../author/chris-jones5.html">5</a>
+          </li>
+
+
+          <li>
+            <a  href="../author/chris-jones6.html">6</a>
+          </li>
+
+
+          <li>
+            <a class="pagination__page--current" href="../author/chris-jones7.html">7</a>
+          </li>
+
+
+          <li>
+            <a  href="../author/chris-jones8.html">8</a>
+          </li>
+
+
+          <li>
+            <a  href="../author/chris-jones9.html">9</a>
+          </li>
+
+
+          <li>
+            <a  href="../author/chris-jones10.html">10</a>
+          </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+                <li>.....</li>
+            </li>
+
+
+          <li>
+            <a  href="../author/chris-jones23.html">23</a>
+          </li>
+
+        <li class="pagination__next">
+            <a href="../author/chris-jones8.html">&raquo;</a>
+        </li>
+    </ul>
+</div>
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>

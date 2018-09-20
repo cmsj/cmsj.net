@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="../../../theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+  <link rel="icon" type="image/vnd.microsoft.icon" href="../../../">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="../../../theme/css/hatena-bookmark-icon.css">
+
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+<meta name="keywords" content="">
+
+  <title>
+    cmsj.net
+&ndash; Raspberry Pi project: PiBus  </title>
+
+</head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="/">cmsj.net</a>
+      </div>
+      <p>
+        <a href="../../../archive.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="../../../2015/12/08/raspberry-pi-project-pibus.html">Raspberry Pi project: PiBus</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 08 December 2015</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>The premise of this project is simple - my family lives in London, there's a bus route that runs along our road, and we use it a lot to take the kids places.
+The reality of using the bus is a little more complex - getting three kids ready to go out, is a nightmare and it's not made any easier by checking a travel app on your phone to see how close the bus is.</p>
+<p>I don't think there is much I can do to make the preparation of the children any less manic, but I can certainly do something about the visibility of information about buses, mainly thanks to the excellent open APIs/data provided by <a href="https://tfl.gov.uk/info-for/open-data-users/">Transport For London</a>.</p>
+<p>So, armed with their API, a Python 3 interpreter and a <a href="https://www.raspberrypi.org/">Raspberry Pi</a>, I set out to make a little box for the kitchen wall which will show when the next 3 buses are due to arrive outside our house.</p>
+<p><a href="https://github.com/cmsj/pibus">The code itself</a> is easy enough to throw together because Python has libraries for everything (it also helps if you don't bother to design a decent architecture!). <a href="http://docs.python-requests.org/en/latest/">Requests</a> to fetch the bus data from TfL, <a href="https://docs.python.org/3/library/json.html">json</a>/<a href="https://pypi.python.org/pypi/iso8601">iso8601</a> to parse the data, <a href="https://python-pillow.github.io/">Pillow</a> to render it as an image, and <a href="https://apscheduler.readthedocs.org/en/latest/">APScheduler</a> to give it a simple run-loop.</p>
+<p>The question then becomes, how to display the data. The easiest answer would be a little LCD screen, but that brings with it the downside of having a backlight in the kitchen, which would be ugly and distracting, and it also raises the question of viewing angles. Another answer would be some kind of physical indicator, but that requires skills I don't have time for. Instead, I decided to look for an E-Ink display (think <a href="https://kindle.amazon.com/">Kindle</a>) - it would let me display simple images without producing light.</p>
+<p>The first option I looked at was the <a href="https://www.kickstarter.com/projects/pisupply/papirus-the-epaper-screen-hat-for-your-raspberry-p">PaPiRus</a>, but it's in the window between its crowdfunding drive having finished, and being available to buy. The only other option I could find was the <a href="http://www.percheron-electronics.uk/shop/e-paper-hat/">E-Paper HAT</a>, from Percheron Electronics, which also started life as a crowdfunding project, but is actually available to buy.</p>
+<p>Unfortunately, these displays are super fragile, which I discovered by destroying the first one, but Neil at Percheron was super helpful and I quickly had a new display and some tips about how to avoid cracking it.</p>
+<p>My visualisation of this data isn't going to win any awards for beauty, but it serves its purpose by showing a big number to tell us how many minutes we have, and I managed to minimise the number of times you see the white-black-white refresh cycle of the eInk display with partial screen updates.
+Here are some photos of the project in various stages of construction:</p>
+<p><img alt="Freshly assembled out of the box" src="../../../images/IMG_6856.JPG">
+<em>Freshly assembled out of the box</em></p>
+<p><img alt="The smallest USB WiFi adapter I've ever seen" src="../../../images/IMG_6857.JPG">
+<em>The smallest USB WiFi adapter I've ever seen!</em></p>
+<p><img alt="Modified PiBow case" src="../../../images/IMG_6858.JPG">
+<em>Sadly I had to make some modifications to the PiBow case to fit this particular rPi</em></p>
+<p><img alt="Running an eInk test program" src="../../../images/IMG_6864.JPG">
+<em>Running one of the eInk display test programs</em></p>
+<p>Initially I was rather hoping I could use the famous font that TfL (and London Transport before it) use, which is known as Johnston, but sadly they will not licence the font outside their own use and use by contracted partners. There is a third party clone of the font, but it may have legal issues, presumably because TfL values their braaaaaand. Instead, I decided to just drop the idea of shipping a font with the code, and exported Courier.ttf from my laptop to the Pi directly.</p>
+<p><img alt="TfL font" src="../../../images/IMG_6897.JPG">
+<em>This would have been nice, but I cannot have nice font things</em></p>
+<p>I did briefly try Ubuntu Mono, which is a lovely font, but the zeros look like eyes and it freaked me out.</p>
+<p><img alt="PIBUS IS WATCHING YOU" src="../../../images/Screenshot_2015-12-08_14.03.28.png">
+<em>PIBUS IS WATCHING YOU</em></p>
+<p>The display needs to handle various different situations, most obviously, when no data can be fetched from the API. Rather than get too bogged down in the details of whether our Internet connection is down, TfL's API servers are down, London is on fire, or it's just night time and there are no buses, I went for a simple message with a timestamp. Once this has been displayed, the code skips any further screen updates until it has valid data again. This makes it easy to see when a problem occurred.</p>
+<p><img alt="Date message" src="../../../images/IMG_7010.JPG">
+<em>Maybe aliens stole the Internet, maybe it's a bus strike. It doesn't matter.</em></p>
+<p>I also render a small timestamp on valid data screens too, showing when the last data fetch happened. This is mostly so I can be sure that the fetching code isn't stuck somehow. Once I trust the system a bit more, this can probably come out.</p>
+<p><img alt="Final design" src="../../../images/IMG_7012.JPG">
+<em>The final design, showing a fallback for when there is data for  0 &lt; x &lt; 3 buses</em></p>
+<p><img alt="Three buses" src="../../../images/IMG_7013.JPG">
+<em>Data for three buses, plenty of time to get ready for the second one!</em></p>
+<p>So there it is, project completed! Grab the code from <a href="https://github.com/cmsj/pibus">https://github.com/cmsj/pibus</a>, install the requirements on a Pi, give money to the awesome Percheron Electronics for the E-Paper HAT (and matching PiBow case), throw a font in the directory and edit the scripts for the bus stop and bus route that you care about!</p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <section class="author">
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones.</p>
+      </div>
+    </footer>
+</body>
+</html>
