@@ -674,128 +674,128 @@ OS X does ship with a tool that can import photos from camera devices and delete
 &lt;p&gt;This involves using Automator to build a Folder Action workflow for the directory that AutoImporter is pulling the photos into. All it does is check to see if AutoImporter is still running and if so wait, then launch Aperture and tell it to import everything from that directory into a particular Project, and then delete the source files:
 &lt;img alt="Aperture autoimport workflow" src="http://cmsj.net/images/aperture-autoimport-workflow.png"&gt;&lt;/p&gt;
 &lt;h2&gt;&lt;strong&gt;That's it!&lt;/strong&gt;&lt;/h2&gt;
-&lt;p&gt;Really, that's all there is. Now whenever you plug in your iPhone, all of the pictures and movies you've taken recently, will get imported into Aperture for you to process, archive, touch-up, export or whatever else it is that you do with your photos and movies.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Chris Jones</dc:creator><pubDate>Sun, 01 Jul 2012 00:00:00 +0100</pubDate><guid isPermaLink="false">tag:cmsj.net,2012-07-01:/2012/07/01/photo-import-workflow.html</guid></item><item><title>A sysadmin talks OpenSSH tips and tricks</title><link>http://cmsj.net/2012/02/07/sysadmin-talks-openssh-tips-and-tricks.html</link><description>&lt;p&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;&lt;strong&gt;My take on more advanced SSH usage&lt;/strong&gt;&lt;/span&gt;
-I've seen a few articles recently on sites like HackerNews which claimed to cover some advanced SSH techniques/tricks. They were good articles, but for me (as a systems administrator) didn't get into the really powerful guts of OpenSSH.
-So, I figured that I ought to pony up and write about some of the more advanced tricks that I have either used or seen others use. These will most likely be relevant to people who manage tens/hundreds of servers via SSH. Some of them are about actual configuration options for OpenSSH, others are recommendations for ways of working with OpenSSH.
-&lt;span class="Apple-style-span" style="font-size: large;"&gt;&lt;strong&gt;Generate your &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;~/.ssh/config&lt;/span&gt;&lt;/strong&gt;&lt;/span&gt;
-This isn't strictly an OpenSSH trick, but it's worth noting. If you have other sources of knowledge about your systems, automation can do a lot of the legwork for you in creating an SSH config. A perfect example here would be if you have some kind of database which knows about all your servers - you can use that to produce a fragment of an SSH config, then download it to your workstation and concatenate it with various other fragments into a final config. If you mix this with distributed version control, your entire team can share a broadly identical SSH config, with allowance for each person to have a personal fragment for their own preferences and personal hosts. I can't recommend this sort of collaborative working enough.
-&lt;strong&gt;
-&lt;/strong&gt;
-&lt;strong&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;Generate your &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;~/.ssh/known_hosts&lt;/span&gt;&lt;/span&gt;&lt;/strong&gt;
-&lt;span class="Apple-style-span" style="font-weight: normal;"&gt;This follows on from the previous item. If you have some kind of database of servers, teach it the SSH host key of each (usually something like &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;/etc/ssh/ssh_host_rsa_key.pub&lt;/span&gt;) then you can export a file with the keys and hostnames in the correct format to use as a &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;known_hosts&lt;/span&gt; file, e.g.:&lt;/span&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace; font-weight: normal;"&gt;server1.company.com 10.0.0.101 ssh-rsa BLAHBLAHCRYPTOMUMBO&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="font-weight: normal;"&gt;You can then associate this with all the relevant hosts by including something like this in your &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;~/.ssh/config&lt;/span&gt;:&lt;/span&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;Host *.mycompany.com
-  UserKnownHostsFile ~/.ssh/generated_known_hosts
-  StrictHostKeyChecking yes&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
+&lt;p&gt;Really, that's all there is. Now whenever you plug in your iPhone, all of the pictures and movies you've taken recently, will get imported into Aperture for you to process, archive, touch-up, export or whatever else it is that you do with your photos and movies.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Chris Jones</dc:creator><pubDate>Sun, 01 Jul 2012 00:00:00 +0100</pubDate><guid isPermaLink="false">tag:cmsj.net,2012-07-01:/2012/07/01/photo-import-workflow.html</guid></item><item><title>A sysadmin talks OpenSSH tips and tricks</title><link>http://cmsj.net/2012/02/07/sysadmin-talks-openssh-tips-and-tricks.html</link><description>&lt;h1&gt;My take on more advanced SSH usage&lt;/h1&gt;
+&lt;p&gt;I've seen a few articles recently on sites like HackerNews which claimed to cover some advanced SSH techniques/tricks. They were good articles, but for me (as a systems administrator) didn't get into the really powerful guts of OpenSSH.&lt;/p&gt;
+&lt;p&gt;So, I figured that I ought to pony up and write about some of the more advanced tricks that I have either used or seen others use. These will most likely be relevant to people who manage tens/hundreds of servers via SSH. Some of them are about actual configuration options for OpenSSH, others are recommendations for ways of working with OpenSSH.&lt;/p&gt;
+&lt;h2&gt;Generate your ~/.ssh/config&lt;/h2&gt;
+&lt;p&gt;This isn't strictly an OpenSSH trick, but it's worth noting. If you have other sources of knowledge about your systems, automation can do a lot of the legwork for you in creating an SSH config. A perfect example here would be if you have some kind of database which knows about all your servers - you can use that to produce a fragment of an SSH config, then download it to your workstation and concatenate it with various other fragments into a final config. If you mix this with distributed version control, your entire team can share a broadly identical SSH config, with allowance for each person to have a personal fragment for their own preferences and personal hosts. I can't recommend this sort of collaborative working enough.&lt;/p&gt;
+&lt;h2&gt;Generate your ~/.ssh/known_hosts&lt;/h2&gt;
+&lt;p&gt;This follows on from the previous item. If you have some kind of database of servers, teach it the SSH host key of each (usually something like &lt;code&gt;/etc/ssh/ssh_host_rsa_key.pub&lt;/code&gt;) then you can export a file with the keys and hostnames in the correct format to use as a &lt;code&gt;known_hosts&lt;/code&gt; file, e.g.:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;server1.company.com 10.0.0.101 ssh-rsa BLAHBLAHCRYPTOMUMBO&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;You can then associate this with all the relevant hosts by including something like this in your &lt;code&gt;~/.ssh/config&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Host *.mycompany.com
+    UserKnownHostsFile ~/.ssh/generated_known_hosts
+    StrictHostKeyChecking yes
+&lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;p&gt;This brings some serious advantages:
--   &lt;strong&gt;Safer&lt;/strong&gt; - because you have pre-loaded all of the host keys and specified strict host key checking, SSH will prompt you if you connect to a machine and something has changed.
--   &lt;strong&gt;Discoverable&lt;/strong&gt; - if you have tab completion, your shell will let you explore your infrastructure just by prodding the Tab key.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;Keep your private keys, private, private&lt;/span&gt;&lt;/strong&gt;
-&lt;span class="Apple-style-span"&gt;This seems like it ought to be more obvious than it perhaps is... the private halves of your SSH keys are very privileged things. You should treat them with a great deal of respect. Don't put them on multiple machines (SSH keys are cheap to generate and revoke) and don't back them up.&lt;/span&gt;
-&lt;span class="Apple-style-span"&gt;
-&lt;/span&gt;
-&lt;strong&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;Know your limits&lt;/span&gt;&lt;/strong&gt;
-If you're going to write a config snippet that applies to a lot of hosts you can't match with a wildcard, you may end up with a very long &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;Host&lt;/span&gt; line in your ssh config. It's worth remembering that there is a limit to the length of lines: 1024 characters. If you're going to need to exceed that, you will have to just have multiple &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;Host&lt;/span&gt; sections with the same options.&lt;/p&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;&lt;strong&gt;Set sane global defaults&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;HashKnownHosts no
+ * Safer - because you have pre-loaded all of the host keys and specified strict host key checking, SSH will prompt you if you connect to a machine and something has changed.
+ * Discoverable - if you have tab completion, your shell will let you explore your infrastructure just by prodding the Tab key.&lt;/p&gt;
+&lt;h2&gt;Keep your private keys, private, private&lt;/h2&gt;
+&lt;p&gt;This seems like it ought to be more obvious than it perhaps is... the private halves of your SSH keys are very privileged things. You should treat them with a great deal of respect. Don't put them on multiple machines (SSH keys are cheap to generate and revoke) and don't back them up.&lt;/p&gt;
+&lt;h2&gt;Know your limits&lt;/h2&gt;
+&lt;p&gt;If you're going to write a config snippet that applies to a lot of hosts you can't match with a wildcard, you may end up with a very long &lt;code&gt;Host&lt;/code&gt; line in your ssh config. It's worth remembering that there is a limit to the length of lines: 1024 characters. If you're going to need to exceed that, you will have to just have multiple &lt;code&gt;Host&lt;/code&gt; sections with the same options.&lt;/p&gt;
+&lt;h2&gt;Set sane global defaults&lt;/h2&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;HashKnownHosts no
 Host *
-  GSSAPIAuthentication no
-  ForwardAgent no&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
+    GSSAPIAuthentication no
+    ForwardAgent no
+&lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;p&gt;These are very sane global defaults:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;Known hosts hashing is good for keeping your hostnames secret from people who obtain your &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;known_hosts&lt;/span&gt; file, but is also really very inconvenient as you are also unable to get any useful information out of the file yourself (such as tab completion). If you're still feeling paranoid you might consider tightening the permissions on your &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;known_hosts&lt;/span&gt; file as it may be readable by other users on your workstation.&lt;/li&gt;
+&lt;li&gt;Known hosts hashing is good for keeping your hostnames secret from people who obtain your &lt;code&gt;known_hosts&lt;/code&gt; file, but is also really very inconvenient as you are also unable to get any useful information out of the file yourself (such as tab completion). If you're still feeling paranoid you might consider tightening the permissions on your &lt;code&gt;known_hosts&lt;/code&gt; file as it may be readable by other users on your workstation.&lt;/li&gt;
 &lt;li&gt;GSSAPI is very unlikely to be something you need, it's just slowing things down if it's enabled.&lt;/li&gt;
-&lt;li&gt;Agent forwarding can be tremendously dangerous and should, I think, be actively and passionately discouraged. It ought to be a nice feature, but it requires that you trust remote hosts unequivocally as if they had your private keys, because functionally speaking, they do. They don't actually have the private key material, but any sufficiently privileged process on the remote server can connect back to the SSH agent running on your workstation and request it respond to challenges from an SSH server. If you keep your keys unlocked in an SSH agent, this gives any privileged attacker on a server you are logged into, trivial access to any other machine your keys can SSH into&lt;span class="Apple-style-span" style="font-family: Times, 'Times New Roman', serif;"&gt;. &lt;/span&gt;If you somehow depend on using agent forwarding with Internet facing servers, please re-consider your security model (unless you are able to robustly and accurately argue why your usage is safe, but if that is the case then you don't need to be reading a post like this!)&lt;/li&gt;
+&lt;li&gt;Agent forwarding can be tremendously dangerous and should, I think, be actively and passionately discouraged. It ought to be a nice feature, but it requires that you trust remote hosts unequivocally as if they had your private keys, because functionally speaking, they do. They don't actually have the private key material, but any sufficiently privileged process on the remote server can connect back to the SSH agent running on your workstation and request it respond to challenges from an SSH server. If you keep your keys unlocked in an SSH agent, this gives any privileged attacker on a server you are logged into, trivial access to any other machine your keys can SSH into. If you somehow depend on using agent forwarding with Internet facing servers, please re-consider your security model (unless you are able to robustly and accurately argue why your usage is safe, but if that is the case then you don't need to be reading a post like this!)&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;&lt;strong&gt;Notify useful metadata&lt;/strong&gt;&lt;/span&gt;&lt;/p&gt;
-&lt;p&gt;If you're using a Linux or OSX desktop, you either have something like &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;notify-send(1)&lt;/span&gt; or Growl for desktop notifications. You can hook this into your SSH config to display useful metadata to yourself. The easiest way to do this is via the &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;LocalCommand&lt;/span&gt; option:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;Host *
-  PermitLocalCommand yes
-  LocalCommand /home/user/bin/ssh-notify.sh %h&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;This will call the &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;ssh-notify.sh&lt;/span&gt; script every time you SSH to a host, passing the hostname you gave, as an argument.  In the script you probably want to ensure you're actually in an interactive terminal and not some kind of backgrounded batch session - this can be done trivially by ensuring that &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;tty -s&lt;/span&gt; returns zero. Now the script just needs to go and fetch some metadata about the server you're connecting to (e.g. its physical location, the services that run on it, its hardware specs, etc.) and format them into a command that will display a notification.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;Sidestep overzealous key agents&lt;/span&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If you have a lot of SSH keys in your ssh-agent (e.g. more than about 5) you may have noticed that SSHing to machines which want a password, or those which you wish to use a specific key that isn't in your agent, can be quite tricky. The reason for this is that OpenSSH currently seems to talk to the agent in preference to obeying command line options (i.e. &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;-i&lt;/span&gt;) or config file directives (i.e. &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;IdentityFile or PreferredAuthentications&lt;/span&gt;). You can force the behaviour you are asking for with the &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;IdentitiesOnly&lt;/span&gt; option, e.g.:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;Host server1.company.com
-  IdentityFile /some/rarely/used/ssh.key
-  IdentitiesOnly yes&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;(on a command line you would add this with &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;-o IdentitiesOnly=yes&lt;/span&gt;)
-&lt;strong&gt;
-&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;Match hosts with wildcards&lt;/span&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;h2&gt;Notify useful metadata&lt;/h2&gt;
+&lt;p&gt;If you're using a Linux or OSX desktop, you either have something like &lt;code&gt;notify-send(1)&lt;/code&gt; or Growl for desktop notifications. You can hook this into your SSH config to display useful metadata to yourself. The easiest way to do this is via the &lt;code&gt;LocalCommand&lt;/code&gt; option:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Host *
+    PermitLocalCommand yes
+    LocalCommand /home/user/bin/ssh-notify.sh %h
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This will call the &lt;code&gt;ssh-notify.sh&lt;/code&gt; script every time you SSH to a host, passing the hostname you gave, as an argument.  In the script you probably want to ensure you're actually in an interactive terminal and not some kind of backgrounded batch session - this can be done trivially by ensuring that &lt;code&gt;tty -s&lt;/code&gt; returns zero. Now the script just needs to go and fetch some metadata about the server you're connecting to (e.g. its physical location, the services that run on it, its hardware specs, etc.) and format them into a command that will display a notification.&lt;/p&gt;
+&lt;h2&gt;Sidestep overzealous key agents&lt;/h2&gt;
+&lt;p&gt;If you have a lot of SSH keys in your ssh-agent (e.g. more than about 5) you may have noticed that SSHing to machines which want a password, or those which you wish to use a specific key that isn't in your agent, can be quite tricky. The reason for this is that OpenSSH currently seems to talk to the agent in preference to obeying command line options (i.e. &lt;code&gt;-i&lt;/code&gt;) or config file directives (i.e. &lt;code&gt;IdentityFile&lt;/code&gt; or PreferredAuthentications). You can force the behaviour you are asking for with the &lt;code&gt;IdentitiesOnly&lt;/code&gt; option, e.g.:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Host server1.company.com
+    IdentityFile /some/rarely/used/ssh.key
+    IdentitiesOnly yes
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;(on a command line you would add this with &lt;code&gt;-o IdentitiesOnly=yes&lt;/code&gt;)&lt;/p&gt;
+&lt;h2&gt;Match hosts with wildcards&lt;/h2&gt;
 &lt;p&gt;Sometimes you need to talk to a lot of almost identically-named servers. Obviously SSH has a way to make this easier or I wouldn't be mentioning this. For example, if you needed to ssh to a cluster of remote management devices:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;Host *.company.com management-rack-??.company.com
-  User root
-  PreferredAuthentications password&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;This will match anything ending in &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;.company.com&lt;/span&gt; and also anything that starts with &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;management-rack-&lt;/span&gt; and then has two characters, followed by &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;.company.com&lt;/span&gt;.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;Per-host SSH keys&lt;/span&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Host *.company.com management-rack-??.company.com
+    User root
+    PreferredAuthentications password
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This will match anything ending in &lt;code&gt;.company.com&lt;/code&gt; and also anything that starts with &lt;code&gt;management-rack-&lt;/code&gt; and then has two characters, followed by &lt;code&gt;.company.com&lt;/code&gt;.&lt;/p&gt;
+&lt;h2&gt;Per-host SSH keys&lt;/h2&gt;
 &lt;p&gt;You may have some machines where you have a different key for each machine. By naming them after the fully qualified domain names of the hosts they relate to, you can skip over a more tedious SSH config with something like the following:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;Host server-??.company.com
-  IdentityFile /some/path/id_rsa-%h&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;(the &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;%h&lt;/span&gt; will be substituted with the FQDN you're SSHing to. The &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;ssh_config&lt;/span&gt; man page lists a few other available substitutions.)&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;Use fake, per-network port forwarding hosts&lt;/span&gt;&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;If you have network management devices which require web access that you normally forward ports for with the &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;-L&lt;/span&gt; option, consider constructing a fake host in your SSH config which establishes all of the port forwards you need for that network/datacentre/etc:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;Host port-forwards-site1.company.com
-  Hostname server1.company.com
-  LocalForward 1234 10.0.0.101:1234&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;This also means that your forwards will be on the same port each time, which makes saving certificates in your browser a reasonable undertaking. All you need to do is &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;ssh port-forwards-site1.company.com&lt;/span&gt; (using nifty Tab completion of course!) and you're done. If you don't want it tying up a terminal you can add the options &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;-f&lt;/span&gt; and &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;-N&lt;/span&gt; to your command line, which will establish the ssh connection in the background.&lt;/p&gt;
-&lt;p&gt;If you're using programs which support SOCKS (e.g. Firefox and many other desktop Linux apps) you can use the &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;DynamicForward&lt;/span&gt; option to send traffic over the SSH connection without having to add &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;LocalForward&lt;/span&gt; entries for each port you care about. Used with a browser extension such as FoxyProxy (which lets you configure multiple proxies based on wildcard/regexp URL matches) makes for a very flexible setup.&lt;/p&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;&lt;strong&gt;Use an SSH jump host&lt;/strong&gt;&lt;/span&gt;
-Rather than have tens/dozens/hundreds/etc of servers holding their SSH port open to the Internet and being battered with brute force password cracking attempts, you might consider having a single host listening (or a single host per network perhaps), which you can proxy your SSH connections through.
-If you do consider something like this, you must resist the temptation to place private keys on the jump host - to do so would utterly defeat the point.
-Instead, you can use an old, but very nifty trick that completely hides the jump host from your day-to-day usage:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;Host jumphost.company.com
-  ProxyCommand none
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Host server-??.company.com
+    IdentityFile /some/path/id_rsa-%h
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;(the &lt;code&gt;%h&lt;/code&gt; will be substituted with the FQDN you're SSHing to. The &lt;code&gt;ssh_config&lt;/code&gt; man page lists a few other available substitutions.)&lt;/p&gt;
+&lt;h2&gt;Use fake, per-network port forwarding hosts&lt;/h2&gt;
+&lt;p&gt;If you have network management devices which require web access that you normally forward ports for with the &lt;code&gt;-L&lt;/code&gt; option, consider constructing a fake host in your SSH config which establishes all of the port forwards you need for that network/datacentre/etc:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Host port-forwards-site1.company.com
+    Hostname server1.company.com
+    LocalForward 1234 10.0.0.101:1234
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This also means that your forwards will be on the same port each time, which makes saving certificates in your browser a reasonable undertaking. All you need to do is &lt;code&gt;ssh port-forwards-site1.company.com&lt;/code&gt; (using nifty Tab completion of course!) and you're done. If you don't want it tying up a terminal you can add the options &lt;code&gt;-f&lt;/code&gt; and &lt;code&gt;-N&lt;/code&gt; to your command line, which will establish the ssh connection in the background.&lt;/p&gt;
+&lt;p&gt;If you're using programs which support SOCKS (e.g. Firefox and many other desktop Linux apps) you can use the &lt;code&gt;DynamicForward&lt;/code&gt; option to send traffic over the SSH connection without having to add &lt;code&gt;LocalForward&lt;/code&gt; entries for each port you care about. Used with a browser extension such as FoxyProxy (which lets you configure multiple proxies based on wildcard/regexp URL matches) makes for a very flexible setup.&lt;/p&gt;
+&lt;h2&gt;Use an SSH jump host&lt;/h2&gt;
+&lt;p&gt;Rather than have tens/dozens/hundreds/etc of servers holding their SSH port open to the Internet and being battered with brute force password cracking attempts, you might consider having a single host listening (or a single host per network perhaps), which you can proxy your SSH connections through.&lt;/p&gt;
+&lt;p&gt;If you do consider something like this, you must resist the temptation to place private keys on the jump host - to do so would utterly defeat the point.&lt;/p&gt;
+&lt;p&gt;Instead, you can use an old, but very nifty trick that completely hides the jump host from your day-to-day usage:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Host jumphost.company.com
+    ProxyCommand none
 Host *.company.com
-  ProxyCommand ssh jumphost.company.com nc -q0 %h %p&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;You might wonder what on earth that is doing, but it's really quite simple. The first &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;Host&lt;/span&gt; stanza just means we won't use any special commands to connect to the jump host itself. The second &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;Host&lt;/span&gt; stanza says that in order to connect to anything ending in &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;.company.com&lt;/span&gt; (but excluding &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;jumphost.company.com&lt;/span&gt; because it just matched the previous stanza) we will first SSH to the jump host and then use &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;nc(1)&lt;/span&gt; (i.e. netcat) to connect to the relevant port (&lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;%p&lt;/span&gt;) on the host we originally asked for (&lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;%h&lt;/span&gt;). Your local SSH client now has a session open to the jump host which is acting like it's a socket to the SSH port on the host you wanted to talk to, so it just uses that connection to establish an SSH session with the machine you wanted. Simple!
-For those of you lucky enough to be connecting to servers that have OpenSSH 5.4 or newer, you can replace the jump host &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;ProxyCommand&lt;/span&gt; with:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;ProxyCommand ssh -W %h:%p jumphost.company.com&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;&lt;strong&gt;Re-use existing SSH connections&lt;/strong&gt;&lt;/span&gt;
-Some people swear by this trick, but because I'm very close to my servers and have a decent CPU, the setup time for connections doesn't bother me. Folks who are many milliseconds from their servers, or who don't have unquenchable techno-lust for new workstations, may appreciate saving some time when establishing SSH connections.
-The idea is that OpenSSH can place connections into the background automatically, and re-use those existing secure channels when you ask for a new &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;ssh(1)&lt;/span&gt;, &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;scp(1)&lt;/span&gt; or &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;sftp(1)&lt;/span&gt; connections to hosts you have already spoken to. The configuration I would recommend for this, would be:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;Host *
-  ControlMaster auto
-  ControlPath ~/.ssh/control/%h-%l-%p
-  ControlPersist 600&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
+    ProxyCommand ssh jumphost.company.com nc -q0 %h %p
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;You might wonder what on earth that is doing, but it's really quite simple. The first &lt;code&gt;Host&lt;/code&gt; stanza just means we won't use any special commands to connect to the jump host itself. The second &lt;code&gt;Host&lt;/code&gt; stanza says that in order to connect to anything ending in &lt;code&gt;.company.com&lt;/code&gt; (but excluding &lt;code&gt;jumphost.company.com&lt;/code&gt; because it just matched the previous stanza) we will first SSH to the jump host and then use &lt;code&gt;nc(1)&lt;/code&gt; (i.e. netcat) to connect to the relevant port (&lt;code&gt;%p&lt;/code&gt;) on the host we originally asked for (&lt;code&gt;%h&lt;/code&gt;). Your local SSH client now has a session open to the jump host which is acting like it's a socket to the SSH port on the host you wanted to talk to, so it just uses that connection to establish an SSH session with the machine you wanted. Simple!&lt;/p&gt;
+&lt;p&gt;For those of you lucky enough to be connecting to servers that have OpenSSH 5.4 or newer, you can replace the jump host &lt;code&gt;ProxyCommand&lt;/code&gt; with:&lt;/p&gt;
+&lt;p&gt;&lt;code&gt;ProxyCommand ssh -W %h:%p jumphost.company.com&lt;/code&gt;&lt;/p&gt;
+&lt;h2&gt;Re-use existing SSH connections&lt;/h2&gt;
+&lt;p&gt;Some people swear by this trick, but because I'm very close to my servers and have a decent CPU, the setup time for connections doesn't bother me. Folks who are many milliseconds from their servers, or who don't have unquenchable techno-lust for new workstations, may appreciate saving some time when establishing SSH connections.&lt;/p&gt;
+&lt;p&gt;The idea is that OpenSSH can place connections into the background automatically, and re-use those existing secure channels when you ask for a new &lt;code&gt;ssh(1)&lt;/code&gt;, &lt;code&gt;scp(1)&lt;/code&gt; or &lt;code&gt;sftp(1)&lt;/code&gt; connections to hosts you have already spoken to. The configuration I would recommend for this, would be:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Host *
+    ControlMaster auto
+    ControlPath ~/.ssh/control/%h-%l-%p
+    ControlPersist 600
+&lt;/pre&gt;&lt;/div&gt;
+
+
 &lt;p&gt;This will do several things:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;&lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;ControlMaster auto&lt;/span&gt; will cause OpenSSH to establish the "master" connection sockets as needed, falling back to normal connections if something is wrong.&lt;/li&gt;
-&lt;li&gt;The &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;ControlPath&lt;/span&gt; option specifies where the connection sockets will live. Here we are placing them in a directory and giving them filenames that consist of the hostname, login username and port, which ought to be sufficient to uniquely identify each connection. If you need to get more specific, you can place this section near the end of your config and have explicit &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;ControlPath&lt;/span&gt; entries in earlier &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;Host&lt;/span&gt; stanzas.&lt;/li&gt;
-&lt;li&gt;&lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;ControlPersist 600&lt;/span&gt; causes the master connections to die if they are idle for 10 minutes. The default is that they live on as long as your network is connected - if you have hundreds of servers this will add up to an awful lot of &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;ssh(1)&lt;/span&gt; processes running on your workstation! Depending on your needs, 10 minutes may not be long enough.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ControlMaster auto&lt;/code&gt; will cause OpenSSH to establish the "master" connection sockets as needed, falling back to normal connections if something is wrong.&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;ControlPath&lt;/code&gt; option specifies where the connection sockets will live. Here we are placing them in a directory and giving them filenames that consist of the hostname, login username and port, which ought to be sufficient to uniquely identify each connection. If you need to get more specific, you can place this section near the end of your config and have explicit &lt;code&gt;ControlPath&lt;/code&gt; entries in earlier &lt;code&gt;Host&lt;/code&gt; stanzas.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;ControlPersist 600&lt;/code&gt; causes the master connections to die if they are idle for 10 minutes. The default is that they live on as long as your network is connected - if you have hundreds of servers this will add up to an awful lot of &lt;code&gt;ssh(1)&lt;/code&gt; processes running on your workstation! Depending on your needs, 10 minutes may not be long enough.&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;&lt;strong&gt;&lt;em&gt;Note:&lt;/em&gt;&lt;/strong&gt; You should make the &lt;span class="Apple-style-span" style="font-family: 'Courier New', Courier, monospace;"&gt;~/.ssh/control&lt;/span&gt; directory ahead of time and ensure that only your user can access it.&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;Cope with old/buggy SSH devices&lt;/span&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Note:&lt;/em&gt; You should make the &lt;code&gt;~/.ssh/control&lt;/code&gt; directory ahead of time and ensure that only your user can access it.&lt;/p&gt;
+&lt;h2&gt;Cope with old/buggy SSH devices&lt;/h2&gt;
 &lt;p&gt;Perhaps you have a bunch of management devices in your infrastructure and some of them are a few years old already. Should you find yourself trying to SSH to them, you might find that your connections don't work very well. Perhaps your SSH client is too new and is offering algorithms their creaky old SSH servers can't abide. You can strip down the long default list of algorithms to this to ones that a particular device supports, e.g.:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="background-color: #ead1dc; font-family: 'Courier New', Courier, monospace;"&gt;Host power-device-1.company.com
-  HostkeyAlgorithms ssh-rsa,ssh-dss&lt;/span&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;span class="Apple-style-span" style="font-size: large;"&gt;&lt;strong&gt;That's all folks&lt;/strong&gt;&lt;/span&gt;
-Those are the most useful tips and tricks I have for now. Hopefully someone will read this and think "hah! I can do &lt;strong&gt;&lt;em&gt;much&lt;/em&gt;&lt;/strong&gt; more advanced stuff than that!" and one-up me :)
-Do feel free to comment if you do have something sneaky to add, I'll gladly steal your ideas!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Chris Jones</dc:creator><pubDate>Tue, 07 Feb 2012 00:00:00 +0000</pubDate><guid isPermaLink="false">tag:cmsj.net,2012-02-07:/2012/02/07/sysadmin-talks-openssh-tips-and-tricks.html</guid></item><item><title>Evil shell genius</title><link>http://cmsj.net/2012/01/23/evil-shell-genius.html</link><description>&lt;p&gt;Jono Lange was committing acts of great evil in Bash earlier today. I gave him a few pointers and we agreed that it was sufficiently evil that it deserved a blog post.
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;Host power-device-1.company.com
+    HostkeyAlgorithms ssh-rsa,ssh-dss
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;That's all folks&lt;/h2&gt;
+&lt;p&gt;Those are the most useful tips and tricks I have for now. Hopefully someone will read this and think "hah! I can do &lt;strong&gt;&lt;em&gt;much&lt;/em&gt;&lt;/strong&gt; more advanced stuff than that!" and one-up me :)&lt;/p&gt;
+&lt;p&gt;Do feel free to comment if you do have something sneaky to add, I'll gladly steal your ideas!&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Chris Jones</dc:creator><pubDate>Tue, 07 Feb 2012 00:00:00 +0000</pubDate><guid isPermaLink="false">tag:cmsj.net,2012-02-07:/2012/02/07/sysadmin-talks-openssh-tips-and-tricks.html</guid></item><item><title>Evil shell genius</title><link>http://cmsj.net/2012/01/23/evil-shell-genius.html</link><description>&lt;p&gt;Jono Lange was committing acts of great evil in Bash earlier today. I gave him a few pointers and we agreed that it was sufficiently evil that it deserved a blog post.
 So, if you find yourself wishing you could get pretty desktop notifications when long-running shell commands complete, see his post &lt;a href="http://code.mumak.net/2012/01/undistract-me.html"&gt;here&lt;/a&gt; for the details.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Chris Jones</dc:creator><pubDate>Mon, 23 Jan 2012 00:00:00 +0000</pubDate><guid isPermaLink="false">tag:cmsj.net,2012-01-23:/2012/01/23/evil-shell-genius.html</guid></item><item><title>HP Microserver Remote Access helper</title><link>http://cmsj.net/2012/01/06/hp-microserver-remote-access-helper.html</link><description>&lt;p&gt;I've only had the Remote Access card installed in my HP Microserver for a few hours and already I am bored of accessing it by first logging into the web UI, then navigating to the right bit of the UI, then clicking a button to download a .jnlp file and then running that with javaws(1).
 Instead, I have written some Python that will login for you, fetch the file and execute javaws. Much better!
 You can find the code: &lt;a href="http://bazaar.launchpad.net/~cmsj/+junk/microserver/view/head:/vkvm.py"&gt;here&lt;/a&gt; and you'll want to have python-httplib2 installed.&lt;/p&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Chris Jones</dc:creator><pubDate>Fri, 06 Jan 2012 00:00:00 +0000</pubDate><guid isPermaLink="false">tag:cmsj.net,2012-01-06:/2012/01/06/hp-microserver-remote-access-helper.html</guid></item><item><title>HP Microserver Remote Access Card</title><link>http://cmsj.net/2012/01/05/hp-microserver-remote-access-card.html</link><description>&lt;p&gt;I've been using an HP ProLiant Microserver (N36L) as my fileserver at home, for about a year and it's been a really reliable little workhorse.
