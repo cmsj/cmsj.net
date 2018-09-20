@@ -731,9 +731,11 @@ OS X does ship with a tool that can import photos from camera devices and delete
 &lt;/pre&gt;&lt;/div&gt;
 
 
-&lt;p&gt;This brings some serious advantages:
- * Safer - because you have pre-loaded all of the host keys and specified strict host key checking, SSH will prompt you if you connect to a machine and something has changed.
- * Discoverable - if you have tab completion, your shell will let you explore your infrastructure just by prodding the Tab key.&lt;/p&gt;
+&lt;p&gt;This brings some serious advantages:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Safer - because you have pre-loaded all of the host keys and specified strict host key checking, SSH will prompt you if you connect to a machine and something has changed.&lt;/li&gt;
+&lt;li&gt;Discoverable - if you have tab completion, your shell will let you explore your infrastructure just by prodding the Tab key.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;h2&gt;Keep your private keys, private, private&lt;/h2&gt;
 &lt;p&gt;This seems like it ought to be more obvious than it perhaps is... the private halves of your SSH keys are very privileged things. You should treat them with a great deal of respect. Don't put them on multiple machines (SSH keys are cheap to generate and revoke) and don't back them up.&lt;/p&gt;
 &lt;h2&gt;Know your limits&lt;/h2&gt;
