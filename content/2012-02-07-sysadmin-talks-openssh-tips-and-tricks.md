@@ -28,6 +28,7 @@ Host *.mycompany.com
 ```
 
 This brings some serious advantages:
+
  * Safer - because you have pre-loaded all of the host keys and specified strict host key checking, SSH will prompt you if you connect to a machine and something has changed.
  * Discoverable - if you have tab completion, your shell will let you explore your infrastructure just by prodding the Tab key.
 

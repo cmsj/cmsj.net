@@ -124,6 +124,9 @@ github: publish
 	/Users/cmsj/Library/Python/3.7/bin/ghp-import -n -c cmsj.net -m "Generate Pelican site" -b $(GITHUB_PAGES_BRANCH) $(OUTPUTDIR)
 	git push origin $(GITHUB_PAGES_BRANCH)
 
-all: ipfs github
+push:
+	git push
+
+all: push ipfs github
 
 .PHONY: html help clean regenerate serve serve-global devserver stopserver publish ssh_upload rsync_upload dropbox_upload ftp_upload s3_upload cf_upload github
