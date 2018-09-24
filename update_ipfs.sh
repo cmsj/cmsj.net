@@ -13,7 +13,7 @@ HOSTEDZONE=ZLC6XW8O2UH0
 NAME=ipfs.cmsj.net
 REQUEST='{"HostedZoneId":"'$HOSTEDZONE'","ChangeBatch":{"Comment":"Updating '$NAME' to '$HASH'","Changes":[{"Action":"UPSERT","ResourceRecordSet":{"Name":"_dnslink.'$NAME'","Type":"TXT","TTL":30,"ResourceRecords":[{"Value":"\"dnslink=/ipfs/'$HASH'\""}]}}]}}'
 
-source ../r53_env.txt
+source ../_cmsj.net-r53_env.txt
 aws route53 change-resource-record-sets --cli-input-json "${REQUEST}"
 
 #echo "Linking files to cmsj.net..."
