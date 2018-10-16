@@ -39,4 +39,4 @@ SOCIAL = (('twitter', 'https://twitter.com/cmsj'),
 
 ARTICLE_URL = '{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 ARTICLE_SAVE_AS = '{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
-ARCHIVES_URL = 'archive.html'
+ARCHIVES_URL = 'archives.html'
