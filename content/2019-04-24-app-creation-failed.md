@@ -3,7 +3,7 @@ slug: app-creation-failed
 date: 2019-04-24
 
 
-I've just published https://github.com/cmsj/HotMic/ which contains a very good amount of a macOS app I had hoped to complete and sell for a couple of bucks on the Mac App Store.
+I've just published [https://github.com/cmsj/HotMic/](https://github.com/cmsj/HotMic/) which contains a very good amount of a macOS app I had hoped to complete and sell for a couple of bucks on the Mac App Store.
 
 However, I failed to get it working, primarily because I don't know enough of CoreAudio to get it working, and because I burned almost all of the time I had to write the app, fighting with things that, it turns out, were never going to work.
 
