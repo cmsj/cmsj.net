@@ -41,6 +41,123 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="./2010/06/08/lawnmower-man.html">The Lawnmower Man</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 08 June 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <h1>Introduction</h1>
+<p>This website shares a server with various other network services that form the foundation of my online life (i.e. IRC and Email) and I've been running into capacity issues in the last few months, so I'm running an experiment whereby I upgrade to brand new hardware (Quad Core i7, 8GB of RAM) and partition the available resources across virtual machines so the various network services are isolated into logical security zones.</p>
+<h1>Whining</h1>
+<p>I have plenty of experience using Xen for this sort of thing, but that's becoming more and more irrelevant in newer kernels/distributions. As much as I think that's a shame and a stupid upstream decision, I can't change it, so I need to move on to KVM and libvirt.</p>
+<h1>Resolution</h1>
+<p>So, with the beefy new server booted up in a -server kernel and a big, empty LVM Volume Group I got to work creating some virtual machines. This post is mainly a reminder to myself of the things I need to do for each VM :)</p>
+<h1>Action</h1>
+<p>These are the steps I used to make a VM with 1GB of RAM, 10GB / and 1GB of swap:</p>
+<h3>Create an LVM Logical Volume</h3>
+<div class="highlight"><pre><span></span>lvcreate -L11G -n somehostname VolumeGroup
+</pre></div>
+
+
+<h3>Create a VM image and libvirt XML definition</h3>
+<div class="highlight"><pre><span></span>ubuntu-vm-builder kvm lucid --arch amd64 --mem=1024 --cpus=1 \
+--raw=/dev/VolumeGroup/somehostname --rootsize=10240 --swapsize=1024 \
+--kernel-flavour=server --hostname=somehostname \
+--mirror=http://archive.ubuntu.com/ubuntu/ --components=main,universe \
+--name &#39;Chris Jones&#39; --user cmsj --pass &#39;ubuntu&#39; --bridge virbr0 \
+--libvirt qemu:///system --addpkg vim --addpkg ssh --addpkg ubuntu-minimal
+</pre></div>
+
+
+<p>Catchy command, huh? ;)</p>
+<h3>Wait</h3>
+<p>(building the VM will take a few minutes)</p>
+<h3>Modify the libvirt XML definition for performance</h3>
+<p>The best driver for disk/networking is the paravirtualised "virtio" driver. I found that ubuntu-vm-builder had already configured the networking to use this, but not the disk, so I modified the disk section to look like this:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;disk</span> <span class="na">type=</span><span class="s">&#39;block&#39;</span> <span class="na">device=</span><span class="s">&#39;disk&#39;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;source</span> <span class="na">dev=</span><span class="s">&#39;/dev/VolumeGroup/somehostname&#39;</span><span class="nt">/&gt;</span>
+  <span class="nt">&lt;target</span> <span class="na">dev=</span><span class="s">&#39;vda&#39;</span> <span class="na">bus=</span><span class="s">&#39;virtio&#39;</span><span class="nt">/&gt;</span>
+<span class="nt">&lt;/disk&gt;</span>
+</pre></div>
+
+
+<h3>Modify the libvirt XML definition for emulated serial console</h3>
+<p>I don't really want to use VNC to talk to the console of my VMs, so I add the following to the &lt;devices&gt; section of the XML definition to make a virtualised serial port and consider it a console:</p>
+<div class="highlight"><pre><span></span>    <span class="nt">&lt;serial</span> <span class="na">type=</span><span class="s">&#39;pty&#39;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;target</span> <span class="na">port=</span><span class="s">&#39;0&#39;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/serial&gt;</span>
+    <span class="nt">&lt;console</span> <span class="na">type=</span><span class="s">&#39;pty&#39;</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;target</span> <span class="na">port=</span><span class="s">&#39;0&#39;</span><span class="nt">/&gt;</span>
+    <span class="nt">&lt;/console&gt;</span>
+</pre></div>
+
+
+<h3>Modify the libvirt XML definition for a better CPU</h3>
+<p>I'm running this on an Intel Core i7 (Nehalem), but libvirt's newest defined CPU type is a Core2Duo, so we'll go with that in the root of the &lt;domain&gt; section:</p>
+<div class="highlight"><pre><span></span><span class="nt">&lt;cpu</span> <span class="na">match=</span><span class="s">&#39;minimum&#39;</span><span class="nt">&gt;</span>
+  <span class="nt">&lt;model&gt;</span>core2duo<span class="nt">&lt;/model&gt;</span>
+<span class="nt">&lt;/cpu&gt;</span>
+</pre></div>
+
+
+<h3>Import the XML definition into the running libvirt daemon</h3>
+<div class="highlight"><pre><span></span>virsh define /etc/libvirt/qemu/somehostname.xml
+</pre></div>
+
+
+<h3>Mount the VM's root filesystem</h3>
+<p>The Logical Volume we created should be considered as a whole disk, not a mountable partition, but dmsetup can present the partitions within it, and these should still be present after running ubuntu-vm-builder:</p>
+<div class="highlight"><pre><span></span>mkdir /mnt/tmpvmroot
+mount /dev/mapper/VolumeGroup-somehostnamep1 /mnt/tmpvmroot
+</pre></div>
+
+
+<h3>Fix fstab in the VM</h3>
+<p>Edit /mnt/tmpvmroot/etc/fstab and s/hda/vda/</p>
+<h3>Configure serial console in the VM</h3>
+<p>Edit ﻿/etc/init/ttyS0.conf and place the following in it:</p>
+<div class="highlight"><pre><span></span>    # ttyS0 - getty
+    #
+    # This service maintains a getty on ttyS0 from the point the system is
+    # started until it is shut down again.
+    start on stopped rc RUNLEVEL=[2345]
+    stop on runlevel [!2345]
+    respawn
+    exec /sbin/getty -L 115200 ttyS0 xterm
+</pre></div>
+
+
+<p>Edit /boot/grub/menu.lst and look for the commented "defoptions" line. Change it to:</p>
+<div class="highlight"><pre><span></span>    # defoptions=console=ttyS0 console=tty0
+</pre></div>
+
+
+<p>(the default "quiet splash" is not useful for servers IMHO)</p>
+<h3>Unmount the VM's root filesystem</h3>
+<div class="highlight"><pre><span></span>umount /mnt/tmpvmroot
+rmdir /mnt/tmpvmroot
+</pre></div>
+
+
+<h3>Start the VM</h3>
+<div class="highlight"><pre><span></span>virsh start somehostname
+</pre></div>
+
+
+<h3>SSH into the VM</h3>
+<p>I didn't specify any networking details to ubuntu-vm-builder, so the machine will boot and try to get an address from DHCP. By default you'll have a bridge device for libvirt called virbr0 and dnsmasq will be running, so watch syslog for the VM getting its address.</p>
+<div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="n">cmsj</span><span class="mf">@192.168.122</span><span class="p">.</span><span class="n">xyz</span>
+</pre></div>
+
+
+<p>you should now be in your VM! Now all you need to do is configure it to do things and then fix its networking. My plan is to switch the VMs to static IPs and then use NAT to forward connections from public IPs to the VMs, but you could bridge them onto the host's main ethernet device and assign public IPs directly to the VMs.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="./2010/06/03/python-decisions.html">Python decisions</a></h1>
   </div>
   <div class="article__meta">
@@ -287,28 +404,6 @@ Also in this release the Palette section of the Profile editor in the Preference
     <p>Ok folks, I suck for not getting Terminator 0.90 released earlier and I suck for not having a bunch of bug fixes for 0.14 in Ubuntu Lucid.
 I'm going to fix both tonight by releasing 0.90 and begging the lovely Ubuntu Universe folks to grant an exception to get it into Lucid.
 Here's hoping everything goes smoothly!</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2010/03/15/adventure-with-hp-printerscanner-and.html">An adventure with an HP printer/scanner and Ubuntu</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Mon 15 March 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>For a while now I've been thinking about some ideas for a project that will require a scanner. No problem you think, scanners of various kinds have been supported in Linux for a long time.
-I dislike ordering hardware online because of the shipping lag and because I'm a sucker for the retail experience, so I was checking out which devices would work with Ubuntu and which devices were on sale in my local computer supermarket. The latter was a depressingly short list, and the former was getting annoying to search for, but I stumbled on the idea of a multi-function printer. It turns out that it's cheaper to buy a scanner as part of a printer than it is to buy a scanner on its own (granted the resolution of the scanner isn't quite as good, but it's more than sufficient for my needs). The reason for this is undoubtedly that the manufacturers are expecting to make up their money by selling me ink cartridges every few months.
-As I started to look at models of multi-function printers, one thing became apparent almost immediately - HP have done a lot of leg work on this. I quickly found a bunch of info on their site about how they basically support all of their stuff on Linux, including a page which specifically listed popular distros and which versions worked with which printers.
-I decided pretty much immediately that I wanted to support this, so off I went to the shop to buy an HP. They had the decent looking F4580 for around £40, so I nabbed that and set off home.
-When I got home I fired up my laptop running Lucid and plugged the new device in. Less than 10 seconds later I was told it was ready for printing, and I fired up Robert Ancell's excellent new Simple Scan to see what configuration I would need to do to make that work.... the answer being none, it scanned a page first time.
-Now smug with the ease with which that had worked I started installing the HP driver software on a popular proprietary operating system so I could use it to configure the printer's WiFi feature (something I assumed I couldn't do from within Ubuntu - an assumption that turns out to have been wrong). Ten minutes later it was still finishing off the install process, but eventually I did get the printer hooked up to our wireless network.
-Back to the Lucid machine, I told it to add a new printer, it immediately saw the HP announcing itself on the network and let me quickly add that and I could print over wifi. Pretty nifty stuff.
-Then I started poking around with HP's Linux Imaging and Printing software (HPLIP) and noticed that there was an "hp-toolbox" that wasn't installed. This is the tool I should have used to configure the wifi network on the printer; It also shows the ink levels and lets you kick off scanning/printing/cleaning type jobs. Out of sheer curiosity I went into hp-toolbox's preferences and changed it from using xsane to simple-scan, and told it to start a Scan. I wasn't expecting it to work because the device wasn't connected via USB, but it turns out that not only does the device support scanning over WiFi, it works in Linux. It's not quite as fast as a direct hookup, but it's certainly significantly more convenient!
-So there we have it, out of the box I was up and running within 10 seconds of plugging the device in, and if I'd known to just install hp-toolbox I would have had everything running wirelessly a few minutes later. This being compared to installing CDs and dealing with great gobs of driver/application mess (I've seen HP's Windows drivers and it's no fun trying to persuade them to update themselves, or to persuade them not to prompt you to register every week). A huge, epic victory for Linux and Ubuntu - and one that I seem to find with much random consumer hardware these days. A few years ago this post would have been full of complicated commands and scripts and compilation as I described how to make the device work, but now all I can do is be smug about how easy it was :D
-Win.</p>
   </div>
 </article>
 

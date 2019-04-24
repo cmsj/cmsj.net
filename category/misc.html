@@ -42,6 +42,23 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="../2019/04/24/app-creation-failed.html">Failing to create an app</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 24 April 2019</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I've just published https://github.com/cmsj/HotMic/ which contains a very good amount of a macOS app I had hoped to complete and sell for a couple of bucks on the Mac App Store.</p>
+<p>However, I failed to get it working, primarily because I don't know enough of CoreAudio to get it working, and because I burned almost all of the time I had to write the app, fighting with things that, it turns out, were never going to work.</p>
+<p>So, chalk that one up to experience I guess. Maybe the next person who has this idea will find my repo and spend their allotted time getting it to work :)</p>
+<p>For the curious, the app's purpose was to be a Play Through mechanism for OS X. What is a Play Through app? It means the app reads audio from one device (e.g. a microphone or a Line In port) and writes it out to a different device (e.g. your normal speakers). This lets you use your Mac as a very limited audio mixer. I want it so the Line Out from my PC can be connected to my iMac - then all of my computer audio comes out of one set of speakers with one keyboard volume control setup.</p>
+<p>For the super curious, I'd be happy to get back to working on the app if someone who knows more about Core Audio than I do, wants to get involved!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="../2018/07/12/gmail-as-dashboard.html">Abusing Gmail as a ghetto dashboard</a></h1>
   </div>
   <div class="article__meta">
@@ -442,21 +459,6 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <p>At the time of writing we're only 24 hours past the release of 0.9.65, but so far things are looking good - no strange Lua segfault crash reports as yet. There was one issue found today where I'd placed a <code>_lua_stackguard_exit()</code> call after a C statement that seemed unimportant, but actually caused an important object to be freed, but that is <a href="https://github.com/Hammerspoon/hammerspoon/commit/95a13554c65568aca2ee6db040895c6345b01b50">already fixed</a> and will be included in 0.9.66.</p>
 <p>Assuming we have now fixed the problem, after months of head-scratching, and a few weeks of research, testing and coding, it turns out that across the 107 call sites we only had two stack leaks - <a href="https://github.com/Hammerspoon/hammerspoon/commit/2b7abf2b33e3ddb17d87e548725959a8bba1ac40#diff-d0e4e7c56ae114494056acc9758d118fR797">one was in the code that handles tab completion in Hammerspoon's Console window</a>, and <a href="https://github.com/Hammerspoon/hammerspoon/commit/f199351538d7b81bd4a01f349ddeb2e33e76d8e7">the other was in <code>hs.notify</code></a>. Hopefully you're all enjoying a more stable Hammerspoon experience, but I think we'll be leaving both the API checker and the stack guard macros enabled since they make it very easy to find/fix these sorts of bugs. I'd rather get a smaller number of crashes sooner, than have more months of head-scratching!</p>
 <p>Discuss on <a href="https://twitter.com/cmsj/status/984592229472833536">Twitter</a> | Discuss on <a href="https://news.ycombinator.com/item?id=16826199">Hacker News</a></p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="../2017/11/27/airpod-battery-ear-data.html">Getting battery data from AirPods in macOS</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Mon 27 November 2017</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>A recent <a href="https://github.com/Hammerspoon/hammerspoon/issues/1608">feature request</a> for <a href="http://www.hammerspoon.org">Hammerspoon</a> requested that we add support for reading battery information about AirPods (<a href="http://amzn.to/2zxsZSt">UK</a> <a href="http://amzn.to/2zxl2wn">US</a>).</p>
-<p>Unfortunately because their battery status is quite complex (two earbuds and the case), this information is not reported via the normal IOKit APIs, but with a bit of poking around in the results of <a href="http://stevenygard.com/projects/class-dump/">class-dump</a> for macOS High Sierra I was able to find some relevant methods/properties on <a href="https://developer.apple.com/documentation/iobluetooth/iobluetoothdevice">IOBluetoothDevice</a> that let you read information about the battery level of individual AirPods and the case, plus determine which of the buds are currently in an ear!</p>
-<p>So, the next release of Hammerspoon should include <a href="https://github.com/Hammerspoon/hammerspoon/commit/e5738e8231b90b0506bbacf62cef6491364c5c22">this code</a> to expose all of this information neatly via <code>hs.battery.privateBluetoothBatteryInfo()</code> 😁</p>
   </div>
 </article>
 

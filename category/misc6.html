@@ -42,6 +42,36 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="../2010/08/04/adventures-in-puppet-tangled-strings.html">Adventures in Puppet: Tangled Strings</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 04 August 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I am trying to do as much management on my new VM servers as possible with Puppet, but these are machines I still frequently log on to, and not everything is managed by Puppet, so it's entirely possible that in a fit of forgetfulness I will start editing a file that Puppet is managing and then be annoyed when my changes are lost next time Puppet runs.
+Since prior preparation and planning prevents pitifully poor performance, I decided to do something about this.
+Thus, I present a VIM plugin called TangledStrings, which I'm distributing as a Vimball (.vba) you can download from its <a href="http://launchpad.net/tangledstrings" title="TangledStrings">project page</a> on Launchpad. For more information on Vimball formatted plugins, see <a href="http://vimdoc.sourceforge.net/htmldoc/pi_vimball.html" title="Vimball Documentation">this page</a>. To install the plugin, simply:</p>
+<ul>
+<li>vim tangledstrings.vba</li>
+<li>Follow the instructions from Vimball to type: :so %</li>
+</ul>
+<p>By default, TangledStrings will show a (configurable) warning message when you load a Puppet-owned file:
+<a href="http://www.tenshu.net/wp-content/uploads/2010/08/puppetstrings_alert.png"><img src="http://www.tenshu.net/wp-content/uploads/2010/08/puppetstrings_alert.png" title="tangledstrings_alert" class="aligncenter size-full wp-image-11573" width="403" height="127" /></a>
+This message can be disabled, and you can choose to enable a persistent message in the VIM status line instead:
+<a href="http://www.tenshu.net/wp-content/uploads/2010/08/tangledstrings_statusline.png"><img src="http://www.tenshu.net/wp-content/uploads/2010/08/tangledstrings_statusline.png" title="tangledstrings_statusline" class="aligncenter size-full wp-image-11574" width="403" height="127" /></a>
+(or you could choose to enable both of these methods).
+For more information, see the documentation included in the Vimball which you can display with the VIM command:</p>
+<div class="highlight"><pre><span></span>:help TangledStrings
+</pre></div>
+
+
+<p>Suggestions, improvements, patches, etc. are most welcome! Email me or use Launchpad to file bugs and propose merges.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="../2010/08/04/tangledstrings-10-released.html">TangledStrings 1.0 released!</a></h1>
   </div>
   <div class="article__meta">
@@ -213,123 +243,6 @@ Rike's going to be out for most of tomorrow, so I have to decide between doing m
   <div class="article__text">
     <p>Lots of bug fixes and some improvements to the preferences are in this release, as well as a couple of new plugins for watching terminals for activity, or taking screenshots of individual terminals.
 See the changelog for full details.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="../2010/06/08/lawnmower-man.html">The Lawnmower Man</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Tue 08 June 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <h1>Introduction</h1>
-<p>This website shares a server with various other network services that form the foundation of my online life (i.e. IRC and Email) and I've been running into capacity issues in the last few months, so I'm running an experiment whereby I upgrade to brand new hardware (Quad Core i7, 8GB of RAM) and partition the available resources across virtual machines so the various network services are isolated into logical security zones.</p>
-<h1>Whining</h1>
-<p>I have plenty of experience using Xen for this sort of thing, but that's becoming more and more irrelevant in newer kernels/distributions. As much as I think that's a shame and a stupid upstream decision, I can't change it, so I need to move on to KVM and libvirt.</p>
-<h1>Resolution</h1>
-<p>So, with the beefy new server booted up in a -server kernel and a big, empty LVM Volume Group I got to work creating some virtual machines. This post is mainly a reminder to myself of the things I need to do for each VM :)</p>
-<h1>Action</h1>
-<p>These are the steps I used to make a VM with 1GB of RAM, 10GB / and 1GB of swap:</p>
-<h3>Create an LVM Logical Volume</h3>
-<div class="highlight"><pre><span></span>lvcreate -L11G -n somehostname VolumeGroup
-</pre></div>
-
-
-<h3>Create a VM image and libvirt XML definition</h3>
-<div class="highlight"><pre><span></span>ubuntu-vm-builder kvm lucid --arch amd64 --mem=1024 --cpus=1 \
---raw=/dev/VolumeGroup/somehostname --rootsize=10240 --swapsize=1024 \
---kernel-flavour=server --hostname=somehostname \
---mirror=http://archive.ubuntu.com/ubuntu/ --components=main,universe \
---name &#39;Chris Jones&#39; --user cmsj --pass &#39;ubuntu&#39; --bridge virbr0 \
---libvirt qemu:///system --addpkg vim --addpkg ssh --addpkg ubuntu-minimal
-</pre></div>
-
-
-<p>Catchy command, huh? ;)</p>
-<h3>Wait</h3>
-<p>(building the VM will take a few minutes)</p>
-<h3>Modify the libvirt XML definition for performance</h3>
-<p>The best driver for disk/networking is the paravirtualised "virtio" driver. I found that ubuntu-vm-builder had already configured the networking to use this, but not the disk, so I modified the disk section to look like this:</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;disk</span> <span class="na">type=</span><span class="s">&#39;block&#39;</span> <span class="na">device=</span><span class="s">&#39;disk&#39;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;source</span> <span class="na">dev=</span><span class="s">&#39;/dev/VolumeGroup/somehostname&#39;</span><span class="nt">/&gt;</span>
-  <span class="nt">&lt;target</span> <span class="na">dev=</span><span class="s">&#39;vda&#39;</span> <span class="na">bus=</span><span class="s">&#39;virtio&#39;</span><span class="nt">/&gt;</span>
-<span class="nt">&lt;/disk&gt;</span>
-</pre></div>
-
-
-<h3>Modify the libvirt XML definition for emulated serial console</h3>
-<p>I don't really want to use VNC to talk to the console of my VMs, so I add the following to the &lt;devices&gt; section of the XML definition to make a virtualised serial port and consider it a console:</p>
-<div class="highlight"><pre><span></span>    <span class="nt">&lt;serial</span> <span class="na">type=</span><span class="s">&#39;pty&#39;</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;target</span> <span class="na">port=</span><span class="s">&#39;0&#39;</span><span class="nt">/&gt;</span>
-    <span class="nt">&lt;/serial&gt;</span>
-    <span class="nt">&lt;console</span> <span class="na">type=</span><span class="s">&#39;pty&#39;</span><span class="nt">&gt;</span>
-      <span class="nt">&lt;target</span> <span class="na">port=</span><span class="s">&#39;0&#39;</span><span class="nt">/&gt;</span>
-    <span class="nt">&lt;/console&gt;</span>
-</pre></div>
-
-
-<h3>Modify the libvirt XML definition for a better CPU</h3>
-<p>I'm running this on an Intel Core i7 (Nehalem), but libvirt's newest defined CPU type is a Core2Duo, so we'll go with that in the root of the &lt;domain&gt; section:</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;cpu</span> <span class="na">match=</span><span class="s">&#39;minimum&#39;</span><span class="nt">&gt;</span>
-  <span class="nt">&lt;model&gt;</span>core2duo<span class="nt">&lt;/model&gt;</span>
-<span class="nt">&lt;/cpu&gt;</span>
-</pre></div>
-
-
-<h3>Import the XML definition into the running libvirt daemon</h3>
-<div class="highlight"><pre><span></span>virsh define /etc/libvirt/qemu/somehostname.xml
-</pre></div>
-
-
-<h3>Mount the VM's root filesystem</h3>
-<p>The Logical Volume we created should be considered as a whole disk, not a mountable partition, but dmsetup can present the partitions within it, and these should still be present after running ubuntu-vm-builder:</p>
-<div class="highlight"><pre><span></span>mkdir /mnt/tmpvmroot
-mount /dev/mapper/VolumeGroup-somehostnamep1 /mnt/tmpvmroot
-</pre></div>
-
-
-<h3>Fix fstab in the VM</h3>
-<p>Edit /mnt/tmpvmroot/etc/fstab and s/hda/vda/</p>
-<h3>Configure serial console in the VM</h3>
-<p>Edit ﻿/etc/init/ttyS0.conf and place the following in it:</p>
-<div class="highlight"><pre><span></span>    # ttyS0 - getty
-    #
-    # This service maintains a getty on ttyS0 from the point the system is
-    # started until it is shut down again.
-    start on stopped rc RUNLEVEL=[2345]
-    stop on runlevel [!2345]
-    respawn
-    exec /sbin/getty -L 115200 ttyS0 xterm
-</pre></div>
-
-
-<p>Edit /boot/grub/menu.lst and look for the commented "defoptions" line. Change it to:</p>
-<div class="highlight"><pre><span></span>    # defoptions=console=ttyS0 console=tty0
-</pre></div>
-
-
-<p>(the default "quiet splash" is not useful for servers IMHO)</p>
-<h3>Unmount the VM's root filesystem</h3>
-<div class="highlight"><pre><span></span>umount /mnt/tmpvmroot
-rmdir /mnt/tmpvmroot
-</pre></div>
-
-
-<h3>Start the VM</h3>
-<div class="highlight"><pre><span></span>virsh start somehostname
-</pre></div>
-
-
-<h3>SSH into the VM</h3>
-<p>I didn't specify any networking details to ubuntu-vm-builder, so the machine will boot and try to get an address from DHCP. By default you'll have a bridge device for libvirt called virbr0 and dnsmasq will be running, so watch syslog for the VM getting its address.</p>
-<div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="n">cmsj</span><span class="mf">@192.168.122</span><span class="p">.</span><span class="n">xyz</span>
-</pre></div>
-
-
-<p>you should now be in your VM! Now all you need to do is configure it to do things and then fix its networking. My plan is to switch the VMs to static IPs and then use NAT to forward connections from public IPs to the VMs, but you could bridge them onto the host's main ethernet device and assign public IPs directly to the VMs.</p>
   </div>
 </article>
 

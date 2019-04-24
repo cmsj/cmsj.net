@@ -41,6 +41,19 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="./2009/09/14/lifesaver-10-released.html">Lifesaver 1.0 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Mon 14 September 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>This is mainly a release to get some wider testing, so I expect to make a new release soon fixing any problems. Give it a try!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="./2009/06/23/terminator-013-released.html">Terminator 0.13 released!</a></h1>
   </div>
   <div class="article__meta">
@@ -191,30 +204,6 @@ On the surface it sounds like a good idea and probably not too tricky, but only 
 I'm very glad to say that in just under a week after we all went home from UDS, I've just merged his results into trunk.
 Thanks very much to Kees for his code and helpful suggestions (such as resurrecting Marcus Korn's simultaneous-typing branch, which I did one evening at UDS - rewriting it and then merging it into trunk). Also thanks to the other Terminator users I met there :)
 So that's two new features, although not really the big ticket ones that are holding back 1.0 ;)</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2008/12/17/my-new-project-juicyd-maybe.html">My new project: juicyD (maybe)</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Wed 17 December 2008</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Being a sysadmin I tend to install operating systems quite often on various bits of hardware. This means a lot of CDs. I carry at least 4 CDs in my laptop sleeve and that's not really enough, plus I sometimes burn CDs to update firmwares in laptops, etc.
-It doesn't sound like the end of the world, because it's not, but that doesn't mean the status quo is worth keeping. I've been thinking for a while now that it would be great to have a solid-state device I could use as a USB CDROM. I could load it up with a bunch of ISOs and boot from them without having to carry round a load of CDs or waste blank CDs for BIOS/firmware upgrades that are only a few MB.
-A little research showed that, as ever, Linux was the perfect candidate because of its USB Gadget subsystem, which lets it act as USB Mass Storage, USB Ethernet, USB Serial, USB MIDI and other things.
-While the Mass Storage support currently in the kernel doesn't include CDROM support, there is <a href="http://www.kernel.org/pub/linux/kernel/people/gregkh/gregkh-2.6/gregkh-04-usb/usb-g_file_storage-add-cd-rom-emulation.patch" title="g_file_storage CD-ROM patch">a patch</a> kicking around which adds it as an option when loading the g_file_storage kernel module.
-Next up - selecting some suitable hardware to test this on.
-<img alt="Atmel NGW100" src="http://www.avr32linux.org/twiki/pub/Main/ModifyTheNGW100/ngw_overview.png">
-<a href="http://www.atmel.no/" title="Atmel">Atmel</a>'s <a href="http://www.atmel.com/dyn/products/tools_card.asp?tool_id=4102">NGW100</a> ticks all of the boxes for a test rig, it's got a serial port, a USB port, a power port and an MMC card slot. It's much bigger than a gumstix, and not powered by USB (although there is a<a href="http://nickstallman.net/node/11">dubious sounding hardware hack</a> for this), but this is a low cost board to prove the project is possible.
-The board comes with linux pre-installed, but the kernel isn't super-new, and since the CD-ROM patch isn't in mainline yet, I needed to get the board up to date.
-Fortunately there is a great community of people around embedded linux. With a bunch of googling and help from HcE on #elinux, last night I got stuck in and built a toolchain, kernel, root image and upgraded <a href="http://www.atmel.no/buildroot/buildroot-u-boot.html">the bootloader</a>. This morning I <a href="http://support.atmel.no/knowledgebase/avr32studiohelp/com.atmel.avr32.tool.ngw100/html/firmware_upgrade.html#With_serial_link">uploaded a new image</a> with a slightly old version of the CD-ROM patch (because I only just found the newer version while writing this post).
-There's also plenty of information around about this, but it can be a challenge to wade into a brand new system and immediately know the right places to look (the <a href="http://avr32linux.org/twiki/bin/view">avr32linux.org wiki</a> turns out to be supremely useful, as was HcE).
-So the question is, does it work? The simple anwer is yes, a Linux machine sees it as a CD-ROM drive and can mount it as such. The more complex, and slightly worse answer is not yet, because a test against a BIOS didn't work. It's possible this is a <a href="http://www.avrfreaks.net/wiki/index.php/VBUS_fix">hardware issue</a>, but it could be a software issue too, so I'm casting around for ideas :)
-(the name "juicyD" is probably temporary, and I noticed about 6 hours after I chose it that someone <a href="http://www.tenshu.net/archives/2007/06/03/transcoding-video-for-the-ps3-in-ubuntu/#comment-56">commented</a> on an earlier post with that nick a while ago. Weird)</p>
   </div>
 </article>
 
