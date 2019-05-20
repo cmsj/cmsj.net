@@ -28,7 +28,7 @@ The first piece was a simple bash script that calls imapsync with all of the nec
         --expunge1
 ```
 
-Please test this with the ```--dry``` option if you ever want to do this yourself, the ```--automap``` option worked incredibly well for me (even translating between languages for folders like "Sent Messages"), but check that for yourself.
+Please test this with the ```--dry``` option if you ever want to do this - the ```--automap``` option worked incredibly well for me (even translating between languages for folders like "Sent Messages"), but check that for yourself.
 
 What this script will do is start a Docker container and run imapsync within it, which will then check all folders on the old IMAP server and sync any found emails over to the new IMAP server *and then delete them from the old server*. This is unfortunately necessary because the old ISP in question has a pretty low storage limit and I don't want future email flow to stop because we forgot to go and delete old emails. imapsync appears to be pretty careful about making sure an email has synced correctly before it deletes it from the old server, so I'm not super worried about data loss.
 
