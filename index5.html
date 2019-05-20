@@ -41,6 +41,24 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="./2011/10/11/what-is-value-of-negative-feedback-on.html">What is the value of negative feedback on the Internet?</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 11 October 2011</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I'm sure we've all been there - you buy something on eBay or from a third party on Amazon, and what you get is either rubbish or not what you asked for.
+The correct thing to do is to talk to the seller first to try and resolve your problem, and then when everything is said and done, leave feedback rating the overall experience.
+Several times in the last year I have gone through this process and ended up feeling the need to leave negative feedback. The most obvious case was some bluetooth headphones I'd bought from an eBay seller in China that were so obviously fake that it was hilarious he was even trying to convince me I was doing something wrong.
+In each of these cases, I have been contacted shortly after the negative feedback to ask if I will remove the feedback in return for a full/partial refund.
+This has tickled the curious side of my brain into wanting to know what the value of negative feedback is. The obvious way to find out would be to buy items of various different price and then leave negative feedback and see how far the sellers are prepared to go to preserve their reputations.
+The obvious problem here is that this would be an unethical and unfair way to do science. Perhaps it would be possible to crowd-source anecdotes until they count as data?</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="./2011/10/06/dear-apple.html">Dear Apple</a></h1>
   </div>
   <div class="article__meta">
@@ -263,77 +281,6 @@ GRRRRRRRRRRRRRR!
   <div class="article__text">
     <p>I'm very slowly learning and exploring the fascinating world of Puppet for configuration management. As I go I'm going to try and blog about random things I discover. Partially for my own future reference, partially to help me crystalise my knowledge and partially to help you.
 The first post is coming up immediately, I'm just writing this post as an opening bookend :)</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2010/08/04/adventures-in-puppet-concat-module.html">Adventures in Puppet: concat module</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Wed 04 August 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>R.I. Pienaar has a Puppet module on github called "concat". Its premise is very simple, it just concatenates fragments of text together into a particular file.
-I'm sure that a more seasoned Puppet veteran would have had this running in no time, but since it introduced some new concepts for me, I thought I'd throw up some notes of how I'm using it. I was particularly interested in an example usage I saw which lists the puppet modules a system is using in its /etc/motd, but because of the way Ubuntu handles constructing the motd, I needed to slightly rework the example. In Ubuntu, the /etc/motd file is constructed dynamically when you log in - this is done by pam_motd which executes the scripts in /etc/update-motd.d/. One of those scripts (99-footer) will simply append the contents of /etc/motd.tail to /etc/motd after everything else - my example will take advantage of this. If you are already using motd.tail, you could just have this puppet system write to a different file and then drop another script into /etc/update-motd.d/ to append the contents of that different file.
-This is what I did:</p>
-<ul>
-<li>git clone http://github.com/ripienaar/puppet-concat.git</li>
-<li>Move the resulting git branch to /etc/puppet/modules/concat and add it to my top-level site manifest that includes modules</li>
-<li>Create a class to manage /etc/motd.tail. In my setup this ends up being /etc/puppet/manifests/classes/motd.pp, which is included by my default node, but your setup is probably different. This is what my class looks like:</li>
-</ul>
-<div class="highlight"><pre><span></span>    <span class="k">class</span> <span class="na">motd</span> <span class="p">{</span>
-           <span class="k">include</span> <span class="na">concat</span><span class="p">::</span><span class="na">setup</span>
-           <span class="nv">$motdfile</span> <span class="o">=</span> <span class="s">&quot;/etc/motd.tail&quot;</span>
-
-           <span class="na">concat</span><span class="p">{</span><span class="nv">$motdfile:</span>
-                   <span class="na">owner</span> <span class="o">=&gt;</span> <span class="na">root</span><span class="p">,</span>
-                   <span class="na">group</span> <span class="o">=&gt;</span> <span class="na">root</span><span class="p">,</span>
-                   <span class="na">mode</span> <span class="o">=&gt;</span> <span class="mi">644</span>
-           <span class="p">}</span>
-
-           <span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_header&quot;</span><span class="p">:</span>
-                   <span class="na">target</span> <span class="o">=&gt;</span> <span class="nv">$motdfile,</span>
-                   <span class="na">content</span> <span class="o">=&gt;</span> <span class="s">&quot;\nPuppet modules: &quot;</span><span class="p">,</span>
-                   <span class="na">order</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">,</span>
-           <span class="p">}</span>
-
-           <span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_footer&quot;</span><span class="p">:</span>
-                   <span class="na">target</span> <span class="o">=&gt;</span> <span class="nv">$motdfile,</span>
-                   <span class="na">content</span> <span class="o">=&gt;</span> <span class="s">&quot;\n\n&quot;</span><span class="p">,</span>
-                   <span class="na">order</span> <span class="o">=&gt;</span> <span class="mi">90</span><span class="p">,</span>
-           <span class="p">}</span>
-    <span class="p">}</span><span class="c"></span>
-
-<span class="c">    # used by other modules to register themselves in the motd</span>
-    <span class="k">define</span> <span class="na">motd</span><span class="p">::</span><span class="na">register</span><span class="p">(</span><span class="nv">$content=&quot;&quot;,</span> <span class="nv">$order=20)</span> <span class="p">{</span>
-       <span class="k">if</span> <span class="nv">$content</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="p">{</span>
-          <span class="nv">$body</span> <span class="o">=</span> <span class="nv">$name</span>
-       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="nv">$body</span> <span class="o">=</span> <span class="nv">$content</span>
-       <span class="p">}</span>
-
-       <span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_fragment_$name&quot;</span><span class="p">:</span>
-          <span class="na">target</span>  <span class="o">=&gt;</span> <span class="s">&quot;/etc/motd.tail&quot;</span><span class="p">,</span>
-          <span class="na">content</span> <span class="o">=&gt;</span> <span class="s">&quot;$body &quot;</span><span class="p">,</span>
-          <span class="na">order</span> <span class="o">=&gt;</span> <span class="nv">$order</span>
-       <span class="p">}</span>
-    <span class="p">}</span>
-</pre></div>
-
-
-<p>So that's quite a mouthful. Let's break it down:
- * We have to include concat::setup so the concat module can...set... up :)
- * We then set a variable pointing at the location of the file we want to manage
- * We then instantiate the concat module for the file we want to manage and set properties like the ownership/mode
- * We then call the concat::fragment function for two specific fragments we want in the output - a header and a footer (although I do this on a single line, so it's the phrase "Puppet modules" and "\n\n" respectively). They're forced to be header/footer by the "order" parameter - by making sure we use a low number for the header and a high number for the footer, we get the layout we expect.
- * Outsite this class we define a function motd::register which other modules will call and the content they supply will be handed to concat::fragment with a default order parameter of 20 (which is higher than the value we used for the header and lower than the footer one).</p>
-<p>Finally, in each of my modules I include the line:
-    <code>motd::register{"someawesomemodule":}</code></p>
-<p>and now when I ssh to a node, I see a line like:
-    Puppet modules: web ssh</p>
-<p>It's a fairly simple little thing, but quite pleasing and from here out it's almost zero effort - just adding the motd::register calls to each module.</p>
   </div>
 </article>
 

@@ -41,6 +41,77 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="./2010/08/04/adventures-in-puppet-concat-module.html">Adventures in Puppet: concat module</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 04 August 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>R.I. Pienaar has a Puppet module on github called "concat". Its premise is very simple, it just concatenates fragments of text together into a particular file.
+I'm sure that a more seasoned Puppet veteran would have had this running in no time, but since it introduced some new concepts for me, I thought I'd throw up some notes of how I'm using it. I was particularly interested in an example usage I saw which lists the puppet modules a system is using in its /etc/motd, but because of the way Ubuntu handles constructing the motd, I needed to slightly rework the example. In Ubuntu, the /etc/motd file is constructed dynamically when you log in - this is done by pam_motd which executes the scripts in /etc/update-motd.d/. One of those scripts (99-footer) will simply append the contents of /etc/motd.tail to /etc/motd after everything else - my example will take advantage of this. If you are already using motd.tail, you could just have this puppet system write to a different file and then drop another script into /etc/update-motd.d/ to append the contents of that different file.
+This is what I did:</p>
+<ul>
+<li>git clone http://github.com/ripienaar/puppet-concat.git</li>
+<li>Move the resulting git branch to /etc/puppet/modules/concat and add it to my top-level site manifest that includes modules</li>
+<li>Create a class to manage /etc/motd.tail. In my setup this ends up being /etc/puppet/manifests/classes/motd.pp, which is included by my default node, but your setup is probably different. This is what my class looks like:</li>
+</ul>
+<div class="highlight"><pre><span></span>    <span class="k">class</span> <span class="na">motd</span> <span class="p">{</span>
+           <span class="k">include</span> <span class="na">concat</span><span class="p">::</span><span class="na">setup</span>
+           <span class="nv">$motdfile</span> <span class="o">=</span> <span class="s">&quot;/etc/motd.tail&quot;</span>
+
+           <span class="na">concat</span><span class="p">{</span><span class="nv">$motdfile:</span>
+                   <span class="na">owner</span> <span class="o">=&gt;</span> <span class="na">root</span><span class="p">,</span>
+                   <span class="na">group</span> <span class="o">=&gt;</span> <span class="na">root</span><span class="p">,</span>
+                   <span class="na">mode</span> <span class="o">=&gt;</span> <span class="mi">644</span>
+           <span class="p">}</span>
+
+           <span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_header&quot;</span><span class="p">:</span>
+                   <span class="na">target</span> <span class="o">=&gt;</span> <span class="nv">$motdfile,</span>
+                   <span class="na">content</span> <span class="o">=&gt;</span> <span class="s">&quot;\nPuppet modules: &quot;</span><span class="p">,</span>
+                   <span class="na">order</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">,</span>
+           <span class="p">}</span>
+
+           <span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_footer&quot;</span><span class="p">:</span>
+                   <span class="na">target</span> <span class="o">=&gt;</span> <span class="nv">$motdfile,</span>
+                   <span class="na">content</span> <span class="o">=&gt;</span> <span class="s">&quot;\n\n&quot;</span><span class="p">,</span>
+                   <span class="na">order</span> <span class="o">=&gt;</span> <span class="mi">90</span><span class="p">,</span>
+           <span class="p">}</span>
+    <span class="p">}</span><span class="c"></span>
+
+<span class="c">    # used by other modules to register themselves in the motd</span>
+    <span class="k">define</span> <span class="na">motd</span><span class="p">::</span><span class="na">register</span><span class="p">(</span><span class="nv">$content=&quot;&quot;,</span> <span class="nv">$order=20)</span> <span class="p">{</span>
+       <span class="k">if</span> <span class="nv">$content</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="p">{</span>
+          <span class="nv">$body</span> <span class="o">=</span> <span class="nv">$name</span>
+       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nv">$body</span> <span class="o">=</span> <span class="nv">$content</span>
+       <span class="p">}</span>
+
+       <span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_fragment_$name&quot;</span><span class="p">:</span>
+          <span class="na">target</span>  <span class="o">=&gt;</span> <span class="s">&quot;/etc/motd.tail&quot;</span><span class="p">,</span>
+          <span class="na">content</span> <span class="o">=&gt;</span> <span class="s">&quot;$body &quot;</span><span class="p">,</span>
+          <span class="na">order</span> <span class="o">=&gt;</span> <span class="nv">$order</span>
+       <span class="p">}</span>
+    <span class="p">}</span>
+</pre></div>
+
+
+<p>So that's quite a mouthful. Let's break it down:
+ * We have to include concat::setup so the concat module can...set... up :)
+ * We then set a variable pointing at the location of the file we want to manage
+ * We then instantiate the concat module for the file we want to manage and set properties like the ownership/mode
+ * We then call the concat::fragment function for two specific fragments we want in the output - a header and a footer (although I do this on a single line, so it's the phrase "Puppet modules" and "\n\n" respectively). They're forced to be header/footer by the "order" parameter - by making sure we use a low number for the header and a high number for the footer, we get the layout we expect.
+ * Outsite this class we define a function motd::register which other modules will call and the content they supply will be handed to concat::fragment with a default order parameter of 20 (which is higher than the value we used for the header and lower than the footer one).</p>
+<p>Finally, in each of my modules I include the line:
+    <code>motd::register{"someawesomemodule":}</code></p>
+<p>and now when I ssh to a node, I see a line like:
+    Puppet modules: web ssh</p>
+<p>It's a fairly simple little thing, but quite pleasing and from here out it's almost zero effort - just adding the motd::register calls to each module.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="./2010/08/04/adventures-in-puppet-tangled-strings.html">Adventures in Puppet: Tangled Strings</a></h1>
   </div>
   <div class="article__meta">
@@ -228,20 +299,6 @@ I'm not exactly sure what I hope to gain from this post, other than ridicule on 
     <p>Today has been about creating, not consuming. Apart from half-watching Primal Fear with Rike, I have spent the day fixing bugs in Terminator and playing with the Akai Synthstation app on my iPad. I suspect I'm not going to be ruling the clubs anytime soon, and the UI is pretty dreadful for composing music, but it has a good library of sounds and synth mangling knobs :)
 I even filmed myself playing some of the parts and edited them together into a little music video, but it's really very poor ;)
 Rike's going to be out for most of tomorrow, so I have to decide between doing more of what I've been doing today, playing PS3 games or going out myself. Tricky!</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2010/07/04/terminator-094-released.html">Terminator 0.94 released!</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Sun 04 July 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Lots of bug fixes and some improvements to the preferences are in this release, as well as a couple of new plugins for watching terminals for activity, or taking screenshots of individual terminals.
-See the changelog for full details.</p>
   </div>
 </article>
 

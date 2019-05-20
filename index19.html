@@ -41,6 +41,27 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="./2006/08/08/ubuntu-dapper-606-lts-on-ibmlenovo.html">Ubuntu Dapper 6.06 LTS on an IBM/Lenovo Thinkpad x40</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 08 August 2006</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p><em>Note: This post is a work-in-progress, I will probably come back to this and change/update/rewrite it at will</em>
+I picked up a ThinkPad x40 recently to use with Dapper and I thought I'd chuck up a few notes from my experience thus far. I deliberately chose the ThinkPad because of the reputation of IBM's laptops and especially that they use very good hardware and it has to be said that on a modern distro, especially one that aims to work well with laptops, almost every bit of hardware works straight away after install. I would seriously recommend <a href="http://www.thinkwiki.org/">ThinkWiki</a> to anyone attempting ThinkPad/Linux shenanigans - they have a huge amount of information about the various bits of hardware, installation guides, tips and a bunch more, all nicely tagged so you can tell which bits are relevant to the machine you own.
+First off I'll run through some of the key steps of installation.
+1. Before doing anything else, I used the IBM tools in the pre-installed Windows XP to produce restore images and burn them to disc (one CD, one DVD). This is mostly a precaution in case I either have some insurmountable problem with Linux on the machine, or if I ever come to sell it and the buyer wants their licenced copy of Windows.
+2. After that I did a pretty much default install of Ubuntu. If you want to, you can set the BIOS to disable protection for the "hidden" IBM recovery partition, then use the whole disk in the Ubuntu installer. I chose to leave it there, but I may reclaim it at some point in the future. I read on a few pages/forums that suspending seems to be more reliable if you add <code>acpi_sleep=s3_bios</code> to the kernel command line, which is easy to do in Ubuntu. Edit <code>/boot/grub/menu.lst</code> (you can use <code>gksudo gedit /boot/grub/menu.lst</code> if you don't know otherwise) and place the above acpi_sleep option on the end of the <code>kopt=</code> line and running <code>sudo update-grub</code>.
+3. With the install done I set about installing a few bits and pieces to make the laptop more useful - things like Network Manager (so it's trivially easy to join wired/wireless networks from the desktop), various Bluetooth tools (install <code>gnome-bluetooth</code> and you get most of the bits you need), Java (<code>sun-java5-plugin</code>), mplayer, a few other multimedia libraries including Real Player (available, along with Opera, in the Add/Remove tool (see the Applications menu) if you enable the commercial repository).
+4. Start testing things - graphics work fine, wireless works fine with the madwifi driver (although there is some possibility that there is a kernel crashing bug in the version Dapper offers, see LaunchPad <a href="https://launchpad.net/distros/ubuntu/+source/linux-restricted-modules-2.6.15/+bug/37773">bug 37773</a>), wired ethernet is great, keyboard keys mostly seem to work (volume controls work by default, which is a nice touch).
+5. Configure it. The first thing I did was disable the Sound Server Daemon in Gnome (called Esound, or <code>esd</code>) because I really dislike it. I then stripped out all the interfaces from <code>/etc/network/interfaces</code> other than <code>lo</code> so that Network Manager will take responsibility.
+6. Tweak things. Mplayer always works better if you add an entry to <code>/etc/sysctl.conf</code> that says <code>dev/rtc/max-user-freq=1024</code> and the ThinkPad's wireless activity LED can be enabled with <code>dev/ath0/softled=1</code>. I fiddled with the settings in the Power Management options in Preferences, but these are personal choices, so I won't bother listing them. One thing I would recommend is setting it to only show an icon when it is charging or discharging - if you're on AC and the battery is full you don't really need an icon, so you get a few extra pixels of panel space (and because the screen is small I'd recommend ditching the lower panel and moving its applets to the top). On the subject of applets and screen estate, you can replace the "Applications Places System" menus with a single "Main Menu" applet, which shows an ubuntu logo on the panel - click on it and you get the Applications menu, with Places and System tacked onto it. Gnome's sensors applet can read the information provided by the <code>ibm-acpi</code> driver, so you can monitor the temperature of various bits of hardware and fan speeds. Also of some interest is the CPU Frequency Scaling applet (which shows you how much Linux is throttling your CPU when its idle). One final Gnome panel tip is that if you make it 25 pixels tall instead of the default 24, larger windows will get their window manager icons shown in the Workspace switcher applet. A trivial little detail, but it's kinda handy if (like me) you tend to run things fullscreen on their own workspace.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="./2006/04/08/yudee.html">Yudee!</a></h1>
   </div>
   <div class="article__meta">
@@ -178,21 +199,6 @@ On the left is the original TV image with us circled, on the right is the same s
   <div class="article__text">
     <p>I spent the weekend just gone in some fields in Herefordshire, at the Eastnor Castle <a href="http://www.bigchill.net/">Big Chill</a> festival and it completely rocked :)
 My photos are in the gallery and tom's are <a href="http://www.flickr.com/photos/tomwaters/sets/727260/">here</a></p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2005/07/19/mark-thomas.html">Mark Thomas</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Tue 19 July 2005</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p><a href="http://gallery.tenshu.net/displayimage.php?album=4&amp;pos=2"><img alt="Mark Thomas on stage at Concorde 2" src="http://gallery.tenshu.net/albums/userpics/10001/thumb_dsc00038.jpg"></a>I saw Mark Thomas doing a stand-up gig at Concorde 2 in Brighton this evening with Alex, Simon, and Simon and jolly good it was too. The man can certainly express some righteous anger!
-It wasn't all political ranting (which was still very funny), there was a good mix of humour, some of which went beyond the pale for some of the audience; Along with some excellent anecdotes from various anarchic protests he has taken part in.
-Two thumbs up :)</p>
   </div>
 </article>
 

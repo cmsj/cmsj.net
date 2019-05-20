@@ -41,6 +41,19 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="./2007/11/06/testingtesting123.html">testing...testing...1..2...3...</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 06 November 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Groovy. Airport. Abandons. Alaska. All your base are belong to us. Mooooooo!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="./2007/10/14/at-it-again.html">At it again</a></h1>
   </div>
   <div class="article__meta">
@@ -193,22 +206,6 @@ What's holding it back though is Firefox. It's a very popular piece of software,
     <p>I've just pushed out the first release ever of Terminator, a python script to make a window have multiple Terminals in it.
 It's still very rough around the edges. And the middle. But it's there!
 Rather than repeat myself here, just click over to the <a href="http://www.tenshu.net/terminator/">Terminator</a> page for full details.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2007/07/11/hacky-root-partition-resizing.html">hacky root partition resizing</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Wed 11 July 2007</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>How would you shrink the root file system of a remote machine? Of course the easy answer is to boot into a rescue environment and do it (because you can't shrink ext3 online).
-If you have a good KVM or ILO setup, you already have a rescue environment of sorts - initramfs.
-Chuck "break=mount" on your kernel commandline and the initramfs will drop out to a shell before it mounts the root filesystem. You can now mount the root fs manually and copy out the required tools/libs (e2fsck, resize2fs, fdisk and their libraries, in this case), then unmount the root fs.
-Now, with appropriate $LD_LIBRARY_PATH mangling you can run the extracted binaries and operate on your root partition with impunity</p>
   </div>
 </article>
 

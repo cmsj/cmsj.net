@@ -1,5 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>cmsj.net</title><link>http://cmsj.net/</link><description></description><lastBuildDate>Wed, 24 Apr 2019 00:00:00 +0100</lastBuildDate><item><title>Failing to create an app</title><link>http://cmsj.net/2019/04/24/app-creation-failed.html</link><description>&lt;p&gt;I've just published &lt;a href="https://github.com/cmsj/HotMic/"&gt;https://github.com/cmsj/HotMic/&lt;/a&gt; which contains a very good amount of a macOS app I had hoped to complete and sell for a couple of bucks on the Mac App Store.&lt;/p&gt;
+<rss version="2.0"><channel><title>cmsj.net</title><link>http://cmsj.net/</link><description></description><lastBuildDate>Mon, 20 May 2019 00:00:00 +0100</lastBuildDate><item><title>Overengineered email migration</title><link>http://cmsj.net/2019/05/20/imapsync-docker.html</link><description>&lt;p&gt;I recently had the need to migrate someone in my family off an old ISP email account, onto a more modern email account, without simply shutting down the old account. The old address has been given out to people/companies for at least a decade, so it's simply not practical to stop receiving its email.&lt;/p&gt;
+&lt;p&gt;Initially, I used the ISP's own server-side filtering to forward emails on to the new account and then delete them, however, all of the fantabulous anti-spam technologies that are used these days, conspired to make it unreliable.&lt;/p&gt;
+&lt;p&gt;So instead, I decided that since I can access IMAP on both accounts, and I have a server at home running all the time, I'd just use some kind of local tool to fetch any emails that show up on the old account and move them to the new one.&lt;/p&gt;
+&lt;p&gt;After some investigation, I settled on &lt;a href="https://imapsync.lamiral.info/"&gt;imapsync&lt;/a&gt; as the most capable tool for the job. It's ultimately "just" a Perl script, but it's fantastically well maintained by Gilles Lamiral. It's sort of unclear whether it's Open Source or not, but I'm a big fan of supporting FOSS development, so I happily paid the 60€ Gilles asks for.&lt;/p&gt;
+&lt;p&gt;My strong preference these days is always to run my local services in Docker, and fortunately Gilles publishes an &lt;a href="https://hub.docker.com/r/gilleslamiral/imapsync/"&gt;official imapsync Dockule&lt;/a&gt; so I set to work in Ansible to orchestrate all of the pieces I needed to get this running.&lt;/p&gt;
+&lt;p&gt;The first piece was a simple bash script that calls imapsync with all of the necessary command line options:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="ch"&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class="c1"&gt;# This is /usr/local/bin/imapsync-user-isp-fancyplace.sh&lt;/span&gt;
+/usr/bin/docker run -u root --rm -v/root/.imap-pass-isp.txt:/isp-pass.txt -v/root/.imap-pass-fancyplace.txt:/fancyplace-pass.txt gilleslamiral/imapsync &lt;span class="se"&gt;\&lt;/span&gt;
+    imapsync &lt;span class="se"&gt;\&lt;/span&gt;
+        --host1 imap.isp.net --port1 &lt;span class="m"&gt;993&lt;/span&gt; --user1 olduser@isp.net --passfile1 /isp-pass.txt --ssl1 --sslargs1 &lt;span class="nv"&gt;SSL_verify_mode&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+        --host2 imap.fancyplace.com --port2 &lt;span class="m"&gt;993&lt;/span&gt; --user2 newuser@fancyplace.com --passfile2 /fancyplace-pass.txt --ssl2 --sslargs2 &lt;span class="nv"&gt;SSL_verify_mode&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="se"&gt;\&lt;/span&gt;
+        --automap &lt;span class="se"&gt;\&lt;/span&gt;
+        --nofoldersizes --nofoldersizesatend &lt;span class="se"&gt;\&lt;/span&gt;
+        --delete1 --noexpungeaftereach &lt;span class="se"&gt;\&lt;/span&gt;
+        --expunge1
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Please test this with the &lt;code&gt;--dry&lt;/code&gt; option if you ever want to do this - the &lt;code&gt;--automap&lt;/code&gt; option worked incredibly well for me (even translating between languages for folders like "Sent Messages"), but check that for yourself.&lt;/p&gt;
+&lt;p&gt;What this script will do is start a Docker container and run imapsync within it, which will then check all folders on the old IMAP server and sync any found emails over to the new IMAP server &lt;em&gt;and then delete them from the old server&lt;/em&gt;. This is unfortunately necessary because the old ISP in question has a pretty low storage limit and I don't want future email flow to stop because we forgot to go and delete old emails. imapsync appears to be pretty careful about making sure an email has synced correctly before it deletes it from the old server, so I'm not super worried about data loss.&lt;/p&gt;
+&lt;p&gt;The IMAP passwords are read from files that live in /root/ on my server (with &lt;code&gt;0400&lt;/code&gt; permissions) and they are mounted through into the container. For the new IMAP account, this is a "per-device" password rather than the main account password, so it won't change, and is easy to revoke.&lt;/p&gt;
+&lt;p&gt;This isn't a complete setup yet though, because after doing one sync, imapsync will exit and Docker will obey its &lt;code&gt;--rm&lt;/code&gt; option and delete the container. What we now need is a regular trigger to run this script and while this used to mean cron, nowadays it could also mean a &lt;a href="https://www.freedesktop.org/software/systemd/man/systemd.timer.html"&gt;systemd timer&lt;/a&gt;. So, I created a simple systemd service file which gets written to &lt;code&gt;/etc/systemd/system/imapsync-user-isp-fancyplace.service&lt;/code&gt; and enabled in systemd:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[Unit]&lt;/span&gt;
+&lt;span class="na"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;User IMAP Sync&lt;/span&gt;
+&lt;span class="na"&gt;After&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;docker.service&lt;/span&gt;
+&lt;span class="na"&gt;Requires&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;docker.service&lt;/span&gt;
+
+&lt;span class="k"&gt;[Service]&lt;/span&gt;
+&lt;span class="na"&gt;Type&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;oneshot&lt;/span&gt;
+&lt;span class="na"&gt;ExecStart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;/usr/local/bin/imapsync-user-isp-fancyplace.sh&lt;/span&gt;
+&lt;span class="na"&gt;Restart&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;no&lt;/span&gt;
+&lt;span class="na"&gt;TimeoutSec&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;120&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;and a systemd timer file which gets written to &lt;code&gt;/etc/systemd/system/imapsync-user-isp-fancyplace.timer&lt;/code&gt;, and then both enabled and started in systemd:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;span class="k"&gt;[Unit]&lt;/span&gt;
+&lt;span class="na"&gt;Description&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;Trigger User IMAP Sync&lt;/span&gt;
+
+&lt;span class="k"&gt;[Timer]&lt;/span&gt;
+&lt;span class="na"&gt;Unit&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;imapsync-user-isp-fancyplace.service&lt;/span&gt;
+&lt;span class="na"&gt;OnUnitActiveSec&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;10min&lt;/span&gt;
+&lt;span class="na"&gt;OnUnitInactiveSec&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;10min&lt;/span&gt;
+&lt;span class="na"&gt;Persistent&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;true&lt;/span&gt;
+
+&lt;span class="k"&gt;[Install]&lt;/span&gt;
+&lt;span class="na"&gt;WantedBy&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;timers.target&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This will trigger every 10 minutes and start the specified service, which executes the script that starts the Dockule to sync the email. Simple!&lt;/p&gt;
+&lt;p&gt;And just to show a useful command, you can check when the timer last triggered, and when it will trigger next, like this:&lt;/p&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;# systemctl list-timers
+NEXT                         LEFT          LAST                         PASSED             UNIT                               ACTIVATES
+Mon 2019-05-20 17:38:13 BST  27s left      Mon 2019-05-20 17:28:13 BST  9min ago           imapsync-user-isp-fancyplace.timer imapsync-user-isp-fancyplace.service
+[snip unrelated timers]
+
+9 timers listed.
+Pass --all to see loaded but inactive timers, too.
+&lt;/pre&gt;&lt;/div&gt;</description><dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">Chris Jones</dc:creator><pubDate>Mon, 20 May 2019 00:00:00 +0100</pubDate><guid isPermaLink="false">tag:cmsj.net,2019-05-20:/2019/05/20/imapsync-docker.html</guid></item><item><title>Failing to create an app</title><link>http://cmsj.net/2019/04/24/app-creation-failed.html</link><description>&lt;p&gt;I've just published &lt;a href="https://github.com/cmsj/HotMic/"&gt;https://github.com/cmsj/HotMic/&lt;/a&gt; which contains a very good amount of a macOS app I had hoped to complete and sell for a couple of bucks on the Mac App Store.&lt;/p&gt;
 &lt;p&gt;However, I failed to get it working, primarily because I don't know enough of CoreAudio to get it working, and because I burned almost all of the time I had to write the app, fighting with things that, it turns out, were never going to work.&lt;/p&gt;
 &lt;p&gt;So, chalk that one up to experience I guess. Maybe the next person who has this idea will find my repo and spend their allotted time getting it to work :)&lt;/p&gt;
 &lt;p&gt;For the curious, the app's purpose was to be a Play Through mechanism for OS X. What is a Play Through app? It means the app reads audio from one device (e.g. a microphone or a Line In port) and writes it out to a different device (e.g. your normal speakers). This lets you use your Mac as a very limited audio mixer. I want it so the Line Out from my PC can be connected to my iMac - then all of my computer audio comes out of one set of speakers with one keyboard volume control setup.&lt;/p&gt;
