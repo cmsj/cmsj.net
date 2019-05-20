@@ -41,6 +41,34 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="./2013/03/16/alfred-2-workflows.html">Alfred 2 workflows</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Sat 16 March 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Since I started using OS X as my primary desktop, I've loved Spotlight for launching apps and finding files. I resisted trying any of the replacement apps, for fear of the bottomless pit of customisation that they seemed to offer.
+With the very recent release of Alfred 2, I was finally tempted to try it by the previews of their Workflow feature.
+The idea is that you can add new commands to Alfred by writing scripts in bash/python/ruby/php and then neatly package them up and share them with others. I was expecting to write a few myself and share them, but the user community has been spinning up so quickly that they've already covered everything I was going to write.
+Instead, I decided to use some time to write about the workflows I'm using so far:</p>
+<ul>
+<li><a href="http://www.alfredforum.com/topic/940-google-search-in-line-results-workflow/">Google Search</a> - get live results from Google as you type. It's not always what I want when I'm searching, but it's a very quick way to get some insight into the results available.</li>
+<li><a href="http://www.alfredforum.com/topic/1041-create-new-task-in-omnifocus-inbox/">New OmniFocus Inbox Task</a> - Very quick way to create a new task for later triage</li>
+<li><a href="http://www.alfredforum.com/topic/826-ssh-with-smart-hostname-autocompletion/">Open SSH</a> - This collects up all your hosts from SSH's known_host file, config file and local network, then opens terminal windows for you to ssh to the host you choose.</li>
+<li><a href="http://www.alfredforum.com/topic/202-parallels-desktop-workflow/">Parallels Desktop</a> - Easy way to start/resume your Parallels virtual machines.</li>
+<li><a href="http://www.alfredforum.com/topic/375-rate-itunes-track/">Rate iTunes Track</a> - does what it sounds like, rate the current iTunes track.</li>
+<li><a href="http://www.alfredforum.com/topic/942-screen-sharing-with-automatic-network-discovery/">Screen Sharing</a> - quickly VNC to the hosts on your network that are advertising it (including iCloud hosts if you have Back To My Mac configured)</li>
+<li><a href="http://www.alfredforum.com/topic/476-toggle-vpn/">VPN Toggle</a> - get on/off your corporate network quickly.</li>
+</ul>
+<p>Lots more on the Alfred 2 forums. At some point it would be nice to see this unified into some kind of integrated search/download feature of Alfred 2.</p>
+<hr>
+<p>Update: (2012-04-12) I've written a <a href="http://www.tenshu.net/2013/04/some-more-awesome-alfred-2-workflows.html">second post</a> that covers a few more workflows I've discovered since this one.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="./2013/03/14/how-death-of-google-reader-looked-in-my.html">How the death of Google Reader looked in my Twitter timeline</a></h1>
   </div>
   <div class="article__meta">
@@ -353,25 +381,6 @@ So, if you find yourself wishing you could get pretty desktop notifications when
     <p>I've only had the Remote Access card installed in my HP Microserver for a few hours and already I am bored of accessing it by first logging into the web UI, then navigating to the right bit of the UI, then clicking a button to download a .jnlp file and then running that with javaws(1).
 Instead, I have written some Python that will login for you, fetch the file and execute javaws. Much better!
 You can find the code: <a href="http://bazaar.launchpad.net/~cmsj/+junk/microserver/view/head:/vkvm.py">here</a> and you'll want to have python-httplib2 installed.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2012/01/05/hp-microserver-remote-access-card.html">HP Microserver Remote Access Card</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Thu 05 January 2012</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>I've been using an HP ProLiant Microserver (N36L) as my fileserver at home, for about a year and it's been a really reliable little workhorse.
-Today I gave it a bit of a spruce up with 8GB of RAM and the Remote Access Card option.
-Since it came with virtually no documentation, and since I can't find any reference online to anyone else having had the same issue I had, I'm writing this post so Google can help future travellers.
-When you are installing the card, check in the BIOS's PCI Express options that you have set it to automatically choose the right graphics card to use. I had hard coded it to use the onboard VGA controller.
-The reason for this is that the RAC card is actually a graphics card, so the BIOS needs to be able to activate it as the primary card.
-If you don't change this setting, what you will see is the RAC appear to work normally, but its vKVM remote video feature will only ever show you a green screen window, with the words "OUT OF RANGE" in yellow letters.
-Annoyingly, I thought this was my 1920x1080 monitor confusing things, so it took me longer to fix this than it should have, but there we go.</p>
   </div>
 </article>
 

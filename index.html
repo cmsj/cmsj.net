@@ -41,6 +41,21 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="./2019/05/20/app-creation-failed-update1.html">Update: Failing to create an app</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Mon 20 May 2019</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p><a href="/2019/04/24/app-creation-failed.html">Previously</a> I wrote about how I'd tried to create an app, but ultimately failed because I wasn't getting the results I wanted out of the macOS CoreAudio APIs.</p>
+<p>Thanks to some excellent input from <a href="https://twitter.com/DavidLublin">David Lublin</a> I refactored the code to be able to switch easily between different backend audio APIs, and <a href="https://github.com/cmsj/HotMic/blob/master/HotMic/Audio%20Backends/THMBackEndAVFCapture.m">implemented a replacement</a> for CoreAudio using AVFoundation's AVCaptureSession and it seems to work!</p>
+<p>I'd still like to settle back on CoreAudio at some point, but for now I can rest assured that whenever the older versions of SoundSource stop working, I still have a working option.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="./2019/05/20/imapsync-docker.html">Overengineered email migration</a></h1>
   </div>
   <div class="article__meta">
@@ -378,28 +393,6 @@ Pass --all to see loaded but inactive timers, too.
 
 
 <p>and now Homebridge is up to date, and working, plus I have a Docker network I can use in the future if any other containerised services need to be very close to the LAN.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2018/06/15/systemd-remote-syslog.html">Receiving remote syslog events with systemd</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Fri 15 June 2018</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p><a href="https://www.freedesktop.org/wiki/Software/systemd/">Systemd</a> includes <code>journald</code>, a fancy replacement for the venerable <code>syslog</code> daemon (and its descendents, <code>syslog-ng</code> and <code>rsyslog</code>).</p>
-<p>One interesting, but frustrating, decision by <code>journald</code>'s maintainers is that it does not speak the syslog network protocol, so it's unable to receive remote syslog events. Remote syslog is a tremendously useful feature for aggregating log data from many hosts on a network - I've always used it so my network devices can log somewhere I'm likely to look at, but I haven't been able to do that since <code>journald</code> arrived.</p>
-<p>While there are many ways to skin this goose, the method I've chosen is a tiny Python daemon that listens on syslog's UDP port (514), does minimal processing of the data and then feeds it into <code>journald</code> via its API, to get the data as rich as possible (since one of <code>journald</code>'s strengths is that it can store a lot more metadata about a log entry).</p>
-<p>So, <a href="https://gist.github.com/cmsj/e03b6d28325ce5c3d5b255256278a330">here is the source</a> for the daemon, and <a href="https://gist.github.com/cmsj/71f987d1129c5dc693243dd1aa5f8f4f">here is the systemd service file</a> that manages it - note that it runs as an unprivileged user, with the sole privilege escalation of being able to bind to low port numbers (something only root can do normally).</p>
-<p>The daemon is certainly not perfect (patches welcome!), but it works. Here is a <code>journald</code> log entry from one of my UniFi access points:</p>
-<div class="highlight"><pre><span></span>Jun 15 21:28:26 gnubert (&quot;U7PG2,802aa8d48ab3,v3.9.27.8537&quot;)[23506]: kernel: [4251792.410000] [wifi1] FWLOG: [58855274] BEACON_EVENT_SWBA_SEND_FAILED (  )
-</pre></div>
-
-
-<p>(the more syslog-obsessed among you will notice that I'm setting the <code>identifier</code> to the hostname of the device that sent the message. Internally, the <code>facility</code> is mapped correctly, as is the <code>priority</code>. The text of the message then appears, prepended by its <code>identifier</code>.</p>
   </div>
 </article>
 

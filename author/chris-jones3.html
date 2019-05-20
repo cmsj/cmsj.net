@@ -42,6 +42,38 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="../2015/02/20/send-imessage-and-sms-with-applescript.html">Sending iMessages and SMS through Messages.app with AppleScript</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 20 February 2015</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I was searching around for ways to automate sending iMessages, so I could write a plugin for <a href="http://www.hammerspoon.org/">Hammerspoon</a>. I found various scripts lurking around the place for sending iMessages, but I also found one that can send SMS if you have SMS Relay enabled (which means you need OS X 10.10 and an iPhone running iOS 8.1).
+I figured I'd collect them as a single post, to help future searchers, so without further ado, here are two stripped down AppleScript snippets that let you control Messages.app to send either an iMessage, or an SMS.
+Firstly, sending an iMessage:</p>
+<div class="highlight"><pre><span></span><span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Messages&quot;</span>
+  <span class="nv">send</span> <span class="s2">&quot;This is an iMessage&quot;</span> <span class="k">to</span> <span class="nv">buddy</span> <span class="s2">&quot;foo@bar.com&quot;</span> <span class="k">of</span> <span class="p">(</span><span class="nv">service</span> <span class="mi">1</span> <span class="nb">whose</span> <span class="nv">service</span> <span class="nv">type</span> <span class="ow">is</span> <span class="nv">iMessage</span><span class="p">)</span>
+<span class="k">end</span> <span class="k">tell</span>
+</pre></div>
+
+
+<p>The buddy address can be either an email or a phone number that's registered with Apple for use with iMessage.
+Secondly, sending an SMS:</p>
+<div class="highlight"><pre><span></span><span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Messages&quot;</span>
+  <span class="nv">send</span> <span class="s2">&quot;This is an SMS&quot;</span> <span class="k">to</span> <span class="nv">buddy</span> <span class="s2">&quot;+1234567890&quot;</span> <span class="k">of</span> <span class="nv">service</span> <span class="s2">&quot;SMS&quot;</span>
+<span class="k">end</span> <span class="k">tell</span>
+</pre></div>
+
+
+<p>Here, the buddy address should be a phone number.
+Simple!
+(and for the Hammerspoon users, you'll find hs.messages available in the next release, 0.9.23)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="../2013/08/02/quick-thought-on-moto-x.html">The curious Moto X pricing</a></h1>
   </div>
   <div class="article__meta">
@@ -242,34 +274,6 @@ Here is the changelog:
 <li><a href="https://github.com/LeEnno/alfred-terminalfinder/blob/master/TerminalFinder.alfredworkflow?raw=true">TerminalFinder</a> - lets you quickly get a Terminal for the Finder window you're looking at.</li>
 </ul>
 <p>I imagine there will be more to come, the total number of workflows is <strong>exploding</strong> at the moment!</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="../2013/03/16/alfred-2-workflows.html">Alfred 2 workflows</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Sat 16 March 2013</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Since I started using OS X as my primary desktop, I've loved Spotlight for launching apps and finding files. I resisted trying any of the replacement apps, for fear of the bottomless pit of customisation that they seemed to offer.
-With the very recent release of Alfred 2, I was finally tempted to try it by the previews of their Workflow feature.
-The idea is that you can add new commands to Alfred by writing scripts in bash/python/ruby/php and then neatly package them up and share them with others. I was expecting to write a few myself and share them, but the user community has been spinning up so quickly that they've already covered everything I was going to write.
-Instead, I decided to use some time to write about the workflows I'm using so far:</p>
-<ul>
-<li><a href="http://www.alfredforum.com/topic/940-google-search-in-line-results-workflow/">Google Search</a> - get live results from Google as you type. It's not always what I want when I'm searching, but it's a very quick way to get some insight into the results available.</li>
-<li><a href="http://www.alfredforum.com/topic/1041-create-new-task-in-omnifocus-inbox/">New OmniFocus Inbox Task</a> - Very quick way to create a new task for later triage</li>
-<li><a href="http://www.alfredforum.com/topic/826-ssh-with-smart-hostname-autocompletion/">Open SSH</a> - This collects up all your hosts from SSH's known_host file, config file and local network, then opens terminal windows for you to ssh to the host you choose.</li>
-<li><a href="http://www.alfredforum.com/topic/202-parallels-desktop-workflow/">Parallels Desktop</a> - Easy way to start/resume your Parallels virtual machines.</li>
-<li><a href="http://www.alfredforum.com/topic/375-rate-itunes-track/">Rate iTunes Track</a> - does what it sounds like, rate the current iTunes track.</li>
-<li><a href="http://www.alfredforum.com/topic/942-screen-sharing-with-automatic-network-discovery/">Screen Sharing</a> - quickly VNC to the hosts on your network that are advertising it (including iCloud hosts if you have Back To My Mac configured)</li>
-<li><a href="http://www.alfredforum.com/topic/476-toggle-vpn/">VPN Toggle</a> - get on/off your corporate network quickly.</li>
-</ul>
-<p>Lots more on the Alfred 2 forums. At some point it would be nice to see this unified into some kind of integrated search/download feature of Alfred 2.</p>
-<hr>
-<p>Update: (2012-04-12) I've written a <a href="http://www.tenshu.net/2013/04/some-more-awesome-alfred-2-workflows.html">second post</a> that covers a few more workflows I've discovered since this one.</p>
   </div>
 </article>
 

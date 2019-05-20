@@ -42,6 +42,28 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="../2018/06/15/systemd-remote-syslog.html">Receiving remote syslog events with systemd</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Fri 15 June 2018</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p><a href="https://www.freedesktop.org/wiki/Software/systemd/">Systemd</a> includes <code>journald</code>, a fancy replacement for the venerable <code>syslog</code> daemon (and its descendents, <code>syslog-ng</code> and <code>rsyslog</code>).</p>
+<p>One interesting, but frustrating, decision by <code>journald</code>'s maintainers is that it does not speak the syslog network protocol, so it's unable to receive remote syslog events. Remote syslog is a tremendously useful feature for aggregating log data from many hosts on a network - I've always used it so my network devices can log somewhere I'm likely to look at, but I haven't been able to do that since <code>journald</code> arrived.</p>
+<p>While there are many ways to skin this goose, the method I've chosen is a tiny Python daemon that listens on syslog's UDP port (514), does minimal processing of the data and then feeds it into <code>journald</code> via its API, to get the data as rich as possible (since one of <code>journald</code>'s strengths is that it can store a lot more metadata about a log entry).</p>
+<p>So, <a href="https://gist.github.com/cmsj/e03b6d28325ce5c3d5b255256278a330">here is the source</a> for the daemon, and <a href="https://gist.github.com/cmsj/71f987d1129c5dc693243dd1aa5f8f4f">here is the systemd service file</a> that manages it - note that it runs as an unprivileged user, with the sole privilege escalation of being able to bind to low port numbers (something only root can do normally).</p>
+<p>The daemon is certainly not perfect (patches welcome!), but it works. Here is a <code>journald</code> log entry from one of my UniFi access points:</p>
+<div class="highlight"><pre><span></span>Jun 15 21:28:26 gnubert (&quot;U7PG2,802aa8d48ab3,v3.9.27.8537&quot;)[23506]: kernel: [4251792.410000] [wifi1] FWLOG: [58855274] BEACON_EVENT_SWBA_SEND_FAILED (  )
+</pre></div>
+
+
+<p>(the more syslog-obsessed among you will notice that I'm setting the <code>identifier</code> to the hostname of the device that sent the message. Internally, the <code>facility</code> is mapped correctly, as is the <code>priority</code>. The text of the message then appears, prepended by its <code>identifier</code>.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="../2018/04/13/lua-stack-adventures.html">Adventures in Lua stack overflows</a></h1>
   </div>
   <div class="article__meta">
@@ -463,38 +485,6 @@ Here are some photos of the project in various stages of construction:</p>
 <p><img alt="Three buses" src="../images/IMG_7013.JPG">
 <em>Data for three buses, plenty of time to get ready for the second one!</em></p>
 <p>So there it is, project completed! Grab the code from <a href="https://github.com/cmsj/pibus">https://github.com/cmsj/pibus</a>, install the requirements on a Pi, give money to the awesome Percheron Electronics for the E-Paper HAT (and matching PiBow case), throw a font in the directory and edit the scripts for the bus stop and bus route that you care about!</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="../2015/02/20/send-imessage-and-sms-with-applescript.html">Sending iMessages and SMS through Messages.app with AppleScript</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Fri 20 February 2015</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>I was searching around for ways to automate sending iMessages, so I could write a plugin for <a href="http://www.hammerspoon.org/">Hammerspoon</a>. I found various scripts lurking around the place for sending iMessages, but I also found one that can send SMS if you have SMS Relay enabled (which means you need OS X 10.10 and an iPhone running iOS 8.1).
-I figured I'd collect them as a single post, to help future searchers, so without further ado, here are two stripped down AppleScript snippets that let you control Messages.app to send either an iMessage, or an SMS.
-Firstly, sending an iMessage:</p>
-<div class="highlight"><pre><span></span><span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Messages&quot;</span>
-  <span class="nv">send</span> <span class="s2">&quot;This is an iMessage&quot;</span> <span class="k">to</span> <span class="nv">buddy</span> <span class="s2">&quot;foo@bar.com&quot;</span> <span class="k">of</span> <span class="p">(</span><span class="nv">service</span> <span class="mi">1</span> <span class="nb">whose</span> <span class="nv">service</span> <span class="nv">type</span> <span class="ow">is</span> <span class="nv">iMessage</span><span class="p">)</span>
-<span class="k">end</span> <span class="k">tell</span>
-</pre></div>
-
-
-<p>The buddy address can be either an email or a phone number that's registered with Apple for use with iMessage.
-Secondly, sending an SMS:</p>
-<div class="highlight"><pre><span></span><span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Messages&quot;</span>
-  <span class="nv">send</span> <span class="s2">&quot;This is an SMS&quot;</span> <span class="k">to</span> <span class="nv">buddy</span> <span class="s2">&quot;+1234567890&quot;</span> <span class="k">of</span> <span class="nv">service</span> <span class="s2">&quot;SMS&quot;</span>
-<span class="k">end</span> <span class="k">tell</span>
-</pre></div>
-
-
-<p>Here, the buddy address should be a phone number.
-Simple!
-(and for the Hammerspoon users, you'll find hs.messages available in the next release, 0.9.23)</p>
   </div>
 </article>
 

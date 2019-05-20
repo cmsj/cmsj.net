@@ -41,6 +41,19 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="./2010/03/31/terminator-091-released.html">Terminator 0.91 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 31 March 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Unfortunately I overlooked some very annoying bugs during the 0.90 release process. This is a quick release to address them. apologies to those affected.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="./2010/03/30/heads-up-new-terminator-incoming.html">Heads up, new Terminator incoming</a></h1>
   </div>
   <div class="article__meta">
@@ -246,21 +259,6 @@ Best of all, the Borg pattern is incredibly simple in Python. Like, really simpl
 So now I have the Borg pattern in use for the main class, a class that provides all the configuration, a class that discovers plugins and lets them be referenced, and a fairly new class I'm experimenting with that acts as a factory for all of my classes, as a way to break any possibility of circular module dependencies.
 Reality has to bite though, the Borg isn't a panacea; One has to be very careful about how one creates Borg objects. I chose to create a base class called Borg which Terminator, Config, Factory and PluginRegistry all derive from, but this turns out to have been a very short sighted decision to abstract out the common 4 lines. It wasn't until I started building Config to have functions that allow it to be accessed as a dict that I realised all of my Terminator, Config, Factory and PluginRegistry instances were the same thing as opposed to each type being distinct. It's also terrifyingly important that the subclasses of Borg not use class attributes. Any attributes defined by these classes *must* be instantiated as None so they are instance variables, and *after* you've called Borg.__init__(self) in your own __init__() you can then set up your attributes however you want because they are then part of the shared state.
 On the whole I am happy with the Borg pattern. I've written test code to ensure that all of the assumptions I explicitly made are guaranteed, and all of the implicit assumptions I've discovered I made are also safe. Nonetheless, it's not a completely clean solution and I find myself wishing it was somehow a primitive of the language.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2009/12/23/random-musical-linkage.html">Random musical linkage</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Wed 23 December 2009</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>I listen to a lot of electronic music and one of the nice things about that is the intermingling of other music by way of samples.
-Case in point, I'm currently watching The Ballet Boyz's production of The Rite Of Spring with Rike, and I suddenly realised that the string motif playing at the entrance of The Elders is sampled and looped to great effect by the hypnotic Physical World on Freeland's album Now &amp; Them.
-This kind of thing makes me smile :)</p>
   </div>
 </article>
 
