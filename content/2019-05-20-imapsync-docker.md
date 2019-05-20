@@ -9,7 +9,7 @@ Initially, I used the ISP's own server-side filtering to forward emails on to th
 
 So instead, I decided that since I can access IMAP on both accounts, and I have a server at home running all the time, I'd just use some kind of local tool to fetch any emails that show up on the old account and move them to the new one.
 
-After some investigation, I settled on [imapsync](https://imapsync.lamiral.info/) as the most capable tool for the job. It's ultimately "just" a Perl script, but it's fantastically well maintained by Gilles Lamiral. It's sort of unclear whether it's Open Source or not, but I'm a big fan of supporting FOSS development, so I happily paid the 60€ Gilles asks for.
+After some investigation, I settled on [imapsync](https://imapsync.lamiral.info/) as the most capable tool for the job. It's ultimately "just" a Perl script, but it's fantastically well maintained by Gilles Lamiral. It's Open Source, but I'm a big fan of supporting FOSS development, so I happily paid the 60€ Gilles asks for.
 
 My strong preference these days is always to run my local services in Docker, and fortunately Gilles publishes an [official imapsync Dockule](https://hub.docker.com/r/gilleslamiral/imapsync/) so I set to work in Ansible to orchestrate all of the pieces I needed to get this running.
 
