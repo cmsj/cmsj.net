@@ -41,63 +41,6 @@
 
 <article>
   <div class="article__title">
-    <h1><a href="./2010/07/06/who-wants-to-see-something-really-ugly.html">Who wants to see something really ugly?</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Tue 06 July 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>I think it should be abundantly clear from my postings here that I'm not a very good programmer, and this means I give myself a lot of free rope to do some very stupid things.
-I'm in constant need of debugging information and in Terminator particularly where we have lots of objects all interacting and reparenting all the time. We've had a simple dbg() method for a long time, but I was getting very bored of typing out dbg('Class::method:: Some message about %d' % foo), so I decided to see what could be done about inferring the Class and method parts of the message.
-It turns out that python is very good at introspecting its own runtime, so back in January, armed with my own stupidity and some help from various folks on the Internet, I came up with the following:</p>
-<div class="highlight"><pre><span></span># set this to true to enable debugging output
-DEBUG = False
-# set this to true to additionally list filenames in debugging
-DEBUGFILES = False
-# list of classes to show debugging for. empty list means show all classes
-DEBUGCLASSES = []
-# list of methods to show debugging for. empty list means show all methods
-DEBUGMETHODS = []
-
-def dbg(log = &quot;&quot;):
-    &quot;&quot;&quot;Print a message if debugging is enabled&quot;&quot;&quot;
-    if DEBUG:
-        stackitem = inspect.stack()[1]
-        parent_frame = stackitem[0]
-        method = parent_frame.f_code.co_name
-        names, varargs, keywords, local_vars = inspect.getargvalues(parent_frame)
-        try:
-            self_name = names[0]
-            classname = local_vars[self_name].__class__.__name__
-        except IndexError:
-            classname = &quot;noclass&quot;
-        if DEBUGFILES:
-            line = stackitem[2]
-            filename = parent_frame.f_code.co_filename
-            extra = &quot; (%s:%s)&quot; % (filename, line)
-        else:
-            extra = &quot;&quot;
-        if DEBUGCLASSES != [] and classname not in DEBUGCLASSES:
-            return
-        if DEBUGMETHODS != [] and method not in DEBUGMETHODS:
-            return
-        try:
-            print &gt;&gt; sys.stderr, &quot;%s::%s: %s%s&quot; % (classname, method, log, extra)
-        except IOError:
-            pass
-</pre></div>
-
-
-<p>How's about that for shockingly bad? ;)
-It also adds a really impressive amount of overhead to the execution time.
-I added the DEBUGCLASSES and DEBUGMETHODS lists so I could cut down on the huge amount of output - these are hooked up to command line options, so you can do something like "terminator -d --debug-classes=Terminal" and only receive debugging messages from the Terminal module.
-I'm not exactly sure what I hope to gain from this post, other than ridicule on the Internet, but maybe, just maybe, someone will pop up and point out how stupid I am in a way that turns this into a 2 line, low-overhead function :D</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
     <h1><a href="././2010/07/04/good-day.html">A good day</a></h1>
   </div>
   <div class="article__meta">
@@ -449,6 +392,19 @@ Please keep those bug reports coming, the response to the 0.9x series has been f
   <div class="article__text">
     <p>Hot on the heels of 0.91 we have a new release for you. This is another bugfix release, stomping on as many regressions from 0.14 as we can find. Many, many thanks to all of the people who have been in touch with the project to tel us about the things that are affecting them. If you find more regressions/bugs, please let us know!
 Also in this release the Palette section of the Profile editor in the Preferences GUI is now fully active, which means that all of the config file options should now be fully editable in the GUI.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2010/03/31/terminator-090-released.html">Terminator 0.90 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 31 March 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>After lots of work we're really very proud to announce that the completely re-worked Terminator 0.90 is now available! Hopefully we haven't introduced too many new bugs in exchange for the much requested features of being able to save layouts!</p>
   </div>
 </article>
 

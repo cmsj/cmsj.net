@@ -41,21 +41,6 @@
 
 <article>
   <div class="article__title">
-    <h1><a href="./2008/07/06/terminator-09-almost-ready.html">Terminator 0.9 almost ready</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Sun 06 July 2008</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>It's taken us some time to get there, but as <a href="https://launchpad.net/terminator/+milestone/0.9" title="Bugs milestoned for 0.9">this page</a> shows, we now have all of the bugs we want solved for 0.9, solved :D
-The string freeze came way too late unfortunately, so I'm expecting we'll want to do a 0.9.1 consisting of translations and fixes for any other bugs we figure out on <a href="https://launchpad.net/terminator/+milestone/1.0-beta" title="Bugs milestoned for 1.0">the road to 1.0</a>.
-I now need to prepare all of the parts required for a release and push out a final RC build into <a href="https://launchpad.net/~gnome-terminator/+archive" title="Terminator PPA">our PPA</a> and if all is well, 0.9 will be released very shortly! Please test it now and tell us if you hit any last minute problems.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
     <h1><a href="./2008/07/05/09-ready-for-translation.html">0.9 ready for translation!</a></h1>
   </div>
   <div class="article__meta">
@@ -203,6 +188,29 @@ Configuration has been entirely replaced - we now offer a stack of config option
 I'm hoping to push out a release soon because we've also accumulated a few small bugfixes.
 The plan from here is to have a major release to land the tabs feature, and then go all out for a massive 1.0 when we can save/restore meta-profiles.
 Woo!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2008/04/08/getting-information-out-of-badly-broken.html">getting information out of a badly broken debian installer</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 08 April 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>You have new hardware (most likely server).
+You pop in a debian/ubuntu installer CD, tell it what kind of keyboard you have and expect it to scan the CDROM for packages, but....uh-oh, it can't find the CD!
+What do you do?! Well, realistically there's not a lot you can do to make it work, but you can do a lot to help get it fixed.
+You need to pull off /var/log/syslog, the output of lspci, lspci -v and lspci -vvnn.
+You may very well find yourself having a problem with that though, because you're still pretty early in a typical linux boot process, so you probably don't have any disks mounted and you may find yourself missing any modules to make that happen.
+You should have usb-storage.ko though. That and isofs.ko.
+Can you see where this is going? :)
+find the .udeb's on your install CD with a working computer, <code>ar -x</code> the core fs modules one and pull out ext3 (and jbd and mbcache), or vfat and its dependencies. put them in a directory, then do <code>mkisofs -o /dev/usbstick1 /path/to/modules</code>.
+You now have a partition on your USB stick that is an ISO9660 filesystem (ie a CD). Obviously make sure you don't do this on a USB stick you care about the contents of.
+Chuck the USB stick into the broken server, <code>modprobe usb-storage</code>, mount the newly appeared partition and copy the modules over to the right place in /lib/modules/. Unmount the USB stick, modprobe the drivers and now you can put in an ext3/vfat formatted USB stick and you have somewhere to write the debugging information to!
+Easy! :) Now file a bug with the debugging information you collected.</p>
   </div>
 </article>
 

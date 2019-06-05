@@ -41,44 +41,6 @@
 
 <article>
   <div class="article__title">
-    <h1><a href="./2018/06/15/homebridge-in-docker.html">Homebridge in Docker, an adventure in networking</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Fri 15 June 2018</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p><a href="https://github.com/nfarina/homebridge">Homebridge</a> is a great way of connecting <a href="https://www.npmjs.com/search?q=homebridge">loads</a> of devices that don't support Apple's <a href="https://www.apple.com/uk/ios/home/">HomeKit</a>, to your iOS devices. It consists of a daemon that understands the <a href="https://developer.apple.com/support/homekit-accessory-protocol/">HomeKit Accessory Protocol</a> and <a href="https://www.npmjs.com/search?q=homebridge">many plugins</a> that talk to other devices/services.</p>
-<p>My home server is running Ubuntu, so installing Homebridge is fairly trivial, except I run all my services in <a href="https://www.docker.com">Docker</a> containers. To make things even more fun, I don't build or manage the containers by hand - the building is done by <a href="https://hub.docker.com/u/cmsj/">Docker Hub</a> and the containers are deployed and managed by <a href="https://www.ansible.com/">Ansible</a>.</p>
-<p>So far so good, except that for a long time Homebridge used <a href="https://www.avahi.org/">Avahi</a> (an Open Source implementation of Apple's Bonjour host/service discovery protocol) to announce its devices. That presented a small challenge in that I didn't want to have Avahi running only in that container, so I had to bind mount <code>/var/run/avahi-daemon/</code> into the container.</p>
-<p>I recently rebuilt my Homebridge container to pull it up to the latest versions of Homebridge and the plugins I use, but it was no longer announcing devices on my LAN, and there were no mentions of Avahi in its log. After some digging, it turns out that the HomeKit Accessory Protocol (HAP) library that Homebridge uses, now instantiates its own multicast DNS stack rather than using Avahi.</p>
-<p>Apart from not actually working, this was great news, I could remove the <code>/var/run</code> bind mount from the container, making things more secure, I just needed to figure out why it wasn't showing up.</p>
-<p>The HAP library that Homebridge uses, ends up depending on <a href="https://github.com/mafintosh/multicast-dns">this library</a> to implement mDNS and it makes <a href="https://github.com/mafintosh/multicast-dns/blob/master/index.js#L147">a very simple</a> decision about which network interface it should use. In my case, it was choosing the <code>docker0</code> bridge interface which explicitly isn't connected to the outside world. With no configuration options at the Homebridge level to influence the choice of interface, I had to solve the problem at the Docker network layer.</p>
-<p>So, the answer was the following Ansible task to create a Docker network that is attached to my LAN interface (<code>bridge0</code>) and give it a small portion of a reserved segment in the IP subnet I use:</p>
-<div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure LANbridge network</span>
-  <span class="l l-Scalar l-Scalar-Plain">docker_network</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lanbridge</span>
-    <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">macvlan</span>
-    <span class="l l-Scalar l-Scalar-Plain">driver_options</span><span class="p p-Indicator">:</span>
-      <span class="l l-Scalar l-Scalar-Plain">parent</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bridge0</span>
-    <span class="l l-Scalar l-Scalar-Plain">ipam_options</span><span class="p p-Indicator">:</span>
-      <span class="l l-Scalar l-Scalar-Plain">subnet</span><span class="p p-Indicator">:</span> <span class="s">&#39;10.0.88.0/24&#39;</span>
-      <span class="l l-Scalar l-Scalar-Plain">gateway</span><span class="p p-Indicator">:</span> <span class="s">&#39;10.0.88.1&#39;</span>
-      <span class="l l-Scalar l-Scalar-Plain">iprange</span><span class="p p-Indicator">:</span> <span class="s">&#39;10.0.88.32/29&#39;</span>
-</pre></div>
-
-
-<p>then change the task for the Homebridge container to use this network:</p>
-<div class="highlight"><pre><span></span>  network_mode: lanbridge
-</pre></div>
-
-
-<p>and now Homebridge is up to date, and working, plus I have a Docker network I can use in the future if any other containerised services need to be very close to the LAN.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
     <h1><a href="./2018/06/15/systemd-remote-syslog.html">Receiving remote syslog events with systemd</a></h1>
   </div>
   <div class="article__meta">
@@ -477,6 +439,51 @@ OcyivXLlbaSZ58AsHZSIA4ZjeoDnlWNsFHemBUSAOMa03b4JtgnGbTaHTZhiLc8=
 =/lkZ
 -----END PGP SIGNATURE-----
 </pre></div>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="./2015/12/08/raspberry-pi-project-pibus.html">Raspberry Pi project: PiBus</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 08 December 2015</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>The premise of this project is simple - my family lives in London, there's a bus route that runs along our road, and we use it a lot to take the kids places.
+The reality of using the bus is a little more complex - getting three kids ready to go out, is a nightmare and it's not made any easier by checking a travel app on your phone to see how close the bus is.</p>
+<p>I don't think there is much I can do to make the preparation of the children any less manic, but I can certainly do something about the visibility of information about buses, mainly thanks to the excellent open APIs/data provided by <a href="https://tfl.gov.uk/info-for/open-data-users/">Transport For London</a>.</p>
+<p>So, armed with their API, a Python 3 interpreter and a <a href="https://www.raspberrypi.org/">Raspberry Pi</a>, I set out to make a little box for the kitchen wall which will show when the next 3 buses are due to arrive outside our house.</p>
+<p><a href="https://github.com/cmsj/pibus">The code itself</a> is easy enough to throw together because Python has libraries for everything (it also helps if you don't bother to design a decent architecture!). <a href="http://docs.python-requests.org/en/latest/">Requests</a> to fetch the bus data from TfL, <a href="https://docs.python.org/3/library/json.html">json</a>/<a href="https://pypi.python.org/pypi/iso8601">iso8601</a> to parse the data, <a href="https://python-pillow.github.io/">Pillow</a> to render it as an image, and <a href="https://apscheduler.readthedocs.org/en/latest/">APScheduler</a> to give it a simple run-loop.</p>
+<p>The question then becomes, how to display the data. The easiest answer would be a little LCD screen, but that brings with it the downside of having a backlight in the kitchen, which would be ugly and distracting, and it also raises the question of viewing angles. Another answer would be some kind of physical indicator, but that requires skills I don't have time for. Instead, I decided to look for an E-Ink display (think <a href="https://kindle.amazon.com/">Kindle</a>) - it would let me display simple images without producing light.</p>
+<p>The first option I looked at was the <a href="https://www.kickstarter.com/projects/pisupply/papirus-the-epaper-screen-hat-for-your-raspberry-p">PaPiRus</a>, but it's in the window between its crowdfunding drive having finished, and being available to buy. The only other option I could find was the <a href="http://www.percheron-electronics.uk/shop/e-paper-hat/">E-Paper HAT</a>, from Percheron Electronics, which also started life as a crowdfunding project, but is actually available to buy.</p>
+<p>Unfortunately, these displays are super fragile, which I discovered by destroying the first one, but Neil at Percheron was super helpful and I quickly had a new display and some tips about how to avoid cracking it.</p>
+<p>My visualisation of this data isn't going to win any awards for beauty, but it serves its purpose by showing a big number to tell us how many minutes we have, and I managed to minimise the number of times you see the white-black-white refresh cycle of the eInk display with partial screen updates.
+Here are some photos of the project in various stages of construction:</p>
+<p><img alt="Freshly assembled out of the box" src="./images/IMG_6856.JPG">
+<em>Freshly assembled out of the box</em></p>
+<p><img alt="The smallest USB WiFi adapter I've ever seen" src="./images/IMG_6857.JPG">
+<em>The smallest USB WiFi adapter I've ever seen!</em></p>
+<p><img alt="Modified PiBow case" src="./images/IMG_6858.JPG">
+<em>Sadly I had to make some modifications to the PiBow case to fit this particular rPi</em></p>
+<p><img alt="Running an eInk test program" src="./images/IMG_6864.JPG">
+<em>Running one of the eInk display test programs</em></p>
+<p>Initially I was rather hoping I could use the famous font that TfL (and London Transport before it) use, which is known as Johnston, but sadly they will not licence the font outside their own use and use by contracted partners. There is a third party clone of the font, but it may have legal issues, presumably because TfL values their braaaaaand. Instead, I decided to just drop the idea of shipping a font with the code, and exported Courier.ttf from my laptop to the Pi directly.</p>
+<p><img alt="TfL font" src="./images/IMG_6897.JPG">
+<em>This would have been nice, but I cannot have nice font things</em></p>
+<p>I did briefly try Ubuntu Mono, which is a lovely font, but the zeros look like eyes and it freaked me out.</p>
+<p><img alt="PIBUS IS WATCHING YOU" src="./images/Screenshot_2015-12-08_14.03.28.png">
+<em>PIBUS IS WATCHING YOU</em></p>
+<p>The display needs to handle various different situations, most obviously, when no data can be fetched from the API. Rather than get too bogged down in the details of whether our Internet connection is down, TfL's API servers are down, London is on fire, or it's just night time and there are no buses, I went for a simple message with a timestamp. Once this has been displayed, the code skips any further screen updates until it has valid data again. This makes it easy to see when a problem occurred.</p>
+<p><img alt="Date message" src="./images/IMG_7010.JPG">
+<em>Maybe aliens stole the Internet, maybe it's a bus strike. It doesn't matter.</em></p>
+<p>I also render a small timestamp on valid data screens too, showing when the last data fetch happened. This is mostly so I can be sure that the fetching code isn't stuck somehow. Once I trust the system a bit more, this can probably come out.</p>
+<p><img alt="Final design" src="./images/IMG_7012.JPG">
+<em>The final design, showing a fallback for when there is data for  0 &lt; x &lt; 3 buses</em></p>
+<p><img alt="Three buses" src="./images/IMG_7013.JPG">
+<em>Data for three buses, plenty of time to get ready for the second one!</em></p>
+<p>So there it is, project completed! Grab the code from <a href="https://github.com/cmsj/pibus">https://github.com/cmsj/pibus</a>, install the requirements on a Pi, give money to the awesome Percheron Electronics for the E-Paper HAT (and matching PiBow case), throw a font in the directory and edit the scripts for the bus stop and bus route that you care about!</p>
   </div>
 </article>
 

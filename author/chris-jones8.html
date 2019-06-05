@@ -42,19 +42,6 @@
 
 <article>
   <div class="article__title">
-    <h1><a href="../2010/03/31/terminator-090-released.html">Terminator 0.90 released!</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Wed 31 March 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>After lots of work we're really very proud to announce that the completely re-worked Terminator 0.90 is now available! Hopefully we haven't introduced too many new bugs in exchange for the much requested features of being able to save layouts!</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
     <h1><a href="../2010/03/31/terminator-091-released.html">Terminator 0.91 released</a></h1>
   </div>
   <div class="article__meta">
@@ -230,6 +217,49 @@ Pulling in external dependencies is a big deal for us - many of our users are on
 After playing a little with both of the options I came to the conclusion that while they are both really well made and capable, they are far more formal than we need, and the added dependency issues continued to concern me.
 I revisited Armin's plugin system and removed the use of .__subclasses__() that was breaking doctest and offending #python instead having a list in each .py file which the plugin system extracts and treats any classes mentioned in that list as plugins. I also extended it to always instantiate the plugins and look for the plugin files in both the system directories and the user's home directory.
 <a href="http://bazaar.launchpad.net/%7Ecmsj/%2Bjunk/terminator-epic-refactor/annotate/head%3A/terminatorlib/plugin.py">This plugin system</a> is currently hooked into two places in the branch, URL mangling and the context menu. This allows plugins to add support for new URL types (e.g. we just added support for Launchpad code URLs like lp:~cmsj/+junk/terminator-epic-refactor), and insert new options into the context menu. I'm not sure if we need to go further, but if you would like to hook into other parts let me know - it's pretty easy to arrange now :)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="../2009/12/23/python-wanderings-part-one.html">Python wanderings, part one</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Wed 23 December 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>As mentioned in my earlier post about refactoring Terminator, I want to talk about some of the things I've learned about Python and programming in the last few months. If I were you I wouldn't place any great significance in anything I'm about to say - after all I'm a rank amateur in the field of programming.
+This is going to be a multi-part post so I at least get something out there, rather than leaving it to rot forever in my drafts folder.</p>
+<h2>1. Solving global warming^W variables</h2>
+<p>I have objects that represent terminal widgets, objects that represent widgets that contain terminals, objects that contain configuration, and one master object that functions as the brains of the operation.
+Inevitably these objects need to know about each other, but how to achieve that? The brain object is simply called 'Terminator' and almost every other part of the system needs to know about it, same with the config object, and Terminator needs to know about all of the terminal objects, etc. The dependencies are all over the place and one aim of the re-factor was to separate all these parts out and decouple them, but ultimately I was never going to get away from different objects needing to know about each other.
+So how to go about it? As far as I know the options are:
+-   pass around object references (every time you create something, pass it your references to all the bits it needs)
+    -   Pros: no hacks or tricks involved
+    -   Cons: makes every __init__() more complicated, means passing references that an object doesn't need other than to pass to its children.</p>
+<ul>
+<li>
+<p>use global variables</p>
+<ul>
+<li>Pros: they're global</li>
+<li>Cons: everyone seems to hate global variables, perhaps because it's an implicit dependency not an explicit one, or because of potential namespace collisions, or maybe other reasons.</li>
+</ul>
+</li>
+<li>
+<p>use singletons</p>
+<ul>
+<li>Pros: explicit dependency</li>
+<li>Cons: often seems to involve hackery to get the singleton object reference</li>
+</ul>
+</li>
+</ul>
+<p>In my searching around I came across a fourth option that somewhat relates to singletons... the Borg pattern.
+This is a very simple idea - it's a class that always instantiates to the same thing. You don't need a factory or function or something that gives you a reference to the singleton, you just instantiate a class and it's the same as all of the others you've instantiated of the same class.
+Best of all, the Borg pattern is incredibly simple in Python. Like, really simple. Don't believe me? Click <a href="http://code.activestate.com/recipes/66531/">here</a>. Yep, four lines of code. Technically it's probably a bit ugly, but the resulting code feels very clean.
+So now I have the Borg pattern in use for the main class, a class that provides all the configuration, a class that discovers plugins and lets them be referenced, and a fairly new class I'm experimenting with that acts as a factory for all of my classes, as a way to break any possibility of circular module dependencies.
+Reality has to bite though, the Borg isn't a panacea; One has to be very careful about how one creates Borg objects. I chose to create a base class called Borg which Terminator, Config, Factory and PluginRegistry all derive from, but this turns out to have been a very short sighted decision to abstract out the common 4 lines. It wasn't until I started building Config to have functions that allow it to be accessed as a dict that I realised all of my Terminator, Config, Factory and PluginRegistry instances were the same thing as opposed to each type being distinct. It's also terrifyingly important that the subclasses of Borg not use class attributes. Any attributes defined by these classes *must* be instantiated as None so they are instance variables, and *after* you've called Borg.__init__(self) in your own __init__() you can then set up your attributes however you want because they are then part of the shared state.
+On the whole I am happy with the Borg pattern. I've written test code to ensure that all of the assumptions I explicitly made are guaranteed, and all of the implicit assumptions I've discovered I made are also safe. Nonetheless, it's not a completely clean solution and I find myself wishing it was somehow a primitive of the language.</p>
   </div>
 </article>
 
