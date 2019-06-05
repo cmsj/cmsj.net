@@ -8,6 +8,11 @@ SITEURL = 'http://cmsj.net'
 
 PATH = 'content'
 STATIC_PATHS = ['images', 'static']
+EXTRA_PATH_METADATA = {
+    'extra/macpro.html': {'path': 'MacPro.html'},
+}
+ARTICLE_EXCLUDES = ['static']
+
 DISPLAY_ARTICLE_INFO_ON_INDEX = True
 HIDE_SIDEBAR = True
 RELATIVE_URLS = True
