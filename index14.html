@@ -41,6 +41,29 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="./2008/04/08/getting-information-out-of-badly-broken.html">getting information out of a badly broken debian installer</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Tue 08 April 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>You have new hardware (most likely server).
+You pop in a debian/ubuntu installer CD, tell it what kind of keyboard you have and expect it to scan the CDROM for packages, but....uh-oh, it can't find the CD!
+What do you do?! Well, realistically there's not a lot you can do to make it work, but you can do a lot to help get it fixed.
+You need to pull off /var/log/syslog, the output of lspci, lspci -v and lspci -vvnn.
+You may very well find yourself having a problem with that though, because you're still pretty early in a typical linux boot process, so you probably don't have any disks mounted and you may find yourself missing any modules to make that happen.
+You should have usb-storage.ko though. That and isofs.ko.
+Can you see where this is going? :)
+find the .udeb's on your install CD with a working computer, <code>ar -x</code> the core fs modules one and pull out ext3 (and jbd and mbcache), or vfat and its dependencies. put them in a directory, then do <code>mkisofs -o /dev/usbstick1 /path/to/modules</code>.
+You now have a partition on your USB stick that is an ISO9660 filesystem (ie a CD). Obviously make sure you don't do this on a USB stick you care about the contents of.
+Chuck the USB stick into the broken server, <code>modprobe usb-storage</code>, mount the newly appeared partition and copy the modules over to the right place in /lib/modules/. Unmount the USB stick, modprobe the drivers and now you can put in an ext3/vfat formatted USB stick and you have somewhere to write the debugging information to!
+Easy! :) Now file a bug with the debugging information you collected.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="./2008/03/17/thinkpad-x300-thoughts.html">Thinkpad X300 thoughts</a></h1>
   </div>
   <div class="article__meta">
@@ -162,20 +185,6 @@ After looking around the docs and asking on #python, optparse seemed to be a bet
   </div>
   <div class="article__text">
     <p>I just found an <a href="http://davehall.com.au/tags/n95">excellent post</a> which includes some runes for getting the oh-so-ugly opensync to work with an n95. I just synced all my contacts to my laptop via Bluetooth \o/</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2008/02/07/want-to-work-for-canonical.html">Want to work for Canonical?</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Thu 07 February 2008</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Maybe you're fresh out of college or university, or maybe you just love tinkering with computers so much you didn't bother with stuffy education.
-We're <a href="http://www.ubuntu.com/employment#jdce">looking for someone</a> to take on a junior role in our sysadmin team, so if you're interested, take a look at the description and mail our lovely HR people!</p>
   </div>
 </article>
 
