@@ -7,7 +7,7 @@ SITENAME = 'cmsj.net'
 SITEURL = 'http://cmsj.net'
 
 PATH = 'content'
-STATIC_PATHS = ['images']
+STATIC_PATHS = ['images', 'static']
 DISPLAY_ARTICLE_INFO_ON_INDEX = True
 HIDE_SIDEBAR = True
 RELATIVE_URLS = True
