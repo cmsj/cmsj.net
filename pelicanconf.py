@@ -16,6 +16,7 @@ THEME = 'themes/hss'
 DEFAULT_PAGINATION = 10
 
 TIMEZONE = 'Europe/London'
+DEFAULT_DATE = 'fs'
 DEFAULT_LANG = 'en'
 
 JINJA_ENVIRONMENT = {'extensions': ['jinja2.ext.i18n']}
