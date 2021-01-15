@@ -11,7 +11,7 @@ It's been a fascinating journey so far, learning about how to calibrate a printe
 
 Something that became obvious fairly quickly though, was that the printer would be more reliable with a heated bed. I've been able to get reliable prints via the use of rafts, but that adds time to prints and wastes filament, so I decided to see if I could mod the printer to have a heated bed.
 
-I started Googling and quickly discovered that my printer is actually a rebadged [EasyThreed X1](https://www.easythreed.com/h-col-1223.html) and that EasyThreed sell a [hotbed accessory](https://www.aliexpress.com/i/4000911088465.html) for the X1, but it's an externally powered/controlled device. That's fine in theory, but I have quickly gotten very attached to being able to completely remotely control the printer via [Octoprint](https://octoprint.org/).
+I started Googling and quickly discovered that my printer is actually a rebadged [EasyThreed X1](https://www.easythreed.com/h-col-1223.html) and that EasyThreed sell a [hotbed accessory](https://www.aliexpress.com/i/4000911088465.html) for the X1, but it's an externally powered/controlled device. That's fine in theory, but I have quickly gotten very attached to being able to completely remotely control the printer via [Octoprint](https://octoprint.org/). So, the obvious next step was to try and mod the printer to be able to drive the heater directly.
 
 Looking inside the controller box showed a pretty capable circuit board:
 
