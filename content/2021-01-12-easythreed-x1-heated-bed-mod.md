@@ -98,7 +98,7 @@ If you want to do this mod to your X1, here are some things you should know, and
  * Remove the bed-levelling screws from your X1, swap the original bed for the heated one.
  * Open the controller box of your X1, plug the bed's thermal sensor into the controller board in the `TB1` header.
  * Wire the bed's power into the green `HOT-BED` terminal. For the best results you probably want to unsolder the original power cable from the bed and use something thinner and more flexible (but at the very least you need something longer).
- * Reassemble the controller box and run all the wires neatly.
+ * Reassemble the controller box and run all the wires neatly. I recommend you manually move the bed around to make sure neither the power nor temp sensor wires snag on anything.
  * Connect the controller box's USB port to your PC, and in Arduino IDE click the ➡ button to compile and upload the firmware. Wait until it says `Upload complete`.
  * In theory, you're done! Check the temperature readings in some software that can talk to the printer (Octoprint, Pronterface, etc.), tell it to turn the bed heater on and make sure the temps rise to the level you asked for. I would definitely encourage you to do this while next to the printer, in case something goes dangerously wrong!
 
