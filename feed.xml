@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>cmsj.net</title><link>http://cmsj.net/</link><description></description><lastBuildDate>Fri, 15 Jan 2021 01:01:18 +0000</lastBuildDate><item><title>EasyThreeD X1 Heated Bed Mod</title><link>http://cmsj.net/2021/01/12/ez3dbedmod.html</link><description>&lt;p&gt;(If you don't want to read this whole thing, skip to the end of the post for a tl;dr version)&lt;/p&gt;
+<rss version="2.0"><channel><title>cmsj.net</title><link>http://cmsj.net/</link><description></description><lastBuildDate>Fri, 15 Jan 2021 01:27:16 +0000</lastBuildDate><item><title>EasyThreeD X1 Heated Bed Mod</title><link>http://cmsj.net/2021/01/12/ez3dbedmod.html</link><description>&lt;p&gt;(If you don't want to read this whole thing, skip to the end of the post for a tl;dr version)&lt;/p&gt;
 &lt;p&gt;I was lucky enough to get a &lt;a href="https://amzn.to/3i8l8Sz"&gt;Labists X1&lt;/a&gt; 3D printer for Christmas a few weeks ago, and it's the first 3D printer I've had or really even interacted with.&lt;/p&gt;
 &lt;p&gt;It's been a fascinating journey so far, learning about how to calibrate a printer, how to use slicers, and how to start making my own models.&lt;/p&gt;
 &lt;p&gt;Something that became obvious fairly quickly though, was that the printer would be more reliable with a heated bed. I've been able to get reliable prints via the use of rafts, but that adds time to prints and wastes filament, so I decided to see if I could mod the printer to have a heated bed.&lt;/p&gt;
@@ -21,9 +21,11 @@
 &lt;p&gt;The specific diffs aren't particularly important (although the Labists firmware does have some curious changes, like disabling thermal runaway protection), but by reading up a bit on configuring Marlin, and comparing the differences between the X3 and the X1, it seemed like very little would need to change to enable the bed heater and its temperature sensor (a header for which is also conveniently present on the controller board).&lt;/p&gt;
 &lt;p&gt;At this point in the investigation I had:&lt;/p&gt;
 &lt;ul&gt;
-&lt;li&gt;A controller board with:&lt;/li&gt;
+&lt;li&gt;A controller board with:&lt;ul&gt;
 &lt;li&gt;A power terminal for a bed heater&lt;/li&gt;
 &lt;li&gt;A header for a bed temperature sensor&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
 &lt;li&gt;Source for the controller firmware&lt;/li&gt;
 &lt;li&gt;Source for an extremely similar printer that has a bed heater&lt;/li&gt;
 &lt;li&gt;An external bed heater with power and sensor cables&lt;/li&gt;
