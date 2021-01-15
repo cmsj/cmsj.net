@@ -94,6 +94,7 @@ If you want to do this mod to your X1, here are some things you should know, and
  * Install the CH340 USB Serial drivers. There seem to be lots of places to get these from, I used [these](http://www.wch.cn/download/ch341ser_exe.html)
  * Install Arduino IDE 1.0.5 - still available from the bottom of [this page](https://www.arduino.cc/en/main/OldSoftwareReleases)
  * In Arduino IDE, open the `Marlin.ino` file from the `Marlin` directory and click the ✔ button on the toolbar, this will compile the source so you can check everything is installed correctly.
+ * If you plan to print PLA, you might want to increase the `BED_MAXTEMP` define to something higher than `100`.
  * Remove the bed-levelling screws from your X1, swap the original bed for the heated one.
  * Open the controller box of your X1, plug the bed's thermal sensor into the controller board in the `TB1` header.
  * Wire the bed's power into the green `HOT-BED` terminal. For the best results you probably want to unsolder the original power cable from the bed and use something thinner and more flexible (but at the very least you need something longer).
