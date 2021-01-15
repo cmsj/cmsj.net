@@ -40,8 +40,8 @@ The specific diffs aren't particularly important (although the Labists firmware 
 At this point in the investigation I had:
 
  * A controller board with:
-  * A power terminal for a bed heater
-  * A header for a bed temperature sensor
+     * A power terminal for a bed heater
+     * A header for a bed temperature sensor
  * Source for the controller firmware
  * Source for an extremely similar printer that has a bed heater
  * An external bed heater with power and sensor cables
