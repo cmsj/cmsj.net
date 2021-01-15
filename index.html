@@ -3,48 +3,135 @@
 
 <head>
   <!-- ## for client-side less
-  <link rel="stylesheet/less" type="text/css" href="./theme/css/style.less">
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
   -->
-  <link rel="icon" type="image/vnd.microsoft.icon" href="./">
-  <link rel="stylesheet" type="text/css" href="./theme/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/fontawesome-all.min.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/hatena-bookmark-icon.css">
 
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
 
   <meta charset="utf-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Chris Jones">
   <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+
 
   <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
 
 
   <title>
     cmsj.net
-  </title>
-
-</head>
+  </title></head>
 
 <body>
   <main>
     <header>
       <div class="site-name">
-        <a href="/">cmsj.net</a>
+        <a href="http://cmsj.net">cmsj.net</a>
       </div>
       <p>
-        <a href="./archives.html"><i class="fas fa-archive"></i> Archive</a>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
       </p>
     </header>
 
 <article>
   <div class="article__title">
-    <h1><a href="./2019/05/20/app-creation-failed-update1.html">Update: Failing to create an app</a></h1>
+    <h1><a href="http://cmsj.net/2021/01/12/ez3dbedmod.html">EasyThreeD X1 Heated Bed Mod</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 20 May 2019</p>
+    <p class="article__meta__post-date">Posted on: Tue 12 January 2021</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>(If you don't want to read this whole thing, skip to the end of the post for a tl;dr version)</p>
+<p>I was lucky enough to get a <a href="https://amzn.to/3i8l8Sz">Labists X1</a> 3D printer for Christmas a few weeks ago, and it's the first 3D printer I've had or really even interacted with.</p>
+<p>It's been a fascinating journey so far, learning about how to calibrate a printer, how to use slicers, and how to start making my own models.</p>
+<p>Something that became obvious fairly quickly though, was that the printer would be more reliable with a heated bed. I've been able to get reliable prints via the use of rafts, but that adds time to prints and wastes filament, so I decided to see if I could mod the printer to have a heated bed.</p>
+<p>I started Googling and quickly discovered that my printer is actually a rebadged <a href="https://www.easythreed.com/h-col-1223.html">EasyThreed X1</a> and that EasyThreed sell a <a href="https://www.aliexpress.com/i/4000911088465.html">hotbed accessory</a> for the X1, but it's an externally powered/controlled device. That's fine in theory, but I have quickly gotten very attached to being able to completely remotely control the printer via <a href="https://octoprint.org/">Octoprint</a>.</p>
+<p>Looking inside the controller box showed a pretty capable circuit board:</p>
+<p><img alt="EasyThreed X1 controller board" src="http://cmsj.net/images/easythreed_x1_controller.jpg"></p>
+<p>but it was instantly obvious that next to the power terminal for the extruder heater, was a terminal labelled <code>HOT-BED</code>:</p>
+<p><img alt="Hot bed power terminal" src="http://cmsj.net/images/easythreed_x1_terminals.jpg"></p>
+<p>Next on my journey of discovery was the communication info that Octoprint was sending/receiving, among which I saw:</p>
+<p><code>Recv: echo:Marlin 1.1.0-RC3</code></p>
+<p>which quickly led me to the <a href="https://github.com/MarlinFirmware/Marlin">Marlin</a> open source project which, crucially, is licensed as GPL. For those who don't know, GPL means that since Labists have given me a binary of Marlin in the printer, they have to give me the source code if I ask for it.</p>
+<p>I reached out to Labists and they were happy to supply the source, then I also emailed EasyThreed to ask if I could have their source for the X1 as well (and while I was at it, their X3 printer, which looks a lot like the X1, but ships with a heated bed already as part of the product). They sent me the source with no real issues, so I grabbed the main Marlin repo, checked out the tag for <code>1.1.0-RC3</code> and started making branches for the various Labists/EasyThreed source trees I'd acquired. Since their changes were a bit gratuitous in places (random whitespace changes, DOS line endings, tabs, etc) I cleaned them up quite a bit to try and isolate the diffs to code/comment changes.</p>
+<p>Since it's all GPL, I've republished their code with my cleanups:</p>
+<ul>
+<li><a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-Labists-X1">Labists X1</a></li>
+<li><a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X1">EasyThreed X1</a></li>
+<li><a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X3">EasyThreed X3</a></li>
+</ul>
+<p>The specific diffs aren't particularly important (although the Labists firmware does have some curious changes, like disabling thermal runaway protection), but by reading up a bit on configuring Marlin, and comparing the differences between the X3 and the X1, it seemed like very little would need to change to enable the bed heater and its temperature sensor (a header for which is also conveniently present on the controller board).</p>
+<p>At this point in the investigation I had:</p>
+<ul>
+<li>A controller board with:</li>
+<li>A power terminal for a bed heater</li>
+<li>A header for a bed temperature sensor</li>
+<li>Source for the controller firmware</li>
+<li>Source for an extremely similar printer that has a bed heater</li>
+<li>An external bed heater with power and sensor cables</li>
+</ul>
+<p>Not a bad situation to be in!</p>
+<p>Diving into the firmware, I found that Marlin keeps most board-specific settings in <code>Configuration.h</code> and specifically, it contains <code>#define TEMP_SENSOR_BED 0</code>. The number that <code>TEMP_SENSOR_BED</code> is defined as, indicates to Marlin what type of temp sensor is attached (with <code>0</code> obviously meaning nothing is attached). The X3 has a value of <code>1</code> (a 100k thermistor), but I found that I could only get reliable readings with it set to <code>4</code> (a 10k thermistor).</p>
+<p>Believe it or not, that's actually the only thing that <em>has</em> to change, but I did also change <code>#define BED_MAXTEMP 150</code> because 150C seems kind of high. This define sets a temperature at which Marlin will shut itself down as a safety measure. As far as I can tell, 50C-70C is a more realistic range for PLA, and even with ABS it seems as though 110C is recommended. I haven't printed ABS yet and don't have any real plans to, so I reduced the safety limit to 100C.
+I also modified the build version strings in <code>Default_Version.h</code> so I'd be able to quickly tell in Octoprint if I had successfully uploaded a new firmware.</p>
+<p>Next came the challenge of building the firmware. I grabbed the latest Arduino IDE, but it failed to compile Marlin correctly (perhaps because I was using the macOS version of Ardino IDE). Labists helpfully included a Windows build of Arduino IDE 1.0.5 with their firmware source, which was able to build it. Arduino IDE is also GPL, but I haven't republished that yet because I haven't audited the archive for other things that I don't have rights to distribute.</p>
+<p>To get the firmware to upload correctly to the X1, I had to set the board type in Arduino IDE to <code>Melzi</code> and select the COM port for its USB interface, except its USB interface wasn't showing up and Windows' Device Manager couldn't find a driver for it. Some Googling for the USB VID/PID of that device led me to the manufacturer of the CH340 chipset and <a href="http://www.wch.cn/download/ch341ser_exe.html">their drivers</a>.</p>
+<p>Finally the moment of truth - was I about to destroy a controller board with a bad firmware/driver? I clicked the Upload button, waited for it to complete, attached the controller to my Octoprint machine again and.......</p>
+<p><code>Recv: echo:Marlin 1.1.0-RC3-cmsj</code></p>
+<p>Success! I then waited for Octoprint to start communicating with the printer and monitoring temperatures...</p>
+<p><code>Recv: ok T:24.2 /0.0 B:23.6 /0.0 T0:24.2 /0.0 @:0 B@:0</code></p>
+<p>For those of you who aren't familiar with Octoprint/GCode, the <code>T:24.2</code> is the temp sensor in the extruder and the <code>B23.6</code> is the reading from the bed sensor! Another success!</p>
+<p>After replacing the X1's 30W power supply with a 60W variant so it could power the motors <em>and</em> the heater, I asked it to heat up to 50C, and after a little while....</p>
+<p><code>Recv: ok T:28.1 /0.0 B:49.9 /50.0 T0:28.1 /0.0 @:0 B@:127</code></p>
+<p>Perfect!</p>
+<p>And here is the first test print I did, to make sure everything else was still working:</p>
+<p><img alt="Calibration cubes" src="http://cmsj.net/images/easythreed_x1_cubes.jpg"></p>
+<p>The cubes on the left are from before the heated bed, where I was having to level the bed closer to the nozzle to get enough adhesion and the cube on the right is the first print with the heated bed. I think the results speak for themselves - much better detail retention. It's not visible, but the "elephant's foot" is gone too!</p>
+<p>This has been a super rewarding journey, and I'm incredibly grateful to all the people in the 3D printing community upon whose shoulders I am standing. It's a rare and beautiful thing to find a varied community of products, projects and people, all working on the same goals and producing such high quality hardware and software along the way.</p>
+<h1>And now the tl;dr version</h1>
+<p>If you want to do this mod to your X1, here are some things you should know, and some things you will need:</p>
+<ul>
+<li>I am not responsible for your printer. This is a physical and firmware mod, please be careful and think about what you're doing.</li>
+<li>Buy the official <a href="https://www.aliexpress.com/i/4000911088465.html">hotbed accessory</a>, open its control box and unplug the temperature sensor cable.</li>
+<li>Buy a 12V 5A barrel plug power supply (I used <a href="https://amzn.to/3oM2VN3">this one</a> but there are a million options). Use this from now on to power your X1.</li>
+<li>Grab the modified Marlin source from my GitHub repo:<ul>
+<li>Either <a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X1-cmsj">EasyThreed X1</a> - see the precise changes from EasyThreed's firmware <a href="https://github.com/cmsj/Marlin/compare/1.1.0-RC3-EasyThreeD-X1...cmsj:1.1.0-RC3-EasyThreeD-X1-cmsj">here</a></li>
+<li>Or <a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-Labists-X1-cmsj">Labists X1</a> - this has <a href="https://github.com/cmsj/Marlin/compare/1.1.0-RC3-Labists-X1...cmsj:1.1.0-RC3-Labists-X1-cmsj">more changes</a> than the EasyThreed version, since I pulled back in some of Labists changes, but left thermal runaway protection enabled.</li>
+</ul>
+</li>
+<li>Install the CH340 USB Serial drivers. There seem to be lots of places to get these from, I used <a href="http://www.wch.cn/download/ch341ser_exe.html">these</a></li>
+<li>Install Arduino IDE 1.0.5 - still available from the bottom of <a href="https://www.arduino.cc/en/main/OldSoftwareReleases">this page</a></li>
+<li>In Arduino IDE, open the <code>Marlin.ino</code> file from the <code>Marlin</code> directory and click the ✔ button on the toolbar, this will compile the source so you can check everything is installed correctly.</li>
+<li>Remove the bed-levelling screws from your X1, swap the original bed for the heated one.</li>
+<li>Open the controller box of your X1, plug the bed's thermal sensor into the controller board in the <code>TB1</code> header.</li>
+<li>Wire the bed's power into the green <code>HOT-BED</code> terminal. For the best results you probably want to unsolder the original power cable from the bed and use something thinner and more flexible (but at the very least you need something longer).</li>
+<li>Reassemble the controller box and run all the wires neatly.</li>
+<li>Connect the controller box's USB port to your PC, and in Arduino IDE click the ➡ button to compile and upload the firmware. Wait until it says <code>Upload complete</code>.</li>
+<li>In theory, you're done! Check the temperature readings in some software that can talk to the printer (Octoprint, Pronterface, etc.), tell it to turn the bed heater on and make sure the temps rise to the level you asked for. I would definitely encourage you to do this while next to the printer, in case something goes dangerously wrong!</li>
+</ul>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2019/05/20/app-creation-failed-update1.html">Update: Failing to create an app</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Mon 20 May 2019</p>
     </p>
   </div>
   <div class="article__text">
@@ -56,10 +143,10 @@
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2019/05/20/imapsync-docker.html">Overengineered email migration</a></h1>
+    <h1><a href="http://cmsj.net/2019/05/20/imapsync-docker.html">Overengineered email migration</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 20 May 2019</p>
+    <p class="article__meta__post-date">Posted on: Mon 20 May 2019</p>
     </p>
   </div>
   <div class="article__text">
@@ -69,7 +156,7 @@
 <p>After some investigation, I settled on <a href="https://imapsync.lamiral.info/">imapsync</a> as the most capable tool for the job. It's ultimately "just" a Perl script, but it's fantastically well maintained by Gilles Lamiral. It's Open Source, but I'm a big fan of supporting FOSS development, so I happily paid the 60€ Gilles asks for.</p>
 <p>My strong preference these days is always to run my local services in Docker, and fortunately Gilles publishes an <a href="https://hub.docker.com/r/gilleslamiral/imapsync/">official imapsync Dockule</a> so I set to work in Ansible to orchestrate all of the pieces I needed to get this running.</p>
 <p>The first piece was a simple bash script that calls imapsync with all of the necessary command line options:</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 <span class="c1"># This is /usr/local/bin/imapsync-user-isp-fancyplace.sh</span>
 /usr/bin/docker run -u root --rm -v/root/.imap-pass-isp.txt:/isp-pass.txt -v/root/.imap-pass-fancyplace.txt:/fancyplace-pass.txt gilleslamiral/imapsync <span class="se">\</span>
     imapsync <span class="se">\</span>
@@ -79,14 +166,13 @@
         --nofoldersizes --nofoldersizesatend <span class="se">\</span>
         --delete1 --noexpungeaftereach <span class="se">\</span>
         --expunge1
-</pre></div>
-
+</code></pre></div>
 
 <p>Please test this with the <code>--dry</code> option if you ever want to do this - the <code>--automap</code> option worked incredibly well for me (even translating between languages for folders like "Sent Messages"), but check that for yourself.</p>
 <p>What this script will do is start a Docker container and run imapsync within it, which will then check all folders on the old IMAP server and sync any found emails over to the new IMAP server <em>and then delete them from the old server</em>. This is unfortunately necessary because the old ISP in question has a pretty low storage limit and I don't want future email flow to stop because we forgot to go and delete old emails. imapsync appears to be pretty careful about making sure an email has synced correctly before it deletes it from the old server, so I'm not super worried about data loss.</p>
 <p>The IMAP passwords are read from files that live in /root/ on my server (with <code>0400</code> permissions) and they are mounted through into the container. For the new IMAP account, this is a "per-device" password rather than the main account password, so it won't change, and is easy to revoke.</p>
 <p>This isn't a complete setup yet though, because after doing one sync, imapsync will exit and Docker will obey its <code>--rm</code> option and delete the container. What we now need is a regular trigger to run this script and while this used to mean cron, nowadays it could also mean a <a href="https://www.freedesktop.org/software/systemd/man/systemd.timer.html">systemd timer</a>. So, I created a simple systemd service file which gets written to <code>/etc/systemd/system/imapsync-user-isp-fancyplace.service</code> and enabled in systemd:</p>
-<div class="highlight"><pre><span></span><span class="k">[Unit]</span>
+<div class="highlight"><pre><span></span><code><span class="k">[Unit]</span>
 <span class="na">Description</span><span class="o">=</span><span class="s">User IMAP Sync</span>
 <span class="na">After</span><span class="o">=</span><span class="s">docker.service</span>
 <span class="na">Requires</span><span class="o">=</span><span class="s">docker.service</span>
@@ -96,11 +182,10 @@
 <span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/local/bin/imapsync-user-isp-fancyplace.sh</span>
 <span class="na">Restart</span><span class="o">=</span><span class="s">no</span>
 <span class="na">TimeoutSec</span><span class="o">=</span><span class="s">120</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>and a systemd timer file which gets written to <code>/etc/systemd/system/imapsync-user-isp-fancyplace.timer</code>, and then both enabled and started in systemd:</p>
-<div class="highlight"><pre><span></span><span class="k">[Unit]</span>
+<div class="highlight"><pre><span></span><code><span class="k">[Unit]</span>
 <span class="na">Description</span><span class="o">=</span><span class="s">Trigger User IMAP Sync</span>
 
 <span class="k">[Timer]</span>
@@ -111,28 +196,27 @@
 
 <span class="k">[Install]</span>
 <span class="na">WantedBy</span><span class="o">=</span><span class="s">timers.target</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>This will trigger every 10 minutes and start the specified service, which executes the script that starts the Dockule to sync the email. Simple!</p>
 <p>And just to show a useful command, you can check when the timer last triggered, and when it will trigger next, like this:</p>
-<div class="highlight"><pre><span></span># systemctl list-timers
-NEXT                         LEFT          LAST                         PASSED             UNIT                               ACTIVATES
-Mon 2019-05-20 17:38:13 BST  27s left      Mon 2019-05-20 17:28:13 BST  9min ago           imapsync-user-isp-fancyplace.timer imapsync-user-isp-fancyplace.service
-[snip unrelated timers]
+<div class="highlight"><pre><span></span><code><span class="c1"># systemctl list-timers</span>
+<span class="n">NEXT</span>                         <span class="n">LEFT</span>          <span class="n">LAST</span>                         <span class="n">PASSED</span>             <span class="n">UNIT</span>                               <span class="n">ACTIVATES</span>
+<span class="n">Mon</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">20</span> <span class="mi">17</span><span class="p">:</span><span class="mi">38</span><span class="p">:</span><span class="mi">13</span> <span class="n">BST</span>  <span class="mi">27</span><span class="n">s</span> <span class="n">left</span>      <span class="n">Mon</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">20</span> <span class="mi">17</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">13</span> <span class="n">BST</span>  <span class="mi">9</span><span class="nb">min</span> <span class="n">ago</span>           <span class="n">imapsync</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">isp</span><span class="o">-</span><span class="n">fancyplace</span><span class="o">.</span><span class="n">timer</span> <span class="n">imapsync</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">isp</span><span class="o">-</span><span class="n">fancyplace</span><span class="o">.</span><span class="n">service</span>
+<span class="p">[</span><span class="n">snip</span> <span class="n">unrelated</span> <span class="n">timers</span><span class="p">]</span>
 
-9 timers listed.
-Pass --all to see loaded but inactive timers, too.
-</pre></div>
+<span class="mi">9</span> <span class="n">timers</span> <span class="n">listed</span><span class="o">.</span>
+<span class="n">Pass</span> <span class="o">--</span><span class="n">all</span> <span class="n">to</span> <span class="n">see</span> <span class="n">loaded</span> <span class="n">but</span> <span class="n">inactive</span> <span class="n">timers</span><span class="p">,</span> <span class="n">too</span><span class="o">.</span>
+</code></pre></div>
   </div>
 </article>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2019/04/24/app-creation-failed.html">Failing to create an app</a></h1>
+    <h1><a href="http://cmsj.net/2019/04/24/app-creation-failed.html">Failing to create an app</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 24 April 2019</p>
+    <p class="article__meta__post-date">Posted on: Wed 24 April 2019</p>
     </p>
   </div>
   <div class="article__text">
@@ -146,10 +230,10 @@ Pass --all to see loaded but inactive timers, too.
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2018/07/12/gmail-as-dashboard.html">Abusing Gmail as a ghetto dashboard</a></h1>
+    <h1><a href="http://cmsj.net/2018/07/12/gmail-as-dashboard.html">Abusing Gmail as a ghetto dashboard</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Thu 12 July 2018</p>
+    <p class="article__meta__post-date">Posted on: Thu 12 July 2018</p>
     </p>
   </div>
   <div class="article__text">
@@ -158,7 +242,7 @@ Pass --all to see loaded but inactive timers, too.
 <p>My ideal scenario would be that, for example, my daily backup status email would keep the most recent copy in my Inbox, and automatically archive older ones. Same for newsletters - if I didn't read last week's one, I'm realistically never going to, so once it's more than a couple of weeks stale, just get it out of my Inbox.</p>
 <p>Thankfully, Google has an indirect way of making this sort of thing work - <a href="https://developers.google.com/apps-script/">Google Apps Script</a>. You can trigger small JavaScript scripts to run every so often, and operate on your data in various Google apps, including Gmail.</p>
 <p>So, I quickly wrote <a href="https://gist.github.com/cmsj/0d12c452277f32704f347c7fe117215a">this script</a> and it runs every few hours now:</p>
-<div class="highlight"><pre><span></span><span class="c1">// Configuration data</span>
+<div class="highlight"><pre><span></span><code><span class="c1">// Configuration data</span>
 <span class="c1">// Each config should have the following keys:</span>
 <span class="c1">//  * age_min: maps to &#39;older_than:&#39; in gmail query terms</span>
 <span class="c1">//  * age_max: maps to &#39;newer_than:&#39; in gmail query terms</span>
@@ -192,8 +276,7 @@ Pass --all to see loaded but inactive timers, too.
     <span class="p">}</span>
   <span class="p">}</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>(apologies for the very basic JavaScript - it's not a language I have any real desire to be good at. Don't @ me).</p>
   </div>
@@ -201,15 +284,15 @@ Pass --all to see loaded but inactive timers, too.
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2018/07/12/xcode-leaks-error.html">Fixing an error in Xcode Instruments's Leaks profile</a></h1>
+    <h1><a href="http://cmsj.net/2018/07/12/xcode-leaks-error.html">Fixing an error in Xcode Instruments's Leaks profile</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Thu 12 July 2018</p>
+    <p class="article__meta__post-date">Posted on: Thu 12 July 2018</p>
     </p>
   </div>
   <div class="article__text">
     <p>As part of our general effort to try and raise the quality of Hammerspoon, I've been working with <a href="https://twitter.com/latenitefilms">@latenitefilms</a> to track down some memory leaks, which can be very easy if you use the Leaks profile in Xcode's "Instruments" tool. I tried this various ways, but I kept running into this error:</p>
-<p><img alt="Screenshot" src="./images/2018-07-12-xcode-leaks-error.png"></p>
+<p><img alt="Screenshot" src="http://cmsj.net/images/2018-07-12-xcode-leaks-error.png"></p>
 <p>After asking on the <a href="https://forums.developer.apple.com/thread/104011">Apple Developer Forums</a> we got an interesting response from an Apple employee that code signing might be involved. One change later to not do codesigning on Profile builds and Leaks is working again!</p>
 <p>So there we go, if you see "An error occurred trying to capture Leaks data" and "Unable to acquire required task port", one thing to check is your code signing setup. I don't know what specifically was wrong, but it's easy enough to just not sign local debug/profile builds most of the time anyway.</p>
   </div>
@@ -217,26 +300,26 @@ Pass --all to see loaded but inactive timers, too.
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2018/07/05/amigaos41-in-qemu.html">AmigaOS 4.1 Final Edition in Qemu</a></h1>
+    <h1><a href="http://cmsj.net/2018/07/05/amigaos41-in-qemu.html">AmigaOS 4.1 Final Edition in Qemu</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Thu 05 July 2018</p>
+    <p class="article__meta__post-date">Posted on: Thu 05 July 2018</p>
     </p>
   </div>
   <div class="article__text">
     <p>So this is a fun one, some marvellous hackers, including Zoltan Balaton and Sebastien Mauer have been working on Qemu to add support for the <a href="https://en.wikipedia.org/wiki/Sam460ex">Sam460ex motherboard</a>, a PowerPC system from 2010. Of particular interest to me is that this was a board which received an official port of Amiga OS 4, the spiritual successor to AmigaOS, one of my very favourite operating systems.</p>
 <p>I'll probably write more about this later, but for now, here is a simple screenshot of the install CD having just booted.</p>
 <p><em>Update</em>: Zoltan has published a page with information about how to get it working, <a href="http://zero.eik.bme.hu/~balaton/qemu/amiga/">see here</a></p>
-<p><img alt="Screenshot" src="./images/2018-07-05-amigaos-qemu.png"></p>
+<p><img alt="Screenshot" src="http://cmsj.net/images/2018-07-05-amigaos-qemu.png"></p>
   </div>
 </article>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2018/07/04/home-pro-part1-update.html">Home networking like a pro - Part 1.1 - Network Storage Redux</a></h1>
+    <h1><a href="http://cmsj.net/2018/07/04/home-pro-part1-update.html">Home networking like a pro - Part 1.1 - Network Storage Redux</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 04 July 2018</p>
+    <p class="article__meta__post-date">Posted on: Wed 04 July 2018</p>
     </p>
   </div>
   <div class="article__text">
@@ -247,80 +330,78 @@ Pass --all to see loaded but inactive timers, too.
 <p>Instead of getting lost in the weeds of purchase choices and justifications, instead let's look at some of the things I'm doing to the server with Ansible.</p>
 <p>First up is root disk encryption - it's nice to know that your data is private when at rest, but a headless machine in a cupboard is not a fun place to be typing a password on boot. Fortunately I have two ways round this - firstly, a KVM (a Lantronix Spider) and secondly, one can add dropbear to an initramfs so you can ssh into the initramfs to enter the password.</p>
 <p>Here's the playbook tasks that put dropbear into the initramfs:</p>
-<div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Install dropbear-initramfs</span>
-  <span class="l l-Scalar l-Scalar-Plain">apt</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs</span>
-    <span class="l l-Scalar l-Scalar-Plain">state</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install dropbear-initramfs</span>
+  <span class="nt">apt</span><span class="p">:</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
 
-<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Install busybox-static</span>
-  <span class="l l-Scalar l-Scalar-Plain">apt</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">busybox-static</span>
-    <span class="l l-Scalar l-Scalar-Plain">state</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install busybox-static</span>
+  <span class="nt">apt</span><span class="p">:</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">busybox-static</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
 
 <span class="c1"># This is necessary because of https://bugs.launchpad.net/ubuntu/+source/busybox/+bug/1651818</span>
-<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Add initramfs hook to fix cryptroot-unlock</span>
-  <span class="l l-Scalar l-Scalar-Plain">copy</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">dest</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/initramfs-tools/hooks/zz-busybox-initramfs-fix</span>
-    <span class="l l-Scalar l-Scalar-Plain">src</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/zz-busybox-initramfs-fix</span>
-    <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0744</span>
-    <span class="l l-Scalar l-Scalar-Plain">owner</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-    <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-  <span class="l l-Scalar l-Scalar-Plain">notify</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Add initramfs hook to fix cryptroot-unlock</span>
+  <span class="nt">copy</span><span class="p">:</span>
+    <span class="nt">dest</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/initramfs-tools/hooks/zz-busybox-initramfs-fix</span>
+    <span class="nt">src</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/zz-busybox-initramfs-fix</span>
+    <span class="nt">mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0744</span>
+    <span class="nt">owner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="nt">group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
 
-<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure dropbear-initramfs</span>
-  <span class="l l-Scalar l-Scalar-Plain">lineinfile</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">path</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/config</span>
-    <span class="l l-Scalar l-Scalar-Plain">regexp</span><span class="p p-Indicator">:</span> <span class="s">&#39;DROPBEAR_OPTIONS&#39;</span>
-    <span class="l l-Scalar l-Scalar-Plain">line</span><span class="p p-Indicator">:</span> <span class="s">&#39;DROPBEAR_OPTIONS=&quot;-p</span><span class="nv"> </span><span class="s">31337</span><span class="nv"> </span><span class="s">-s</span><span class="nv"> </span><span class="s">-j</span><span class="nv"> </span><span class="s">-k</span><span class="nv"> </span><span class="s">-I</span><span class="nv"> </span><span class="s">60&quot;&#39;</span>
-  <span class="l l-Scalar l-Scalar-Plain">notify</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure dropbear-initramfs</span>
+  <span class="nt">lineinfile</span><span class="p">:</span>
+    <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/config</span>
+    <span class="nt">regexp</span><span class="p">:</span> <span class="s">&#39;DROPBEAR_OPTIONS&#39;</span>
+    <span class="nt">line</span><span class="p">:</span> <span class="s">&#39;DROPBEAR_OPTIONS=&quot;-p</span><span class="nv"> </span><span class="s">31337</span><span class="nv"> </span><span class="s">-s</span><span class="nv"> </span><span class="s">-j</span><span class="nv"> </span><span class="s">-k</span><span class="nv"> </span><span class="s">-I</span><span class="nv"> </span><span class="s">60&quot;&#39;</span>
+  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
 
-<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Add dropbear authorized_keys</span>
-  <span class="l l-Scalar l-Scalar-Plain">copy</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">dest</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/authorized_keys</span>
-    <span class="l l-Scalar l-Scalar-Plain">src</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/dropbear-authorized_keys</span>
-    <span class="l l-Scalar l-Scalar-Plain">mode</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">0600</span>
-    <span class="l l-Scalar l-Scalar-Plain">owner</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-    <span class="l l-Scalar l-Scalar-Plain">group</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-  <span class="l l-Scalar l-Scalar-Plain">notify</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Add dropbear authorized_keys</span>
+  <span class="nt">copy</span><span class="p">:</span>
+    <span class="nt">dest</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/authorized_keys</span>
+    <span class="nt">src</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/dropbear-authorized_keys</span>
+    <span class="nt">mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0600</span>
+    <span class="nt">owner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="nt">group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
 
 <span class="c1"># The format of the ip= kernel parameter is: &lt;client-ip&gt;:&lt;server-ip&gt;:&lt;gw-ip&gt;:&lt;netmask&gt;:&lt;hostname&gt;:&lt;device&gt;:&lt;autoconf&gt;</span>
 <span class="c1"># It comes from https://git.kernel.org/pub/scm/libs/klibc/klibc.git/tree/usr/kinit/ipconfig/README.ipconfig?id=HEAD</span>
-<span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure boot IP and consoleblanking</span>
-  <span class="l l-Scalar l-Scalar-Plain">lineinfile</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">path</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/default/grub</span>
-    <span class="l l-Scalar l-Scalar-Plain">regexp</span><span class="p p-Indicator">:</span> <span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT&#39;</span>
-    <span class="l l-Scalar l-Scalar-Plain">line</span><span class="p p-Indicator">:</span> <span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT=&quot;ip=10.0.88.11::10.0.88.1:255.255.255.0:gnubert:enp0s31f6:none</span><span class="nv"> </span><span class="s">loglevel=7</span><span class="nv"> </span><span class="s">consoleblank=0&quot;&#39;</span>
-  <span class="l l-Scalar l-Scalar-Plain">notify</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">update grub</span>
-</pre></div>
-
+<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure boot IP and consoleblanking</span>
+  <span class="nt">lineinfile</span><span class="p">:</span>
+    <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/default/grub</span>
+    <span class="nt">regexp</span><span class="p">:</span> <span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT&#39;</span>
+    <span class="nt">line</span><span class="p">:</span> <span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT=&quot;ip=10.0.88.11::10.0.88.1:255.255.255.0:gnubert:enp0s31f6:none</span><span class="nv"> </span><span class="s">loglevel=7</span><span class="nv"> </span><span class="s">consoleblank=0&quot;&#39;</span>
+  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update grub</span>
+</code></pre></div>
 
 <p>While this does rely on some external files, the important one is <code>zz-busybox-initramfs-fix</code> which works around <a href="https://bugs.launchpad.net/ubuntu/+source/busybox/+bug/1651818">a bug</a> in the busybox build that Ubuntu is currently using. Rather than paste the whole script here, you can see it <a href="https://gist.github.com/cmsj/515fbf602f983e796ea11f95ce32d537">here</a>.</p>
 <p>The last task in the playbook configures Linux to boot with a particular networking config on a particular NIC, so you can ssh in. Once you're in, just run <code>cryptsetup-unlock</code> and your encrypted root is unlocked!</p>
 <p>Another interesting thing I'm doing, is using <a href="https://github.com/borgbackup">Borg</a> for some backups. It's a pretty clever backup system, and it works over SSH, so I use the following Ansible task to allow a particular SSH key to log in to the server as root, in a way that forces it to use Borg:</p>
-<div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Deploy ssh borg access</span>
-  <span class="l l-Scalar l-Scalar-Plain">authorized_key</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">user</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-    <span class="l l-Scalar l-Scalar-Plain">state</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
-    <span class="l l-Scalar l-Scalar-Plain">key_options</span><span class="p p-Indicator">:</span> <span class="s">&#39;command=&quot;/usr/bin/borg</span><span class="nv"> </span><span class="s">serve</span><span class="nv"> </span><span class="s">--restrict-to-path</span><span class="nv"> </span><span class="s">/srv/tank/backups/borg&quot;,restrict&#39;</span>
-    <span class="l l-Scalar l-Scalar-Plain">key</span><span class="p p-Indicator">:</span> <span class="s">&quot;ssh-rsa</span><span class="nv"> </span><span class="s">BLAHBLAH</span><span class="nv"> </span><span class="s">cmsj@foo&quot;</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Deploy ssh borg access</span>
+  <span class="nt">authorized_key</span><span class="p">:</span>
+    <span class="nt">user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
+    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+    <span class="nt">key_options</span><span class="p">:</span> <span class="s">&#39;command=&quot;/usr/bin/borg</span><span class="nv"> </span><span class="s">serve</span><span class="nv"> </span><span class="s">--restrict-to-path</span><span class="nv"> </span><span class="s">/srv/tank/backups/borg&quot;,restrict&#39;</span>
+    <span class="nt">key</span><span class="p">:</span> <span class="s">&quot;ssh-rsa</span><span class="nv"> </span><span class="s">BLAHBLAH</span><span class="nv"> </span><span class="s">cmsj@foo&quot;</span>
+</code></pre></div>
 
 <p>Now on client machines I can run <code>borg create --exclude-caches --compression=zlib -v -p -s ssh://gnuborg:22/srv/tank/backups/borg/foo/backups.borg::cmsj-{utcnow} $HOME</code> and because <code>gnuborg</code> is defined in <code>~/.ssh/config</code> it will use all the right ssh options (username, hostname and the SSH key created for this purpose):</p>
-<div class="highlight"><pre><span></span>Host gnuborg
-  User root
-  Hostname gnubert.local
-  IdentityFile ~/.ssh/id_rsa_herborg
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">Host gnuborg</span>
+<span class="err">  User root</span>
+<span class="err">  Hostname gnubert.local</span>
+<span class="err">  IdentityFile ~/.ssh/id_rsa_herborg</span>
+</code></pre></div>
   </div>
 </article>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2018/07/02/homebridge-server-monitoring.html">Homebridge server monitoring</a></h1>
+    <h1><a href="http://cmsj.net/2018/07/02/homebridge-server-monitoring.html">Homebridge server monitoring</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 02 July 2018</p>
+    <p class="article__meta__post-date">Posted on: Mon 02 July 2018</p>
     </p>
   </div>
   <div class="article__text">
@@ -328,71 +409,32 @@ Pass --all to see loaded but inactive timers, too.
 <p>London has been having a little bit of a heatwave recently and it got me thinking about the Linux server I have running in a closet under the stairs - it has pretty poor airflow available to it, and I didn't know how hot its CPU was getting.</p>
 <p>So, by the power of JavaScript, Homebridge and Linux's <code>/sys</code> filesystem, I was able to quickly whip up <a href="https://github.com/cmsj/homebridge-linux-temperature">a plugin</a> for Homebridge that will read an entry from Linux's temperature monitoring interface, and present it to HomeKit. In theory I could use it for sending notifications, but in practice I'm doing that via <a href="https://grafana.com/">Grafana</a> - the purpose of getting the information in HomeKit is so I can ask Siri what the server's temperature is.</p>
 <p>The configuration is very simple, allowing you to configure one temperature sensor per instance of the plugin (but you could define multiple instances in your Homebridge <code>config.json</code>):</p>
-<div class="highlight"><pre><span></span><span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
     <span class="nt">&quot;accessory&quot;</span><span class="p">:</span> <span class="s2">&quot;LinuxTemperature&quot;</span><span class="p">,</span>
     <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gnubert&quot;</span><span class="p">,</span>
     <span class="nt">&quot;sensor_path&quot;</span><span class="p">:</span> <span class="s2">&quot;/sys/bus/platform/devices/coretemp.0/hwmon/hwmon0/temp1_input&quot;</span><span class="p">,</span>
     <span class="nt">&quot;divisor&quot;</span><span class="p">:</span> <span class="mi">1000</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>(<code>gnubert</code> is the hostname of my server).</p>
 <p>Below is a screenshot showing the server's CPU temperature mingling with all of the Nest and Arlo items :)</p>
-<p><img alt="Screenshot" src="./images/2018-07-02-server-temp-homekit.jpg"></p>
+<p><img alt="Screenshot" src="http://cmsj.net/images/2018-07-02-server-temp-homekit.jpg"></p>
   </div>
 </article>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2018/06/19/trello-mac-app-automation.html">A little bit of automation of the Trello Mac App</a></h1>
+    <h1><a href="http://cmsj.net/2018/06/19/trello-mac-app-automation.html">A little bit of automation of the Trello Mac App</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Tue 19 June 2018</p>
+    <p class="article__meta__post-date">Posted on: Tue 19 June 2018</p>
     </p>
   </div>
   <div class="article__text">
     <p><a href="https://www.trello.com">Trello</a> have a Mac app, which I use for work and it struck me this morning that several recurring calendar events I have, which exist to remind me to review a particular board, would be much more pleasant if they contained a link that would open the board directly.</p>
 <p>That would be easy if I used the Trello website, but I quite like the app (even though it's really just a browser pretending to be an app), so I went spelunking.</p>
 <p>To cut a long story short, the Trello Mac app registers itself as a handler for <code>trello://</code> URLs, so if you take any <code>trello.com</code> board URL and replace the <code>https://</code> part with <code>trello://</code> you can use it as a link in your calendar (or anywhere else) and it will open the board in the app.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2018/06/15/homebridge-in-docker.html">Homebridge in Docker, an adventure in networking</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Fri 15 June 2018</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p><a href="https://github.com/nfarina/homebridge">Homebridge</a> is a great way of connecting <a href="https://www.npmjs.com/search?q=homebridge">loads</a> of devices that don't support Apple's <a href="https://www.apple.com/uk/ios/home/">HomeKit</a>, to your iOS devices. It consists of a daemon that understands the <a href="https://developer.apple.com/support/homekit-accessory-protocol/">HomeKit Accessory Protocol</a> and <a href="https://www.npmjs.com/search?q=homebridge">many plugins</a> that talk to other devices/services.</p>
-<p>My home server is running Ubuntu, so installing Homebridge is fairly trivial, except I run all my services in <a href="https://www.docker.com">Docker</a> containers. To make things even more fun, I don't build or manage the containers by hand - the building is done by <a href="https://hub.docker.com/u/cmsj/">Docker Hub</a> and the containers are deployed and managed by <a href="https://www.ansible.com/">Ansible</a>.</p>
-<p>So far so good, except that for a long time Homebridge used <a href="https://www.avahi.org/">Avahi</a> (an Open Source implementation of Apple's Bonjour host/service discovery protocol) to announce its devices. That presented a small challenge in that I didn't want to have Avahi running only in that container, so I had to bind mount <code>/var/run/avahi-daemon/</code> into the container.</p>
-<p>I recently rebuilt my Homebridge container to pull it up to the latest versions of Homebridge and the plugins I use, but it was no longer announcing devices on my LAN, and there were no mentions of Avahi in its log. After some digging, it turns out that the HomeKit Accessory Protocol (HAP) library that Homebridge uses, now instantiates its own multicast DNS stack rather than using Avahi.</p>
-<p>Apart from not actually working, this was great news, I could remove the <code>/var/run</code> bind mount from the container, making things more secure, I just needed to figure out why it wasn't showing up.</p>
-<p>The HAP library that Homebridge uses, ends up depending on <a href="https://github.com/mafintosh/multicast-dns">this library</a> to implement mDNS and it makes <a href="https://github.com/mafintosh/multicast-dns/blob/master/index.js#L147">a very simple</a> decision about which network interface it should use. In my case, it was choosing the <code>docker0</code> bridge interface which explicitly isn't connected to the outside world. With no configuration options at the Homebridge level to influence the choice of interface, I had to solve the problem at the Docker network layer.</p>
-<p>So, the answer was the following Ansible task to create a Docker network that is attached to my LAN interface (<code>bridge0</code>) and give it a small portion of a reserved segment in the IP subnet I use:</p>
-<div class="highlight"><pre><span></span><span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure LANbridge network</span>
-  <span class="l l-Scalar l-Scalar-Plain">docker_network</span><span class="p p-Indicator">:</span>
-    <span class="l l-Scalar l-Scalar-Plain">name</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">lanbridge</span>
-    <span class="l l-Scalar l-Scalar-Plain">driver</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">macvlan</span>
-    <span class="l l-Scalar l-Scalar-Plain">driver_options</span><span class="p p-Indicator">:</span>
-      <span class="l l-Scalar l-Scalar-Plain">parent</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">bridge0</span>
-    <span class="l l-Scalar l-Scalar-Plain">ipam_options</span><span class="p p-Indicator">:</span>
-      <span class="l l-Scalar l-Scalar-Plain">subnet</span><span class="p p-Indicator">:</span> <span class="s">&#39;10.0.88.0/24&#39;</span>
-      <span class="l l-Scalar l-Scalar-Plain">gateway</span><span class="p p-Indicator">:</span> <span class="s">&#39;10.0.88.1&#39;</span>
-      <span class="l l-Scalar l-Scalar-Plain">iprange</span><span class="p p-Indicator">:</span> <span class="s">&#39;10.0.88.32/29&#39;</span>
-</pre></div>
-
-
-<p>then change the task for the Homebridge container to use this network:</p>
-<div class="highlight"><pre><span></span>  network_mode: lanbridge
-</pre></div>
-
-
-<p>and now Homebridge is up to date, and working, plus I have a Docker network I can use in the future if any other containerised services need to be very close to the LAN.</p>
   </div>
 </article>
 
@@ -405,22 +447,22 @@ Pass --all to see loaded but inactive timers, too.
 
 
           <li>
-            <a class="pagination__page--current" href="./index.html">1</a>
+            <a class="pagination__page--current" href="http://cmsj.net/index.html">1</a>
           </li>
 
 
           <li>
-            <a  href="./index2.html">2</a>
+            <a  href="http://cmsj.net/index2.html">2</a>
           </li>
 
 
           <li>
-            <a  href="./index3.html">3</a>
+            <a  href="http://cmsj.net/index3.html">3</a>
           </li>
 
 
           <li>
-            <a  href="./index4.html">4</a>
+            <a  href="http://cmsj.net/index4.html">4</a>
           </li>
 
 
@@ -497,18 +539,25 @@ Pass --all to see loaded but inactive timers, too.
 
 
           <li>
-            <a  href="./index23.html">23</a>
+            <a  href="http://cmsj.net/index23.html">23</a>
           </li>
 
         <li class="pagination__next">
-            <a href="./index2.html">&raquo;</a>
+            <a href="http://cmsj.net/index2.html">&raquo;</a>
         </li>
     </ul>
 </div>
 
   </main>
     <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
       <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
         <div class="author__link">
           <ul>
             <li>
@@ -530,7 +579,7 @@ Pass --all to see loaded but inactive timers, too.
         </div>
       </section>
       <div class="ending-message">
-        <p>&copy; Chris Jones.</p>
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
       </div>
     </footer>
 </body>

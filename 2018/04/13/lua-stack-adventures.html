@@ -3,55 +3,65 @@
 
 <head>
   <!-- ## for client-side less
-  <link rel="stylesheet/less" type="text/css" href="../../../theme/css/style.less">
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
   -->
-  <link rel="icon" type="image/vnd.microsoft.icon" href="../../../">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/pygments.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/fontawesome-all.min.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/hatena-bookmark-icon.css">
 
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
 
   <meta charset="utf-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Chris Jones">
   <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+  <meta name="og:url" content="http://cmsj.net/2018/04/13/lua-stack-adventures.html" />
+  <meta name="og:title" content="Adventures in Lua stack overflows" />
+  <meta name="og:description" content="Hammerspoon is heavily dependent on Lua - it's the true core of the application, so it's unavoidable that we have to interact with Lua's C API in a lot of places. If you've never used it before, Lua's C API is designed to be very simple to integrate with other code …" />
+  <meta name="keywords" content="">
+
 
   <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
 
-<meta name="keywords" content="">
 
   <title>
     cmsj.net
-&ndash; Adventures in Lua stack overflows  </title>
-
-</head>
+&ndash; Adventures in Lua stack overflows  </title></head>
 
 <body>
   <main>
     <header>
       <div class="site-name">
-        <a href="/">cmsj.net</a>
+        <a href="http://cmsj.net">cmsj.net</a>
       </div>
       <p>
-        <a href="../../../archives.html"><i class="fas fa-archive"></i> Archive</a>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
       </p>
     </header>
 
 <article>
   <div class="article__title">
-    <h1><a href="../../../2018/04/13/lua-stack-adventures.html">Adventures in Lua stack overflows</a></h1>
+    <h1><a href="http://cmsj.net/2018/04/13/lua-stack-adventures.html">Adventures in Lua stack overflows</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Fri 13 April 2018</p>
+    <p class="article__meta__post-date">Posted on: Fri 13 April 2018</p>
     </p>
   </div>
   <div class="article__text">
     <p><a href="http://www.hammerspoon.org">Hammerspoon</a> is heavily dependent on <a href="http://www.lua.org">Lua</a> - it's the true core of the application, so it's unavoidable that we have to interact with Lua's C API in a lot of places. If you've never used it before, Lua's C API is designed to be very simple to integrate with other code, but it also places a fairly high burden on developers to integrate it properly.</p>
 <p>One of the ways that Lua remains simple is by being stack based - when you give Lua a C function and make it available to call from Lua code, you have to conform to a particular way of working. The function arguments supplied by the user will be presented to you on a stack, and when your C code has finished its work, the return values must have been pushed onto the stack. Here's an example:</p>
-<div class="highlight"><pre><span></span><span class="k">static</span> <span class="kt">int</span> <span class="nf">someUsefulFunction</span><span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span> <span class="kt">int</span> <span class="n">someUsefulFunction</span><span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Fetch our first argument from the stack</span>
     <span class="kt">int</span> <span class="n">someNumber</span> <span class="o">=</span> <span class="n">lua_tointeger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 
@@ -65,13 +75,12 @@
     <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">42</span><span class="p">);</span>
     <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>All simple enough.</p>
 <p>In this scenario of calling from Lua→C, Lua creates a pseudo-stack for you, so while it's good practice to keep the stack neat and tidy (i.e. remove things from it that you don't need), it's not critical because apart from the return values, the rest of the stack is thrown away. That pseudo-stack only has 20 slots by default though, so if you're pushing a lot of return arguments, or using the stack for other things, you may need to use <code>lua_checkstack()</code> to grow it larger, up to the maximum (2048 slots).</p>
 <p>Where things get more interesting, is when you're interacting with the Lua stack without having crossed a Lua→C boundary. For example, maybe you're in a callback function that's been triggered by some event in your C program, and now you need to call a Lua function that the user gave you earlier. This might look something like this:</p>
-<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">globalLuaFunction</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">globalLuaFunction</span><span class="p">;</span>
 <span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Fetch a pointer to the shared Lua state object</span>
     <span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span> <span class="o">=</span> <span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
@@ -88,12 +97,11 @@
 
     <span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Slightly more complex than the last example, but still manageable. Unfortunately in practice this is a fairly suboptimal implementation of a C→Lua call - storing things in the <code>LUA_REGISTRYINDEX</code> table is fine, but it's often nicer to use multiple tables for different things. The big problem here though is that <code>lua_call()</code> doesn't trap errors. If the Lua code raises an exception, Lua will <code>longjmp</code> to a panic handler and <code>abort()</code> your app.</p>
 <p>So, writing this a bit more completely, we get:</p>
-<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
 <span class="kt">int</span> <span class="n">globalLuaFunctionRef</span><span class="p">;</span>
 <span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Fetch a pointer to the shared Lua state object</span>
@@ -103,7 +111,7 @@
     <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span> <span class="n">luaCallbackTable</span><span class="p">);</span>
 
     <span class="c1">// Push onto the stack, from our callback reference table, the Lua function previously supplied by the user</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
+    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
 
     <span class="c1">// Push the two arguments for the Lua function</span>
     <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aValue</span><span class="p">);</span>
@@ -114,14 +122,13 @@
 
     <span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Ok so this is looking better, we have our own table for neatly storing function references and we'll no longer <code>abort()</code> if the Lua function throws an error.</p>
 <p>However, we now have a problem, we're leaking at least one item onto Lua's stack and possibly two. Unlike in the Lua→C case, we are not operating within the safe confines of a pseudo-stack, so anything we leak here will stay permanently on the stack, and at some point that's likely to cause the stack to overflow.</p>
 <p>Now here is the kicker - stack overflows are really hard to find by default, you don't typically get a nice error, your program will simply leak stack slots until the stack overflows, far from the place where the leak is happening, then segfault, and your backtraces will have very normal looking Lua API calls in them.</p>
 <p>If we were to handle the stack properly, the above could would actually look like this (and note that we've gone from four Lua API calls in the first C→Lua example, to eight here):</p>
-<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
 <span class="kt">int</span> <span class="n">globalLuaFunctionRef</span><span class="p">;</span>
 <span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Fetch a pointer to the shared Lua state object</span>
@@ -131,10 +138,10 @@
     <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span> <span class="n">luaCallbackTable</span><span class="p">);</span>
 
     <span class="c1">// Find globalLuaFunctionRef in luaCallbackTable, and push it onto the stack</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
+    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
 
     <span class="c1">// Remove luaCallbackTable from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
-    <span class="n">lua_remove</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">lua_remove</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-2</span><span class="p">);</span>
 
     <span class="c1">// Push the two arguments for the Lua function</span>
     <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aValue</span><span class="p">);</span>
@@ -142,26 +149,24 @@
 
     <span class="k">if</span> <span class="p">(</span><span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="nb">false</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Fetch the Lua error message from the stack</span>
-        <span class="kt">char</span> <span class="o">*</span><span class="n">someError</span> <span class="o">=</span> <span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="kt">char</span> <span class="o">*</span><span class="n">someError</span> <span class="o">=</span> <span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">);</span>
         <span class="n">printf</span><span class="p">(</span><span class="s">&quot;ERROR: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">someError</span><span class="p">);</span>
 
         <span class="c1">// Remove the Lua error message from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
-        <span class="n">lua_pop</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">lua_pop</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Hammerspoon has been having problems like this for the last few months - lots of crash reports that on the surface, look like completely valid code was executing. I have to admit that it took me a lot longer than it should have, to realise that these were Lua stack overflows rather than my initial suspicion (C heap corruption), but we figured it out eventually and have hopefully fixed all of the leaks.</p>
 <p>So, how did we discover that the problem was stack overflows, and how did we discover where all of the leaks were without manually auditing all of the places where we make C→Lua transitions (of which there are over 100). The answer to the first question is very simple, by defining <code>LUA_USE_APICHECK</code> when compiling Lua, it will do a little extra work to verify its consistency. Crucially, this includes calling <code>abort()</code> with a helpful message when the stack overflows. We turned this on for developers in March and then released 0.9.61 with it enabled, in early April. It's not normally recommended to have the API checker enabled in production because it calls <code>abort()</code>, but we felt that it was important to get more information about the crashes we couldn't reproduce.</p>
 <p>Within a few days we started getting crash reports with the words <code>stack overflow</code> in them (as well as a few other errors, which we were able to fix), but that is only half the battle.</p>
 <p>Having discovered that we did definitely have a stack leak somewhere, how did we discover where it was? This did involve a little brute force effort, but thankfully not a full manual audit of all 107 C→Lua call sites. Instead, I wrote two macros:</p>
-<div class="highlight"><pre><span></span><span class="cp">#define _lua_stackguard_entry(L) int __lua_stackguard_entry=lua_gettop(L);</span>
+<div class="highlight"><pre><span></span><code><span class="cp">#define _lua_stackguard_entry(L) int __lua_stackguard_entry=lua_gettop(L);</span>
 <span class="cp">#define _lua_stackguard_exit(L) assert(__lua_stackguard_entry == lua_gettop(L));</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>These are very simple to use - you call <code>_lua_stackguard_entry()</code> just after you've obtained a pointer to the Lua state object, and then you call <code>_lua_stackguard_exit()</code> at every point where the function can return after that. It records the size of the stack (<code>lua_gettop()</code>) at the entry point and <code>assert()</code>s that it's the same at the exit point (<code>assert()</code> also calls <code>abort()</code> if something is wrong, so now we would get crash logs with the crash in the actual function where the leak is happening).
 These entry/exit calls were then added to all 107 call sites 4 days after the 0.9.61 was released and I spent 3 evenings testing or manually verifying every site, before releasing 0.9.65 (0.9.62-0.9.64 fixed some of the other bugs found by the API checker in the mean time).</p>
@@ -175,7 +180,14 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 
   </main>
     <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
       <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
         <div class="author__link">
           <ul>
             <li>
@@ -197,7 +209,7 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
         </div>
       </section>
       <div class="ending-message">
-        <p>&copy; Chris Jones.</p>
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
       </div>
     </footer>
 </body>

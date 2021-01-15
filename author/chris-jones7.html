@@ -3,49 +3,112 @@
 
 <head>
   <!-- ## for client-side less
-  <link rel="stylesheet/less" type="text/css" href="../theme/css/style.less">
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
   -->
-  <link rel="icon" type="image/vnd.microsoft.icon" href="../">
-  <link rel="stylesheet" type="text/css" href="../theme/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/fontawesome-all.min.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/hatena-bookmark-icon.css">
 
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
 
   <meta charset="utf-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Chris Jones">
   <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+
 
   <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
 
 
   <title>
     cmsj.net
-&ndash; Posts by: Chris Jones  </title>
-
-</head>
+&ndash; Posts by: Chris Jones  </title></head>
 
 <body>
   <main>
     <header>
       <div class="site-name">
-        <a href="/">cmsj.net</a>
+        <a href="http://cmsj.net">cmsj.net</a>
       </div>
       <p>
-        <a href="../archives.html"><i class="fas fa-archive"></i> Archive</a>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
 &gt; Author: Chris Jones
       </p>
     </header>
 
 <article>
   <div class="article__title">
-    <h1><a href=".././2010/07/04/good-day.html">A good day</a></h1>
+    <h1><a href="http://cmsj.net/2010/07/06/who-wants-to-see-something-really-ugly.html">Who wants to see something really ugly?</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Sun 04 July 2010</p>
+    <p class="article__meta__post-date">Posted on: Tue 06 July 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I think it should be abundantly clear from my postings here that I'm not a very good programmer, and this means I give myself a lot of free rope to do some very stupid things.
+I'm in constant need of debugging information and in Terminator particularly where we have lots of objects all interacting and reparenting all the time. We've had a simple dbg() method for a long time, but I was getting very bored of typing out dbg('Class::method:: Some message about %d' % foo), so I decided to see what could be done about inferring the Class and method parts of the message.
+It turns out that python is very good at introspecting its own runtime, so back in January, armed with my own stupidity and some help from various folks on the Internet, I came up with the following:</p>
+<div class="highlight"><pre><span></span><code><span class="err">#</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">true</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">enable</span><span class="w"> </span><span class="n">debugging</span><span class="w"> </span><span class="k">output</span><span class="w"></span>
+<span class="n">DEBUG</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">False</span><span class="w"></span>
+<span class="err">#</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">this</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="k">true</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">additionally</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="n">filenames</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="n">debugging</span><span class="w"></span>
+<span class="n">DEBUGFILES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">False</span><span class="w"></span>
+<span class="err">#</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">classes</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">show</span><span class="w"> </span><span class="n">debugging</span><span class="w"> </span><span class="k">for</span><span class="p">.</span><span class="w"> </span><span class="n">empty</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="n">means</span><span class="w"> </span><span class="n">show</span><span class="w"> </span><span class="ow">all</span><span class="w"> </span><span class="n">classes</span><span class="w"></span>
+<span class="n">DEBUGCLASSES</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">[]</span><span class="w"></span>
+<span class="err">#</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="k">of</span><span class="w"> </span><span class="n">methods</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">show</span><span class="w"> </span><span class="n">debugging</span><span class="w"> </span><span class="k">for</span><span class="p">.</span><span class="w"> </span><span class="n">empty</span><span class="w"> </span><span class="n">list</span><span class="w"> </span><span class="n">means</span><span class="w"> </span><span class="n">show</span><span class="w"> </span><span class="ow">all</span><span class="w"> </span><span class="n">methods</span><span class="w"></span>
+<span class="n">DEBUGMETHODS</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="err">[]</span><span class="w"></span>
+
+<span class="n">def</span><span class="w"> </span><span class="n">dbg</span><span class="p">(</span><span class="nf">log</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;&quot;</span><span class="p">)</span><span class="err">:</span><span class="w"></span>
+<span class="w">    </span><span class="ss">&quot;&quot;&quot;Print a message if debugging is enabled&quot;&quot;&quot;</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="nl">DEBUG</span><span class="p">:</span><span class="w"></span>
+<span class="w">        </span><span class="n">stackitem</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inspect</span><span class="p">.</span><span class="n">stack</span><span class="p">()</span><span class="o">[</span><span class="n">1</span><span class="o">]</span><span class="w"></span>
+<span class="w">        </span><span class="n">parent_frame</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stackitem</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="w"></span>
+<span class="w">        </span><span class="k">method</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parent_frame</span><span class="p">.</span><span class="n">f_code</span><span class="p">.</span><span class="n">co_name</span><span class="w"></span>
+<span class="w">        </span><span class="k">names</span><span class="p">,</span><span class="w"> </span><span class="n">varargs</span><span class="p">,</span><span class="w"> </span><span class="n">keywords</span><span class="p">,</span><span class="w"> </span><span class="n">local_vars</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">inspect</span><span class="p">.</span><span class="n">getargvalues</span><span class="p">(</span><span class="n">parent_frame</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">try</span><span class="err">:</span><span class="w"></span>
+<span class="w">            </span><span class="n">self_name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">names</span><span class="o">[</span><span class="n">0</span><span class="o">]</span><span class="w"></span>
+<span class="w">            </span><span class="n">classname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">local_vars</span><span class="o">[</span><span class="n">self_name</span><span class="o">]</span><span class="p">.</span><span class="n">__class__</span><span class="p">.</span><span class="n">__name__</span><span class="w"></span>
+<span class="w">        </span><span class="ow">except</span><span class="w"> </span><span class="nl">IndexError</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="n">classname</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;noclass&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="nl">DEBUGFILES</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="n">line</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">stackitem</span><span class="o">[</span><span class="n">2</span><span class="o">]</span><span class="w"></span>
+<span class="w">            </span><span class="n">filename</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">parent_frame</span><span class="p">.</span><span class="n">f_code</span><span class="p">.</span><span class="n">co_filename</span><span class="w"></span>
+<span class="w">            </span><span class="n">extra</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot; (%s:%s)&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="n">filename</span><span class="p">,</span><span class="w"> </span><span class="n">line</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="k">else</span><span class="err">:</span><span class="w"></span>
+<span class="w">            </span><span class="n">extra</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="ss">&quot;&quot;</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">DEBUGCLASSES</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="err">[]</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="n">classname</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nl">DEBUGCLASSES</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"></span>
+<span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">DEBUGMETHODS</span><span class="w"> </span><span class="o">!=</span><span class="w"> </span><span class="err">[]</span><span class="w"> </span><span class="ow">and</span><span class="w"> </span><span class="k">method</span><span class="w"> </span><span class="ow">not</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nl">DEBUGMETHODS</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="k">return</span><span class="w"></span>
+<span class="w">        </span><span class="k">try</span><span class="err">:</span><span class="w"></span>
+<span class="w">            </span><span class="k">print</span><span class="w"> </span><span class="o">&gt;&gt;</span><span class="w"> </span><span class="n">sys</span><span class="p">.</span><span class="n">stderr</span><span class="p">,</span><span class="w"> </span><span class="ss">&quot;%s::%s: %s%s&quot;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="p">(</span><span class="n">classname</span><span class="p">,</span><span class="w"> </span><span class="k">method</span><span class="p">,</span><span class="w"> </span><span class="nf">log</span><span class="p">,</span><span class="w"> </span><span class="n">extra</span><span class="p">)</span><span class="w"></span>
+<span class="w">        </span><span class="ow">except</span><span class="w"> </span><span class="nl">IOError</span><span class="p">:</span><span class="w"></span>
+<span class="w">            </span><span class="n">pass</span><span class="w"></span>
+</code></pre></div>
+
+<p>How's about that for shockingly bad? ;)
+It also adds a really impressive amount of overhead to the execution time.
+I added the DEBUGCLASSES and DEBUGMETHODS lists so I could cut down on the huge amount of output - these are hooked up to command line options, so you can do something like "terminator -d --debug-classes=Terminal" and only receive debugging messages from the Terminal module.
+I'm not exactly sure what I hope to gain from this post, other than ridicule on the Internet, but maybe, just maybe, someone will pop up and point out how stupid I am in a way that turns this into a 2 line, low-overhead function :D</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2010/07/04/good-day.html">A good day</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Sun 04 July 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -57,10 +120,10 @@ Rike's going to be out for most of tomorrow, so I have to decide between doing m
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/07/04/terminator-094-released.html">Terminator 0.94 released!</a></h1>
+    <h1><a href="http://cmsj.net/2010/07/04/terminator-094-released.html">Terminator 0.94 released!</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Sun 04 July 2010</p>
+    <p class="article__meta__post-date">Posted on: Sun 04 July 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -71,10 +134,10 @@ See the changelog for full details.</p>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/06/08/lawnmower-man.html">The Lawnmower Man</a></h1>
+    <h1><a href="http://cmsj.net/2010/06/08/lawnmower-man.html">The Lawnmower Man</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Tue 08 June 2010</p>
+    <p class="article__meta__post-date">Posted on: Tue 08 June 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -87,100 +150,88 @@ See the changelog for full details.</p>
 <h1>Action</h1>
 <p>These are the steps I used to make a VM with 1GB of RAM, 10GB / and 1GB of swap:</p>
 <h3>Create an LVM Logical Volume</h3>
-<div class="highlight"><pre><span></span>lvcreate -L11G -n somehostname VolumeGroup
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">lvcreate -L11G -n somehostname VolumeGroup</span>
+</code></pre></div>
 
 <h3>Create a VM image and libvirt XML definition</h3>
-<div class="highlight"><pre><span></span>ubuntu-vm-builder kvm lucid --arch amd64 --mem=1024 --cpus=1 \
---raw=/dev/VolumeGroup/somehostname --rootsize=10240 --swapsize=1024 \
---kernel-flavour=server --hostname=somehostname \
---mirror=http://archive.ubuntu.com/ubuntu/ --components=main,universe \
---name &#39;Chris Jones&#39; --user cmsj --pass &#39;ubuntu&#39; --bridge virbr0 \
---libvirt qemu:///system --addpkg vim --addpkg ssh --addpkg ubuntu-minimal
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">ubuntu-vm-builder kvm lucid --arch amd64 --mem=1024 --cpus=1 \</span>
+<span class="err">--raw=/dev/VolumeGroup/somehostname --rootsize=10240 --swapsize=1024 \</span>
+<span class="err">--kernel-flavour=server --hostname=somehostname \</span>
+<span class="err">--mirror=http://archive.ubuntu.com/ubuntu/ --components=main,universe \</span>
+<span class="err">--name &#39;Chris Jones&#39; --user cmsj --pass &#39;ubuntu&#39; --bridge virbr0 \</span>
+<span class="err">--libvirt qemu:///system --addpkg vim --addpkg ssh --addpkg ubuntu-minimal</span>
+</code></pre></div>
 
 <p>Catchy command, huh? ;)</p>
 <h3>Wait</h3>
 <p>(building the VM will take a few minutes)</p>
 <h3>Modify the libvirt XML definition for performance</h3>
 <p>The best driver for disk/networking is the paravirtualised "virtio" driver. I found that ubuntu-vm-builder had already configured the networking to use this, but not the disk, so I modified the disk section to look like this:</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;disk</span> <span class="na">type=</span><span class="s">&#39;block&#39;</span> <span class="na">device=</span><span class="s">&#39;disk&#39;</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;disk</span> <span class="na">type=</span><span class="s">&#39;block&#39;</span> <span class="na">device=</span><span class="s">&#39;disk&#39;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;source</span> <span class="na">dev=</span><span class="s">&#39;/dev/VolumeGroup/somehostname&#39;</span><span class="nt">/&gt;</span>
   <span class="nt">&lt;target</span> <span class="na">dev=</span><span class="s">&#39;vda&#39;</span> <span class="na">bus=</span><span class="s">&#39;virtio&#39;</span><span class="nt">/&gt;</span>
 <span class="nt">&lt;/disk&gt;</span>
-</pre></div>
-
+</code></pre></div>
 
 <h3>Modify the libvirt XML definition for emulated serial console</h3>
 <p>I don't really want to use VNC to talk to the console of my VMs, so I add the following to the &lt;devices&gt; section of the XML definition to make a virtualised serial port and consider it a console:</p>
-<div class="highlight"><pre><span></span>    <span class="nt">&lt;serial</span> <span class="na">type=</span><span class="s">&#39;pty&#39;</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><span></span><code>    <span class="nt">&lt;serial</span> <span class="na">type=</span><span class="s">&#39;pty&#39;</span><span class="nt">&gt;</span>
       <span class="nt">&lt;target</span> <span class="na">port=</span><span class="s">&#39;0&#39;</span><span class="nt">/&gt;</span>
     <span class="nt">&lt;/serial&gt;</span>
     <span class="nt">&lt;console</span> <span class="na">type=</span><span class="s">&#39;pty&#39;</span><span class="nt">&gt;</span>
       <span class="nt">&lt;target</span> <span class="na">port=</span><span class="s">&#39;0&#39;</span><span class="nt">/&gt;</span>
     <span class="nt">&lt;/console&gt;</span>
-</pre></div>
-
+</code></pre></div>
 
 <h3>Modify the libvirt XML definition for a better CPU</h3>
 <p>I'm running this on an Intel Core i7 (Nehalem), but libvirt's newest defined CPU type is a Core2Duo, so we'll go with that in the root of the &lt;domain&gt; section:</p>
-<div class="highlight"><pre><span></span><span class="nt">&lt;cpu</span> <span class="na">match=</span><span class="s">&#39;minimum&#39;</span><span class="nt">&gt;</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&lt;cpu</span> <span class="na">match=</span><span class="s">&#39;minimum&#39;</span><span class="nt">&gt;</span>
   <span class="nt">&lt;model&gt;</span>core2duo<span class="nt">&lt;/model&gt;</span>
 <span class="nt">&lt;/cpu&gt;</span>
-</pre></div>
-
+</code></pre></div>
 
 <h3>Import the XML definition into the running libvirt daemon</h3>
-<div class="highlight"><pre><span></span>virsh define /etc/libvirt/qemu/somehostname.xml
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">virsh define /etc/libvirt/qemu/somehostname.xml</span>
+</code></pre></div>
 
 <h3>Mount the VM's root filesystem</h3>
 <p>The Logical Volume we created should be considered as a whole disk, not a mountable partition, but dmsetup can present the partitions within it, and these should still be present after running ubuntu-vm-builder:</p>
-<div class="highlight"><pre><span></span>mkdir /mnt/tmpvmroot
-mount /dev/mapper/VolumeGroup-somehostnamep1 /mnt/tmpvmroot
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">mkdir /mnt/tmpvmroot</span>
+<span class="err">mount /dev/mapper/VolumeGroup-somehostnamep1 /mnt/tmpvmroot</span>
+</code></pre></div>
 
 <h3>Fix fstab in the VM</h3>
 <p>Edit /mnt/tmpvmroot/etc/fstab and s/hda/vda/</p>
 <h3>Configure serial console in the VM</h3>
 <p>Edit ﻿/etc/init/ttyS0.conf and place the following in it:</p>
-<div class="highlight"><pre><span></span>    # ttyS0 - getty
-    #
-    # This service maintains a getty on ttyS0 from the point the system is
-    # started until it is shut down again.
-    start on stopped rc RUNLEVEL=[2345]
-    stop on runlevel [!2345]
-    respawn
-    exec /sbin/getty -L 115200 ttyS0 xterm
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">    # ttyS0 - getty</span>
+<span class="err">    #</span>
+<span class="err">    # This service maintains a getty on ttyS0 from the point the system is</span>
+<span class="err">    # started until it is shut down again.</span>
+<span class="err">    start on stopped rc RUNLEVEL=[2345]</span>
+<span class="err">    stop on runlevel [!2345]</span>
+<span class="err">    respawn</span>
+<span class="err">    exec /sbin/getty -L 115200 ttyS0 xterm</span>
+</code></pre></div>
 
 <p>Edit /boot/grub/menu.lst and look for the commented "defoptions" line. Change it to:</p>
-<div class="highlight"><pre><span></span>    # defoptions=console=ttyS0 console=tty0
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">    # defoptions=console=ttyS0 console=tty0</span>
+</code></pre></div>
 
 <p>(the default "quiet splash" is not useful for servers IMHO)</p>
 <h3>Unmount the VM's root filesystem</h3>
-<div class="highlight"><pre><span></span>umount /mnt/tmpvmroot
-rmdir /mnt/tmpvmroot
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">umount /mnt/tmpvmroot</span>
+<span class="err">rmdir /mnt/tmpvmroot</span>
+</code></pre></div>
 
 <h3>Start the VM</h3>
-<div class="highlight"><pre><span></span>virsh start somehostname
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">virsh start somehostname</span>
+</code></pre></div>
 
 <h3>SSH into the VM</h3>
 <p>I didn't specify any networking details to ubuntu-vm-builder, so the machine will boot and try to get an address from DHCP. By default you'll have a bridge device for libvirt called virbr0 and dnsmasq will be running, so watch syslog for the VM getting its address.</p>
-<div class="highlight"><pre><span></span><span class="n">ssh</span> <span class="n">cmsj</span><span class="mf">@192.168.122</span><span class="p">.</span><span class="n">xyz</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="n">ssh</span> <span class="n">cmsj</span><span class="mf">@192.168.122</span><span class="p">.</span><span class="n">xyz</span>
+</code></pre></div>
 
 <p>you should now be in your VM! Now all you need to do is configure it to do things and then fix its networking. My plan is to switch the VMs to static IPs and then use NAT to forward connections from public IPs to the VMs, but you could bridge them onto the host's main ethernet device and assign public IPs directly to the VMs.</p>
   </div>
@@ -188,10 +239,10 @@ rmdir /mnt/tmpvmroot
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/06/03/python-decisions.html">Python decisions</a></h1>
+    <h1><a href="http://cmsj.net/2010/06/03/python-decisions.html">Python decisions</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Thu 03 June 2010</p>
+    <p class="article__meta__post-date">Posted on: Thu 03 June 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -200,47 +251,41 @@ So. What shall we look at first. Well, I just hacked up a tiny script last night
 <p><em>Is most of my music collection from the 90s?</em></p>
 <p>Obviously what I want to do here is examine the ID3 tags of the files in my music collection and see how they're distributed. A quick search with apt showed that Ubuntu 10.04 has two python libraries for dealing with ID3 tags and a quick play with each suggested that the one with the API most relevant to my interests was <a href="apt:python-eyed3" title="Install eyeD3">eyeD3</a>. After a few test iterations of the script I was getting bored of waiting for it to silently scan the roughly 4000 MP3s I have, so I did another quick search and found a <a href="apt:python-progressbar" title="Install progressbar">progress bar</a>library.
 So that's all of the motive and opportunity established, now let's examine the means to the end. If you want to follow along at home, the whole script is <a href="/wp-content/uploads/2010/06/musicdecades.py_.txt" title="musicdecades.py.txt">here</a>.</p>
-<div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
   <span class="kn">import</span> <span class="nn">eyeD3</span>
-  <span class="kn">import</span> <span class="nn">progressbar</span> <span class="kn">as</span> <span class="nn">pbar</span>
+  <span class="kn">import</span> <span class="nn">progressbar</span> <span class="k">as</span> <span class="nn">pbar</span>
 <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
-  <span class="k">print</span><span class="p">(</span><span class="s2">&quot;You should make sure python-eyed3 and python-progressbar are installed&quot;</span><span class="p">)</span>
+  <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;You should make sure python-eyed3 and python-progressbar are installed&quot;</span><span class="p">)</span>
  <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>First off this is the section where I'm importing the two non-default python libraries that I depend on. I want to provide a good experience when they're not installed, so I catch the exception and tell people the Debian/Ubuntu package names they need, and exit gracefully. I rename the progressbar module as I import it just because "progressbar" is annoyingly long as a name, and I don't like doing "from foo import *".
 Skipping further on, we find the code that extracts the ID3 year tag:</p>
-<div class="highlight"><pre><span></span><span class="n">year</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">getYear</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;Unknown&#39;</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="n">year</span> <span class="o">=</span> <span class="n">tag</span><span class="o">.</span><span class="n">getYear</span><span class="p">()</span> <span class="ow">or</span> <span class="s1">&#39;Unknown&#39;</span>
+</code></pre></div>
 
 <p>This is something I'm really not sure about the "correctness" of; One of the reasons I went with the eyeD3 library was that the getYear() method returns None if it can't find any data, but I don't really want to capture the result, then test the result explicitly and if it's None set the value to "Unknown", so I went with the above code which only needs a single line and is (IMHO) highly readable.
 This is ultimately the crux of the entire program - we've now collected the year, so we can work out which decade it's from:</p>
-<div class="highlight"><pre><span></span><span class="k">if</span> <span class="n">year</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="k">if</span> <span class="n">year</span> <span class="ow">is</span> <span class="ow">not</span> <span class="s1">&#39;Unknown&#39;</span><span class="p">:</span>
  <span class="n">year</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">0s&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">year</span><span class="p">)[:</span><span class="mi">3</span><span class="p">]</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>If this isn't an unknown year we chop the final digit off the year and replace it with a zero. Job done!
 Next up, another style question. Rather than store the year we just processed I want to know how many of each decade have been found, so the obvious choice is a dict where the keys are the decades and the values are the number of times each decade has been found. One option would be to pre-fill the dict with all the decades, each with a value of zero, but that seems redundant and ugly, so instead I start out with an empty dict. This presents a challenge - if we find a decade that isn't already a key in the dict (which will frequently be the case) we need to notice that and add it. We could do this by pre-emptively testing the dict with its has_key() method, but that struck me as annoyingly wordy, so I went with:</p>
-<div class="highlight"><pre><span></span><span class="k">try</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><span class="k">try</span><span class="p">:</span>
   <span class="n">years</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
 <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
   <span class="n">years</span><span class="p">[</span><span class="n">year</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>If we are incrementing a year that isn't already in the dict, python will raise a KeyError, at which point we know what's happened and know the correct value is 1, so we just set it explicitly. Seems like the simplest solution, but is it the sanest?
 The only other thing I wanted to say is a complaint - having built up the dict I then want to print it nicely, so I have a quick list comprehension to produce a list of strings of the format "19xx: yy" (i.e. the decade and the final number of tracks found for that decade), which I then join together using:</p>
-<div class="highlight"><pre><span></span><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">OUTPUT</span><span class="p">)</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">OUTPUT</span><span class="p">)</span>
+</code></pre></div>
 
 <p>which I hate! Why can't I do:</p>
-<div class="highlight"><pre><span></span><span class="n">OUTPUT</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="n">OUTPUT</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;, &#39;</span><span class="p">)</span>
+</code></pre></div>
 
 <p>(where "OUTPUT" is the list of strings). If that were possible, what I'd actually do is tack the .join() onto the end of the list comprehension and a single line would turn the dict into a printable string.
 So there we have it, my thoughts on the structure of my script. I'd also add that I've become mildly obsessive about getting good scores from pylint on my code, which is why it's rigorously formatted, docstring-ed and why the variable names in the __main__ section are in capitals.
@@ -251,16 +296,16 @@ Oh, and the answer is no, most of my music is from the 2000s. The 1990s come in 
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/05/13/gtk-icon-cache-search-tool.html">gtk icon cache search tool</a></h1>
+    <h1><a href="http://cmsj.net/2010/05/13/gtk-icon-cache-search-tool.html">gtk icon cache search tool</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Thu 13 May 2010</p>
+    <p class="article__meta__post-date">Posted on: Thu 13 May 2010</p>
     </p>
   </div>
   <div class="article__text">
     <p>Earlier on this evening I was asking the very excellent Ted Gould about a weird problem with my Gtk+ icon theme - an app I'd previously installed by hand in /usr/local/, but subsequently removed, had broken icons because Gtk+ was looking in /usr/local/share/icons/ instead of /usr/share/icons/.
 We did a little digging and realised I had an icon theme cache file in /usr/local/ that was overriding the one in /usr/. A bit of deleting later and it's back, but in the process we whipped up a little bit of python to print out the filename of an icon given an icon name.</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/usr/bin/python</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/python</span>
 <span class="c1"># gtk-find-icon by Chris Jones &lt;cmsj@tenshu.net&gt;</span>
 <span class="c1"># Copyright 2010. GPL v2.</span>
 
@@ -273,19 +318,19 @@ We did a little digging and realised I had an icon theme cache file in /usr/loca
  <span class="n">gtk</span><span class="o">.</span><span class="n">ICON_LOOKUP_USE_BUILTIN</span><span class="p">)</span>
 
 <span class="k">if</span> <span class="ow">not</span> <span class="n">ICON</span><span class="p">:</span>
- <span class="k">print</span> <span class="s2">&quot;None found&quot;</span>
+ <span class="nb">print</span> <span class="s2">&quot;None found&quot;</span>
 <span class="k">else</span><span class="p">:</span>
- <span class="k">print</span><span class="p">(</span><span class="n">ICON</span><span class="o">.</span><span class="n">get_filename</span><span class="p">())</span>
-</pre></div>
+ <span class="nb">print</span><span class="p">(</span><span class="n">ICON</span><span class="o">.</span><span class="n">get_filename</span><span class="p">())</span>
+</code></pre></div>
   </div>
 </article>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/04/19/hybrid-disappear-here.html">Hybrid - Disappear Here</a></h1>
+    <h1><a href="http://cmsj.net/2010/04/19/hybrid-disappear-here.html">Hybrid - Disappear Here</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 19 April 2010</p>
+    <p class="article__meta__post-date">Posted on: Mon 19 April 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -297,10 +342,10 @@ They also post semi-frequent hour long DJ mixes on their <a href="http://soundcl
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/04/18/writing-terminator-plugins.html">Writing Terminator plugins</a></h1>
+    <h1><a href="http://cmsj.net/2010/04/18/writing-terminator-plugins.html">Writing Terminator plugins</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Sun 18 April 2010</p>
+    <p class="article__meta__post-date">Posted on: Sun 18 April 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -312,29 +357,26 @@ The basics of a plugin</p>
 <p>A plugin is a class in a .py file in terminatorlib/plugins or ~/.config/terminator/plugins, but not all classes are automatically treated as plugins. Terminator will examine each of the .py files it finds for a list called 'available' and it will load each of the classes mentioned therein.
 Additionally, it would be a good idea to import terminatorlib.plugin as that contains the base classes that other plugins should be derived from.
 A quick example:</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="kn">as</span> <span class="nn">plugin</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="kn">as</span> <span class="nn">plugin</span>
 <span class="n">available</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;myfirstplugin&#39;</span><span class="p">]</span>
 <span class="k">class</span> <span class="nc">myfirstplugin</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">SomeBasePluginClass</span><span class="p">):</span>
   <span class="n">etc</span><span class="o">.</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>So now let's move on to the simplest type of plugin currently available in Terminator, a URL handler.
 URL Handlers</p>
 <hr>
 <p>This type of plugin adds new regular expressions to match text in the terminal that should be handled as URLs. We ship an example of this with Terminator, it's a handler that adds support for the commonly used format for Launchpad. Ignoring the comments and the basics above, this is ultimately all it is:</p>
-<div class="highlight"><pre><span></span><span class="kr">class</span> <span class="nx">LaunchpadBugURLHandler</span><span class="p">(</span><span class="nx">plugin</span><span class="p">.</span><span class="nx">URLHandler</span><span class="p">)</span><span class="o">:</span>
-  <span class="nx">capabilities</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;url_handler&#39;</span><span class="p">]</span>
-  <span class="nx">handler_name</span> <span class="o">=</span> <span class="s1">&#39;launchpad_bug&#39;</span>
-  <span class="nx">match</span> <span class="o">=</span> <span class="s1">&#39;\\b(lp|LP):?\s?#?[0-9]+(,\s*#?[0-9]+)*\\b&#39;</span>
-</pre></div>
+<div class="highlight"><pre><span></span><code><span class="err">class LaunchpadBugURLHandler(plugin.URLHandler):</span>
+<span class="err">  capabilities = [&#39;url_handler&#39;]</span>
+<span class="err">  handler_name = &#39;launchpad_bug&#39;</span>
+<span class="err">  match = &#39;\\b(lp|LP):?\s?#?[0-9]+(,\s*#?[0-9]+)*\\b&#39;</span>
+</code></pre></div>
 
-
-<div class="highlight"><pre><span></span>  def callback(self, url):
-    for item in re.findall(r&#39;[0-9]+&#39;, url):
-      return(&#39;https://bugs.launchpad.net/bugs/%s&#39; % item)
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">  def callback(self, url):</span>
+<span class="err">    for item in re.findall(r&#39;[0-9]+&#39;, url):</span>
+<span class="err">      return(&#39;https://bugs.launchpad.net/bugs/%s&#39; % item)</span>
+</code></pre></div>
 
 <p>That's it! Let's break it down a little to see the important things here:
 -   inherit from plugin.URLHandler if you want to handle URLs.
@@ -345,7 +387,7 @@ URL Handlers</p>
 Context menu items</p>
 <hr>
 <p>This type of plugin is a little more involved, but not a huge amount and as with URLHandler we ship an example in terminatorlib/plugins/custom_commands.py which is a plugin that allows users to add custom commands to be sent to the terminal when selected. This also brings a second aspect of making more complex plugins - storing configuration. Terminator's shiny new configuration system (based on the excellent ConfigObj) exposes some API for plugins to use for loading and storing their configuration. The nuts and bolts here are:</p>
-<div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="kn">as</span> <span class="nn">plugin</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="kn">as</span> <span class="nn">plugin</span>
 <span class="kn">from</span> <span class="nn">terminatorlib.config</span> <span class="kn">import</span> <span class="n">Config</span>
 <span class="n">available</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CustomCommandsMenu&#39;</span><span class="p">]</span>
 <span class="k">class</span> <span class="nc">CustomCommandsMenu</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">MenuItem</span><span class="p">):</span>
@@ -357,8 +399,7 @@ Context menu items</p>
     <span class="c1"># Now extract valid data from sections{}</span>
   <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menuitems</span><span class="p">,</span> <span class="n">menu</span><span class="p">,</span> <span class="n">terminal</span><span class="p">):</span>
     <span class="n">menuitems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gtk</span><span class="o">.</span><span class="n">MenuItem</span><span class="p">(</span><span class="s1">&#39;some jazz&#39;</span><span class="p">))</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>This is a pretty simplified example, but it's sufficient to insert a menu item that says "some jazz". I'm not going to go into the detail of hooking up a handler to the 'activate' event of the MenuItem or other PyGTK mechanics, but this gives you the basic detail. The method that Terminator will call from your class is again "callback()" and you get passed a list you should add your menu structure to, along with references to the main menu object and the related Terminal. As the plugin system expands and matures I'd like to be more formal about the API that plugins should expect to be able to rely on, rather than having them poke around inside classes like Config and Terminal. Suggestions are welcome :)
 Regarding the configuration storage API - the value returned by Config.plugin_get_config() is just a dict, it's whatever is currently configured for your plugin's name in the Terminator config file. There's no validation of this data, so you should pay attention to it containing valid data. You can then set whatever you want in this dict and pass it to Config().plugin_set_config() with the name of your class and then call Config().save() to flush this out to disk (I recommend that you be quite liberal about calling save()).
@@ -370,10 +411,10 @@ Wrap up</p>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/04/15/terminator-093-released.html">Terminator 0.93 released!</a></h1>
+    <h1><a href="http://cmsj.net/2010/04/15/terminator-093-released.html">Terminator 0.93 released!</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Thu 15 April 2010</p>
+    <p class="article__meta__post-date">Posted on: Thu 15 April 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -384,10 +425,10 @@ Please keep those bug reports coming, the response to the 0.9x series has been f
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/04/07/terminator-092-released.html">Terminator 0.92 released</a></h1>
+    <h1><a href="http://cmsj.net/2010/04/07/terminator-092-released.html">Terminator 0.92 released</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 07 April 2010</p>
+    <p class="article__meta__post-date">Posted on: Wed 07 April 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -395,30 +436,17 @@ Please keep those bug reports coming, the response to the 0.9x series has been f
 Also in this release the Palette section of the Profile editor in the Preferences GUI is now fully active, which means that all of the config file options should now be fully editable in the GUI.</p>
   </div>
 </article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="../2010/03/31/terminator-090-released.html">Terminator 0.90 released!</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Wed 31 March 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>After lots of work we're really very proud to announce that the completely re-worked Terminator 0.90 is now available! Hopefully we haven't introduced too many new bugs in exchange for the much requested features of being able to save layouts!</p>
-  </div>
-</article>
 
 <div class="pagination">
     <ul>
         <li class="pagination__prev">
-            <a href="../author/chris-jones6.html">&laquo;</a>
+            <a href="http://cmsj.net/author/chris-jones6.html">&laquo;</a>
         </li>
 
 
 
           <li>
-            <a  href="../author/chris-jones.html">1</a>
+            <a  href="http://cmsj.net/author/chris-jones.html">1</a>
           </li>
 
 
@@ -431,37 +459,37 @@ Also in this release the Palette section of the Profile editor in the Preference
 
 
           <li>
-            <a  href="../author/chris-jones4.html">4</a>
+            <a  href="http://cmsj.net/author/chris-jones4.html">4</a>
           </li>
 
 
           <li>
-            <a  href="../author/chris-jones5.html">5</a>
+            <a  href="http://cmsj.net/author/chris-jones5.html">5</a>
           </li>
 
 
           <li>
-            <a  href="../author/chris-jones6.html">6</a>
+            <a  href="http://cmsj.net/author/chris-jones6.html">6</a>
           </li>
 
 
           <li>
-            <a class="pagination__page--current" href="../author/chris-jones7.html">7</a>
+            <a class="pagination__page--current" href="http://cmsj.net/author/chris-jones7.html">7</a>
           </li>
 
 
           <li>
-            <a  href="../author/chris-jones8.html">8</a>
+            <a  href="http://cmsj.net/author/chris-jones8.html">8</a>
           </li>
 
 
           <li>
-            <a  href="../author/chris-jones9.html">9</a>
+            <a  href="http://cmsj.net/author/chris-jones9.html">9</a>
           </li>
 
 
           <li>
-            <a  href="../author/chris-jones10.html">10</a>
+            <a  href="http://cmsj.net/author/chris-jones10.html">10</a>
           </li>
 
 
@@ -514,18 +542,25 @@ Also in this release the Palette section of the Profile editor in the Preference
 
 
           <li>
-            <a  href="../author/chris-jones23.html">23</a>
+            <a  href="http://cmsj.net/author/chris-jones23.html">23</a>
           </li>
 
         <li class="pagination__next">
-            <a href="../author/chris-jones8.html">&raquo;</a>
+            <a href="http://cmsj.net/author/chris-jones8.html">&raquo;</a>
         </li>
     </ul>
 </div>
 
   </main>
     <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
       <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
         <div class="author__link">
           <ul>
             <li>
@@ -547,7 +582,7 @@ Also in this release the Palette section of the Profile editor in the Preference
         </div>
       </section>
       <div class="ending-message">
-        <p>&copy; Chris Jones.</p>
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
       </div>
     </footer>
 </body>

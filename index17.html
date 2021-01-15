@@ -3,48 +3,74 @@
 
 <head>
   <!-- ## for client-side less
-  <link rel="stylesheet/less" type="text/css" href="./theme/css/style.less">
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
   -->
-  <link rel="icon" type="image/vnd.microsoft.icon" href="./">
-  <link rel="stylesheet" type="text/css" href="./theme/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/fontawesome-all.min.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/hatena-bookmark-icon.css">
 
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
 
   <meta charset="utf-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Chris Jones">
   <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+
 
   <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
 
 
   <title>
     cmsj.net
-  </title>
-
-</head>
+  </title></head>
 
 <body>
   <main>
     <header>
       <div class="site-name">
-        <a href="/">cmsj.net</a>
+        <a href="http://cmsj.net">cmsj.net</a>
       </div>
       <p>
-        <a href="./archives.html"><i class="fas fa-archive"></i> Archive</a>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
       </p>
     </header>
 
 <article>
   <div class="article__title">
-    <h1><a href="./2007/07/28/terminator-01-released.html">Terminator 0.1 released</a></h1>
+    <h1><a href="http://cmsj.net/2007/07/28/firefox-bad-for-linux.html">Firefox bad for Linux?</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Sat 28 July 2007</p>
+    <p class="article__meta__post-date">Posted on: Sat 28 July 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Firefox is a very popular piece of software. Claims run up to 100 million users, which is really good and on the whole I think it's a very good browser.
+However.
+What Firefox isn't, is integrated. Sure it renders using gtk (and Cairo, if not already then soon) and gnome actions involving URLs spawn Firefox, but it's still trapped away in its own little universe - Marc Andreeson's gift to the world, a platform agnostic application architecture. Clearly Mozilla has built itself a highly capable cross-platform application architecture, but that necessarily isolates them on every platform.
+The trigger behind this post is the patches that recently appeared to let Epiphany use Webkit (Apple's fork of KHTML, as used n Safari). Epiphany isn't a bad browser, but it's not flexible like the fox (purely because there aren't enough extensions). The problem here is that if GNOME is going to achieve the online desktop integration they have been talking about, reliable HTML widgets seem quite vital. GtkMozEmbed (I say having never used it) appears to be very painful to work with.
+A high quality GNOME widget based on Webkit that makes displaying HTML really easy would be so extraordinarily useful to the project. It would allow the browser to disappear into the desktop - want to visit a page? click/press something to type some stuff which is an address or search keywords. Out slides the appropriate web page. It gets rid of the necessity to go Applications-&gt;Internet-&gt;Firefox before typing a URL (and yes I know things like deskbar can launch a browser in these circumstances). Mostly it massively lower the barrier to writing apps which partly rely on the internet, or HTML in general, which can only be a good thing for a more online world.
+What's holding it back though is Firefox. It's a very popular piece of software, even on Windows. Maybe too popular, if Ubuntu were to drop Firefox by default in favour of an integrated future version of Epiphany it could hurt Ubuntu - one of its selling points is no longer that it uses the much vaunted Firefox thingy people have heard of.
+(I also wonder if GTK should support CSS ;)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2007/07/28/terminator-01-released.html">Terminator 0.1 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Sat 28 July 2007</p>
     </p>
   </div>
   <div class="article__text">
@@ -56,10 +82,10 @@ Rather than repeat myself here, just click over to the <a href="http://www.tensh
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2007/07/11/hacky-root-partition-resizing.html">hacky root partition resizing</a></h1>
+    <h1><a href="http://cmsj.net/2007/07/11/hacky-root-partition-resizing.html">hacky root partition resizing</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 11 July 2007</p>
+    <p class="article__meta__post-date">Posted on: Wed 11 July 2007</p>
     </p>
   </div>
   <div class="article__text">
@@ -72,10 +98,10 @@ Now, with appropriate $LD_LIBRARY_PATH mangling you can run the extracted binari
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2007/06/30/computing-nostalgia.html">Computing nostalgia</a></h1>
+    <h1><a href="http://cmsj.net/2007/06/30/computing-nostalgia.html">Computing nostalgia</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Sat 30 June 2007</p>
+    <p class="article__meta__post-date">Posted on: Sat 30 June 2007</p>
     </p>
   </div>
   <div class="article__text">
@@ -99,10 +125,10 @@ I'd like to say thank you to everyone who made the Amiga, everyone who made its 
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2007/06/13/screen-titles-from-ssh.html">screen titles from ssh</a></h1>
+    <h1><a href="http://cmsj.net/2007/06/13/screen-titles-from-ssh.html">screen titles from ssh</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 13 June 2007</p>
+    <p class="article__meta__post-date">Posted on: Wed 13 June 2007</p>
     </p>
   </div>
   <div class="article__text">
@@ -122,10 +148,10 @@ You will need to make sure screen is configured to show a status line (otherwise
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2007/06/09/more-ps3-video-stuff.html">More PS3 video stuff</a></h1>
+    <h1><a href="http://cmsj.net/2007/06/09/more-ps3-video-stuff.html">More PS3 video stuff</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Sat 09 June 2007</p>
+    <p class="article__meta__post-date">Posted on: Sat 09 June 2007</p>
     </p>
   </div>
   <div class="article__text">
@@ -142,10 +168,10 @@ Of course, if the rumours are true, this is going to all be immaterial shortly..
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2007/06/07/installing-ubuntu-on-ps3.html">Installing Ubuntu on the PS3</a></h1>
+    <h1><a href="http://cmsj.net/2007/06/07/installing-ubuntu-on-ps3.html">Installing Ubuntu on the PS3</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Thu 07 June 2007</p>
+    <p class="article__meta__post-date">Posted on: Thu 07 June 2007</p>
     </p>
   </div>
   <div class="article__text">
@@ -159,10 +185,10 @@ After consulting with the very helpful Colin Watson, it turns out that the disk 
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2007/06/05/ps3-movie-icons.html">PS3 movie icons</a></h1>
+    <h1><a href="http://cmsj.net/2007/06/05/ps3-movie-icons.html">PS3 movie icons</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Tue 05 June 2007</p>
+    <p class="article__meta__post-date">Posted on: Tue 05 June 2007</p>
     </p>
   </div>
   <div class="article__text">
@@ -177,10 +203,10 @@ Bonus points to anyone who figures out how to replace the thumbnail of one movie
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2007/06/04/watching-ps3.html">Watching the PS3</a></h1>
+    <h1><a href="http://cmsj.net/2007/06/04/watching-ps3.html">Watching the PS3</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 04 June 2007</p>
+    <p class="article__meta__post-date">Posted on: Mon 04 June 2007</p>
     </p>
   </div>
   <div class="article__text">
@@ -198,10 +224,10 @@ I'm sure you won't care, but it also just happens to fit exactly into the only a
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2007/06/03/flow.html">flOw</a></h1>
+    <h1><a href="http://cmsj.net/2007/06/03/flow.html">flOw</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Sun 03 June 2007</p>
+    <p class="article__meta__post-date">Posted on: Sun 03 June 2007</p>
     </p>
   </div>
   <div class="article__text">
@@ -211,33 +237,17 @@ It's accompanied by an excellent ambient soundtrack which is largely controlled 
 It's simple, relaxing and fun; It's not very hard and it doesn't take very long to complete. Perfect for under £4 and a few minutes of downloading.</p>
   </div>
 </article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2007/06/03/gaming-returns.html">Gaming returns</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Sun 03 June 2007</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>I've been missing my PS2 a lot recently. Sure I have a copy of Windows lying around for when i want to play some games there, but rebooting is much hassle and then I have to fight with Windows. Console games are generally more to my tastes too.
-I flirted with a PSP for a while, but I was really dissatisfied with the games available for it (in that they are postly either not my kind of thing, or cut down PS2 games) and so traded it with a friend for a little Linux PDA.
-It therefore seemed reasonable to look at the latest round of consoles: Wii, Xbox 360 and PS3. I think it's fair to say that I quite like Sony, so I started out with a heavy bias to the PS3. I've seen the wii in action and I completely understand why it's selling like it was illegal, but it's not really for me so I discounted that idea fairly quickly. Microsoft have done a great job with the 360, I've played about with one quite a bit and it seems like they have gone a long way to solve the various mistakes of the original Xbox. The final option is the PS3, which despite Sony's best managerial efforts, has also turned out to be a pretty stonking machine.
-Ultimately the PS3 won out and I'll be posting some vague musings as I explore it (actually I'm writing this a few days after getting it, so I've already got some stuff to fill in).</p>
-  </div>
-</article>
 
 <div class="pagination">
     <ul>
         <li class="pagination__prev">
-            <a href="./index16.html">&laquo;</a>
+            <a href="http://cmsj.net/index16.html">&laquo;</a>
         </li>
 
 
 
           <li>
-            <a  href="./index.html">1</a>
+            <a  href="http://cmsj.net/index.html">1</a>
           </li>
 
 
@@ -290,37 +300,37 @@ Ultimately the PS3 won out and I'll be posting some vague musings as I explore i
 
 
           <li>
-            <a  href="./index14.html">14</a>
+            <a  href="http://cmsj.net/index14.html">14</a>
           </li>
 
 
           <li>
-            <a  href="./index15.html">15</a>
+            <a  href="http://cmsj.net/index15.html">15</a>
           </li>
 
 
           <li>
-            <a  href="./index16.html">16</a>
+            <a  href="http://cmsj.net/index16.html">16</a>
           </li>
 
 
           <li>
-            <a class="pagination__page--current" href="./index17.html">17</a>
+            <a class="pagination__page--current" href="http://cmsj.net/index17.html">17</a>
           </li>
 
 
           <li>
-            <a  href="./index18.html">18</a>
+            <a  href="http://cmsj.net/index18.html">18</a>
           </li>
 
 
           <li>
-            <a  href="./index19.html">19</a>
+            <a  href="http://cmsj.net/index19.html">19</a>
           </li>
 
 
           <li>
-            <a  href="./index20.html">20</a>
+            <a  href="http://cmsj.net/index20.html">20</a>
           </li>
 
 
@@ -333,18 +343,25 @@ Ultimately the PS3 won out and I'll be posting some vague musings as I explore i
 
 
           <li>
-            <a  href="./index23.html">23</a>
+            <a  href="http://cmsj.net/index23.html">23</a>
           </li>
 
         <li class="pagination__next">
-            <a href="./index18.html">&raquo;</a>
+            <a href="http://cmsj.net/index18.html">&raquo;</a>
         </li>
     </ul>
 </div>
 
   </main>
     <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
       <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
         <div class="author__link">
           <ul>
             <li>
@@ -366,7 +383,7 @@ Ultimately the PS3 won out and I'll be posting some vague musings as I explore i
         </div>
       </section>
       <div class="ending-message">
-        <p>&copy; Chris Jones.</p>
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
       </div>
     </footer>
 </body>

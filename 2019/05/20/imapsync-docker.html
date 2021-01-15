@@ -3,49 +3,59 @@
 
 <head>
   <!-- ## for client-side less
-  <link rel="stylesheet/less" type="text/css" href="../../../theme/css/style.less">
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
   -->
-  <link rel="icon" type="image/vnd.microsoft.icon" href="../../../">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/pygments.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/fontawesome-all.min.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/hatena-bookmark-icon.css">
 
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
 
   <meta charset="utf-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Chris Jones">
   <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+  <meta name="og:url" content="http://cmsj.net/2019/05/20/imapsync-docker.html" />
+  <meta name="og:title" content="Overengineered email migration" />
+  <meta name="og:description" content="I recently had the need to migrate someone in my family off an old ISP email account, onto a more modern email account, without simply shutting down the old account. The old address has been given out to people/companies for at least a decade, so it's simply not practical …" />
+  <meta name="keywords" content="">
+
 
   <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
 
-<meta name="keywords" content="">
 
   <title>
     cmsj.net
-&ndash; Overengineered email migration  </title>
-
-</head>
+&ndash; Overengineered email migration  </title></head>
 
 <body>
   <main>
     <header>
       <div class="site-name">
-        <a href="/">cmsj.net</a>
+        <a href="http://cmsj.net">cmsj.net</a>
       </div>
       <p>
-        <a href="../../../archives.html"><i class="fas fa-archive"></i> Archive</a>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
       </p>
     </header>
 
 <article>
   <div class="article__title">
-    <h1><a href="../../../2019/05/20/imapsync-docker.html">Overengineered email migration</a></h1>
+    <h1><a href="http://cmsj.net/2019/05/20/imapsync-docker.html">Overengineered email migration</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 20 May 2019</p>
+    <p class="article__meta__post-date">Posted on: Mon 20 May 2019</p>
     </p>
   </div>
   <div class="article__text">
@@ -55,7 +65,7 @@
 <p>After some investigation, I settled on <a href="https://imapsync.lamiral.info/">imapsync</a> as the most capable tool for the job. It's ultimately "just" a Perl script, but it's fantastically well maintained by Gilles Lamiral. It's Open Source, but I'm a big fan of supporting FOSS development, so I happily paid the 60€ Gilles asks for.</p>
 <p>My strong preference these days is always to run my local services in Docker, and fortunately Gilles publishes an <a href="https://hub.docker.com/r/gilleslamiral/imapsync/">official imapsync Dockule</a> so I set to work in Ansible to orchestrate all of the pieces I needed to get this running.</p>
 <p>The first piece was a simple bash script that calls imapsync with all of the necessary command line options:</p>
-<div class="highlight"><pre><span></span><span class="ch">#!/bin/bash</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 <span class="c1"># This is /usr/local/bin/imapsync-user-isp-fancyplace.sh</span>
 /usr/bin/docker run -u root --rm -v/root/.imap-pass-isp.txt:/isp-pass.txt -v/root/.imap-pass-fancyplace.txt:/fancyplace-pass.txt gilleslamiral/imapsync <span class="se">\</span>
     imapsync <span class="se">\</span>
@@ -65,14 +75,13 @@
         --nofoldersizes --nofoldersizesatend <span class="se">\</span>
         --delete1 --noexpungeaftereach <span class="se">\</span>
         --expunge1
-</pre></div>
-
+</code></pre></div>
 
 <p>Please test this with the <code>--dry</code> option if you ever want to do this - the <code>--automap</code> option worked incredibly well for me (even translating between languages for folders like "Sent Messages"), but check that for yourself.</p>
 <p>What this script will do is start a Docker container and run imapsync within it, which will then check all folders on the old IMAP server and sync any found emails over to the new IMAP server <em>and then delete them from the old server</em>. This is unfortunately necessary because the old ISP in question has a pretty low storage limit and I don't want future email flow to stop because we forgot to go and delete old emails. imapsync appears to be pretty careful about making sure an email has synced correctly before it deletes it from the old server, so I'm not super worried about data loss.</p>
 <p>The IMAP passwords are read from files that live in /root/ on my server (with <code>0400</code> permissions) and they are mounted through into the container. For the new IMAP account, this is a "per-device" password rather than the main account password, so it won't change, and is easy to revoke.</p>
 <p>This isn't a complete setup yet though, because after doing one sync, imapsync will exit and Docker will obey its <code>--rm</code> option and delete the container. What we now need is a regular trigger to run this script and while this used to mean cron, nowadays it could also mean a <a href="https://www.freedesktop.org/software/systemd/man/systemd.timer.html">systemd timer</a>. So, I created a simple systemd service file which gets written to <code>/etc/systemd/system/imapsync-user-isp-fancyplace.service</code> and enabled in systemd:</p>
-<div class="highlight"><pre><span></span><span class="k">[Unit]</span>
+<div class="highlight"><pre><span></span><code><span class="k">[Unit]</span>
 <span class="na">Description</span><span class="o">=</span><span class="s">User IMAP Sync</span>
 <span class="na">After</span><span class="o">=</span><span class="s">docker.service</span>
 <span class="na">Requires</span><span class="o">=</span><span class="s">docker.service</span>
@@ -82,11 +91,10 @@
 <span class="na">ExecStart</span><span class="o">=</span><span class="s">/usr/local/bin/imapsync-user-isp-fancyplace.sh</span>
 <span class="na">Restart</span><span class="o">=</span><span class="s">no</span>
 <span class="na">TimeoutSec</span><span class="o">=</span><span class="s">120</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>and a systemd timer file which gets written to <code>/etc/systemd/system/imapsync-user-isp-fancyplace.timer</code>, and then both enabled and started in systemd:</p>
-<div class="highlight"><pre><span></span><span class="k">[Unit]</span>
+<div class="highlight"><pre><span></span><code><span class="k">[Unit]</span>
 <span class="na">Description</span><span class="o">=</span><span class="s">Trigger User IMAP Sync</span>
 
 <span class="k">[Timer]</span>
@@ -97,19 +105,18 @@
 
 <span class="k">[Install]</span>
 <span class="na">WantedBy</span><span class="o">=</span><span class="s">timers.target</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>This will trigger every 10 minutes and start the specified service, which executes the script that starts the Dockule to sync the email. Simple!</p>
 <p>And just to show a useful command, you can check when the timer last triggered, and when it will trigger next, like this:</p>
-<div class="highlight"><pre><span></span># systemctl list-timers
-NEXT                         LEFT          LAST                         PASSED             UNIT                               ACTIVATES
-Mon 2019-05-20 17:38:13 BST  27s left      Mon 2019-05-20 17:28:13 BST  9min ago           imapsync-user-isp-fancyplace.timer imapsync-user-isp-fancyplace.service
-[snip unrelated timers]
+<div class="highlight"><pre><span></span><code><span class="c1"># systemctl list-timers</span>
+<span class="n">NEXT</span>                         <span class="n">LEFT</span>          <span class="n">LAST</span>                         <span class="n">PASSED</span>             <span class="n">UNIT</span>                               <span class="n">ACTIVATES</span>
+<span class="n">Mon</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">20</span> <span class="mi">17</span><span class="p">:</span><span class="mi">38</span><span class="p">:</span><span class="mi">13</span> <span class="n">BST</span>  <span class="mi">27</span><span class="n">s</span> <span class="n">left</span>      <span class="n">Mon</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">20</span> <span class="mi">17</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">13</span> <span class="n">BST</span>  <span class="mi">9</span><span class="nb">min</span> <span class="n">ago</span>           <span class="n">imapsync</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">isp</span><span class="o">-</span><span class="n">fancyplace</span><span class="o">.</span><span class="n">timer</span> <span class="n">imapsync</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">isp</span><span class="o">-</span><span class="n">fancyplace</span><span class="o">.</span><span class="n">service</span>
+<span class="p">[</span><span class="n">snip</span> <span class="n">unrelated</span> <span class="n">timers</span><span class="p">]</span>
 
-9 timers listed.
-Pass --all to see loaded but inactive timers, too.
-</pre></div>
+<span class="mi">9</span> <span class="n">timers</span> <span class="n">listed</span><span class="o">.</span>
+<span class="n">Pass</span> <span class="o">--</span><span class="n">all</span> <span class="n">to</span> <span class="n">see</span> <span class="n">loaded</span> <span class="n">but</span> <span class="n">inactive</span> <span class="n">timers</span><span class="p">,</span> <span class="n">too</span><span class="o">.</span>
+</code></pre></div>
   </div>
 
 </article>
@@ -117,7 +124,14 @@ Pass --all to see loaded but inactive timers, too.
 
   </main>
     <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
       <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
         <div class="author__link">
           <ul>
             <li>
@@ -139,7 +153,7 @@ Pass --all to see loaded but inactive timers, too.
         </div>
       </section>
       <div class="ending-message">
-        <p>&copy; Chris Jones.</p>
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
       </div>
     </footer>
 </body>

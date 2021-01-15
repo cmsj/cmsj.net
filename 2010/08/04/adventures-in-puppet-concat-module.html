@@ -3,49 +3,59 @@
 
 <head>
   <!-- ## for client-side less
-  <link rel="stylesheet/less" type="text/css" href="../../../theme/css/style.less">
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
   -->
-  <link rel="icon" type="image/vnd.microsoft.icon" href="../../../">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/pygments.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/fontawesome-all.min.css">
-  <link rel="stylesheet" type="text/css" href="../../../theme/css/hatena-bookmark-icon.css">
 
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
 
   <meta charset="utf-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Chris Jones">
   <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+  <meta name="og:url" content="http://cmsj.net/2010/08/04/adventures-in-puppet-concat-module.html" />
+  <meta name="og:title" content="Adventures in Puppet: concat module" />
+  <meta name="og:description" content="R.I. Pienaar has a Puppet module on github called "concat". Its premise is very simple, it just concatenates fragments of text together into a particular file. I'm sure that a more seasoned Puppet veteran would have had this running in no time, but since it introduced some new concepts …" />
+  <meta name="keywords" content="">
+
 
   <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
 
-<meta name="keywords" content="">
 
   <title>
     cmsj.net
-&ndash; Adventures in Puppet: concat module  </title>
-
-</head>
+&ndash; Adventures in Puppet: concat module  </title></head>
 
 <body>
   <main>
     <header>
       <div class="site-name">
-        <a href="/">cmsj.net</a>
+        <a href="http://cmsj.net">cmsj.net</a>
       </div>
       <p>
-        <a href="../../../archives.html"><i class="fas fa-archive"></i> Archive</a>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
       </p>
     </header>
 
 <article>
   <div class="article__title">
-    <h1><a href="../../../2010/08/04/adventures-in-puppet-concat-module.html">Adventures in Puppet: concat module</a></h1>
+    <h1><a href="http://cmsj.net/2010/08/04/adventures-in-puppet-concat-module.html">Adventures in Puppet: concat module</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 04 August 2010</p>
+    <p class="article__meta__post-date">Posted on: Wed 04 August 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -57,7 +67,7 @@ This is what I did:</p>
 <li>Move the resulting git branch to /etc/puppet/modules/concat and add it to my top-level site manifest that includes modules</li>
 <li>Create a class to manage /etc/motd.tail. In my setup this ends up being /etc/puppet/manifests/classes/motd.pp, which is included by my default node, but your setup is probably different. This is what my class looks like:</li>
 </ul>
-<div class="highlight"><pre><span></span>    <span class="k">class</span> <span class="na">motd</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><code>    <span class="k">class</span> <span class="na">motd</span> <span class="p">{</span>
            <span class="k">include</span> <span class="na">concat</span><span class="p">::</span><span class="na">setup</span>
            <span class="nv">$motdfile</span> <span class="o">=</span> <span class="s">&quot;/etc/motd.tail&quot;</span>
 
@@ -94,8 +104,7 @@ This is what I did:</p>
           <span class="na">order</span> <span class="o">=&gt;</span> <span class="nv">$order</span>
        <span class="p">}</span>
     <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>So that's quite a mouthful. Let's break it down:
  * We have to include concat::setup so the concat module can...set... up :)
@@ -115,7 +124,14 @@ This is what I did:</p>
 
   </main>
     <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
       <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
         <div class="author__link">
           <ul>
             <li>
@@ -137,7 +153,7 @@ This is what I did:</p>
         </div>
       </section>
       <div class="ending-message">
-        <p>&copy; Chris Jones.</p>
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
       </div>
     </footer>
 </body>

@@ -4,9 +4,8 @@ $light-grey:  #eeeeee;
 $med-grey:  #999999;
 $dark-grey:  #4d4d4d;
 $dark-red: 	#8B0000;
-$sans: Verdana, "游ゴシック", YuGothic, "Hiragino Kaku Gothic ProN", Meiryo, sans-serif;
-$serif: "Times New Roman", "游明朝", YuMincho, "Hiragino Mincho ProN", Meiryo, serif;
-$mono: monospace;
+$sans: -apple-system,BlinkMacSystemFont,Helvetica Neue,Hiragino Kaku Gothic ProN,Hiragino Sans,ヒラギノ角ゴ ProN W3,メイリオ,Meiryo,sans-serif;
+$mono: 'Roboto Mono', monospace;
 
 body {
   margin: 0;
@@ -46,13 +45,7 @@ hr {
   -webkit-border-radius: $radius;
 }
 
-img+em {
-    width: 1600px;
-    text-align: center;
-    overflow-wrap: break-word;
-}
-
-img,img+em {
+img {
   display: block;
   max-width: 650px;
   max-height: 650px;
@@ -211,7 +204,7 @@ iframe.embedly-card {
 
 @media screen and (max-width: 769px){
   article {
-    img,img+em {
+    img {
       height : auto;
       width  : 100%;
     }
@@ -245,7 +238,7 @@ main {
     }
 
     .article__text {
-      line-height: 1.375em;
+      line-height: 2rem;
       a {
         text-decoration: underline;
       }
@@ -261,7 +254,7 @@ main {
       }
 
       h2 {
-        border-bottom: $light-grey 1px ridge;
+        border-bottom: $light-grey 1px solid;
         margin-top: 2.375rem;
         margin-bottom: 1.375em;
         padding-bottom: 0.5em;
@@ -272,18 +265,19 @@ main {
         margin-bottom: 1.375em;
       }
 
-      code {
-        padding: 0.2em 0;
-        color: $dark-red;
-        font-family: $mono;
-        background: $light-grey;
-        border-radius: 3px;
-      }
+//      code {
+//        padding: 0.2em 0.5em;
+//        color: $dark-red;
+//        font-family: $mono;
+//        background: $light-grey;
+//        border-radius: 3px;
+//      }
 
       pre {
-        margin: 22px 2px 22px 2px;
-        padding: 9.5px;
+        margin: 30px -30px 30px -30px;
+        padding: 15px 40px;
         font-family: $mono;
+        font-size: 0.85em;
         line-height: 1.45;
         overflow-x: auto;
         border-style: none;

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
+
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+  <meta name="og:url" content="http://cmsj.net/2021/01/12/ez3dbedmod.html" />
+  <meta name="og:title" content="EasyThreeD X1 Heated Bed Mod" />
+  <meta name="og:description" content="(If you don't want to read this whole thing, skip to the end of the post for a tl;dr version) I was lucky enough to get a Labists X1 3D printer for Christmas a few weeks ago, and it's the first 3D printer I've had or really even interacted …" />
+  <meta name="keywords" content="">
+
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; EasyThreeD X1 Heated Bed Mod  </title></head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="http://cmsj.net">cmsj.net</a>
+      </div>
+      <p>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2021/01/12/ez3dbedmod.html">EasyThreeD X1 Heated Bed Mod</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Tue 12 January 2021</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>(If you don't want to read this whole thing, skip to the end of the post for a tl;dr version)</p>
+<p>I was lucky enough to get a <a href="https://amzn.to/3i8l8Sz">Labists X1</a> 3D printer for Christmas a few weeks ago, and it's the first 3D printer I've had or really even interacted with.</p>
+<p>It's been a fascinating journey so far, learning about how to calibrate a printer, how to use slicers, and how to start making my own models.</p>
+<p>Something that became obvious fairly quickly though, was that the printer would be more reliable with a heated bed. I've been able to get reliable prints via the use of rafts, but that adds time to prints and wastes filament, so I decided to see if I could mod the printer to have a heated bed.</p>
+<p>I started Googling and quickly discovered that my printer is actually a rebadged <a href="https://www.easythreed.com/h-col-1223.html">EasyThreed X1</a> and that EasyThreed sell a <a href="https://www.aliexpress.com/i/4000911088465.html">hotbed accessory</a> for the X1, but it's an externally powered/controlled device. That's fine in theory, but I have quickly gotten very attached to being able to completely remotely control the printer via <a href="https://octoprint.org/">Octoprint</a>.</p>
+<p>Looking inside the controller box showed a pretty capable circuit board:</p>
+<p><img alt="EasyThreed X1 controller board" src="http://cmsj.net/images/easythreed_x1_controller.jpg"></p>
+<p>but it was instantly obvious that next to the power terminal for the extruder heater, was a terminal labelled <code>HOT-BED</code>:</p>
+<p><img alt="Hot bed power terminal" src="http://cmsj.net/images/easythreed_x1_terminals.jpg"></p>
+<p>Next on my journey of discovery was the communication info that Octoprint was sending/receiving, among which I saw:</p>
+<p><code>Recv: echo:Marlin 1.1.0-RC3</code></p>
+<p>which quickly led me to the <a href="https://github.com/MarlinFirmware/Marlin">Marlin</a> open source project which, crucially, is licensed as GPL. For those who don't know, GPL means that since Labists have given me a binary of Marlin in the printer, they have to give me the source code if I ask for it.</p>
+<p>I reached out to Labists and they were happy to supply the source, then I also emailed EasyThreed to ask if I could have their source for the X1 as well (and while I was at it, their X3 printer, which looks a lot like the X1, but ships with a heated bed already as part of the product). They sent me the source with no real issues, so I grabbed the main Marlin repo, checked out the tag for <code>1.1.0-RC3</code> and started making branches for the various Labists/EasyThreed source trees I'd acquired. Since their changes were a bit gratuitous in places (random whitespace changes, DOS line endings, tabs, etc) I cleaned them up quite a bit to try and isolate the diffs to code/comment changes.</p>
+<p>Since it's all GPL, I've republished their code with my cleanups:</p>
+<ul>
+<li><a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-Labists-X1">Labists X1</a></li>
+<li><a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X1">EasyThreed X1</a></li>
+<li><a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X3">EasyThreed X3</a></li>
+</ul>
+<p>The specific diffs aren't particularly important (although the Labists firmware does have some curious changes, like disabling thermal runaway protection), but by reading up a bit on configuring Marlin, and comparing the differences between the X3 and the X1, it seemed like very little would need to change to enable the bed heater and its temperature sensor (a header for which is also conveniently present on the controller board).</p>
+<p>At this point in the investigation I had:</p>
+<ul>
+<li>A controller board with:</li>
+<li>A power terminal for a bed heater</li>
+<li>A header for a bed temperature sensor</li>
+<li>Source for the controller firmware</li>
+<li>Source for an extremely similar printer that has a bed heater</li>
+<li>An external bed heater with power and sensor cables</li>
+</ul>
+<p>Not a bad situation to be in!</p>
+<p>Diving into the firmware, I found that Marlin keeps most board-specific settings in <code>Configuration.h</code> and specifically, it contains <code>#define TEMP_SENSOR_BED 0</code>. The number that <code>TEMP_SENSOR_BED</code> is defined as, indicates to Marlin what type of temp sensor is attached (with <code>0</code> obviously meaning nothing is attached). The X3 has a value of <code>1</code> (a 100k thermistor), but I found that I could only get reliable readings with it set to <code>4</code> (a 10k thermistor).</p>
+<p>Believe it or not, that's actually the only thing that <em>has</em> to change, but I did also change <code>#define BED_MAXTEMP 150</code> because 150C seems kind of high. This define sets a temperature at which Marlin will shut itself down as a safety measure. As far as I can tell, 50C-70C is a more realistic range for PLA, and even with ABS it seems as though 110C is recommended. I haven't printed ABS yet and don't have any real plans to, so I reduced the safety limit to 100C.
+I also modified the build version strings in <code>Default_Version.h</code> so I'd be able to quickly tell in Octoprint if I had successfully uploaded a new firmware.</p>
+<p>Next came the challenge of building the firmware. I grabbed the latest Arduino IDE, but it failed to compile Marlin correctly (perhaps because I was using the macOS version of Ardino IDE). Labists helpfully included a Windows build of Arduino IDE 1.0.5 with their firmware source, which was able to build it. Arduino IDE is also GPL, but I haven't republished that yet because I haven't audited the archive for other things that I don't have rights to distribute.</p>
+<p>To get the firmware to upload correctly to the X1, I had to set the board type in Arduino IDE to <code>Melzi</code> and select the COM port for its USB interface, except its USB interface wasn't showing up and Windows' Device Manager couldn't find a driver for it. Some Googling for the USB VID/PID of that device led me to the manufacturer of the CH340 chipset and <a href="http://www.wch.cn/download/ch341ser_exe.html">their drivers</a>.</p>
+<p>Finally the moment of truth - was I about to destroy a controller board with a bad firmware/driver? I clicked the Upload button, waited for it to complete, attached the controller to my Octoprint machine again and.......</p>
+<p><code>Recv: echo:Marlin 1.1.0-RC3-cmsj</code></p>
+<p>Success! I then waited for Octoprint to start communicating with the printer and monitoring temperatures...</p>
+<p><code>Recv: ok T:24.2 /0.0 B:23.6 /0.0 T0:24.2 /0.0 @:0 B@:0</code></p>
+<p>For those of you who aren't familiar with Octoprint/GCode, the <code>T:24.2</code> is the temp sensor in the extruder and the <code>B23.6</code> is the reading from the bed sensor! Another success!</p>
+<p>After replacing the X1's 30W power supply with a 60W variant so it could power the motors <em>and</em> the heater, I asked it to heat up to 50C, and after a little while....</p>
+<p><code>Recv: ok T:28.1 /0.0 B:49.9 /50.0 T0:28.1 /0.0 @:0 B@:127</code></p>
+<p>Perfect!</p>
+<p>And here is the first test print I did, to make sure everything else was still working:</p>
+<p><img alt="Calibration cubes" src="http://cmsj.net/images/easythreed_x1_cubes.jpg"></p>
+<p>The cubes on the left are from before the heated bed, where I was having to level the bed closer to the nozzle to get enough adhesion and the cube on the right is the first print with the heated bed. I think the results speak for themselves - much better detail retention. It's not visible, but the "elephant's foot" is gone too!</p>
+<p>This has been a super rewarding journey, and I'm incredibly grateful to all the people in the 3D printing community upon whose shoulders I am standing. It's a rare and beautiful thing to find a varied community of products, projects and people, all working on the same goals and producing such high quality hardware and software along the way.</p>
+<h1>And now the tl;dr version</h1>
+<p>If you want to do this mod to your X1, here are some things you should know, and some things you will need:</p>
+<ul>
+<li>I am not responsible for your printer. This is a physical and firmware mod, please be careful and think about what you're doing.</li>
+<li>Buy the official <a href="https://www.aliexpress.com/i/4000911088465.html">hotbed accessory</a>, open its control box and unplug the temperature sensor cable.</li>
+<li>Buy a 12V 5A barrel plug power supply (I used <a href="https://amzn.to/3oM2VN3">this one</a> but there are a million options). Use this from now on to power your X1.</li>
+<li>Grab the modified Marlin source from my GitHub repo:<ul>
+<li>Either <a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X1-cmsj">EasyThreed X1</a> - see the precise changes from EasyThreed's firmware <a href="https://github.com/cmsj/Marlin/compare/1.1.0-RC3-EasyThreeD-X1...cmsj:1.1.0-RC3-EasyThreeD-X1-cmsj">here</a></li>
+<li>Or <a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-Labists-X1-cmsj">Labists X1</a> - this has <a href="https://github.com/cmsj/Marlin/compare/1.1.0-RC3-Labists-X1...cmsj:1.1.0-RC3-Labists-X1-cmsj">more changes</a> than the EasyThreed version, since I pulled back in some of Labists changes, but left thermal runaway protection enabled.</li>
+</ul>
+</li>
+<li>Install the CH340 USB Serial drivers. There seem to be lots of places to get these from, I used <a href="http://www.wch.cn/download/ch341ser_exe.html">these</a></li>
+<li>Install Arduino IDE 1.0.5 - still available from the bottom of <a href="https://www.arduino.cc/en/main/OldSoftwareReleases">this page</a></li>
+<li>In Arduino IDE, open the <code>Marlin.ino</code> file from the <code>Marlin</code> directory and click the ✔ button on the toolbar, this will compile the source so you can check everything is installed correctly.</li>
+<li>Remove the bed-levelling screws from your X1, swap the original bed for the heated one.</li>
+<li>Open the controller box of your X1, plug the bed's thermal sensor into the controller board in the <code>TB1</code> header.</li>
+<li>Wire the bed's power into the green <code>HOT-BED</code> terminal. For the best results you probably want to unsolder the original power cable from the bed and use something thinner and more flexible (but at the very least you need something longer).</li>
+<li>Reassemble the controller box and run all the wires neatly.</li>
+<li>Connect the controller box's USB port to your PC, and in Arduino IDE click the ➡ button to compile and upload the firmware. Wait until it says <code>Upload complete</code>.</li>
+<li>In theory, you're done! Check the temperature readings in some software that can talk to the printer (Octoprint, Pronterface, etc.), tell it to turn the bed heater on and make sure the temps rise to the level you asked for. I would definitely encourage you to do this while next to the printer, in case something goes dangerously wrong!</li>
+</ul>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
+      <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
+      </div>
+    </footer>
+</body>
+</html>

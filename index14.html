@@ -3,48 +3,78 @@
 
 <head>
   <!-- ## for client-side less
-  <link rel="stylesheet/less" type="text/css" href="./theme/css/style.less">
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
   -->
-  <link rel="icon" type="image/vnd.microsoft.icon" href="./">
-  <link rel="stylesheet" type="text/css" href="./theme/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/fontawesome-all.min.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/hatena-bookmark-icon.css">
 
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
 
   <meta charset="utf-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Chris Jones">
   <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+
 
   <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
 
 
   <title>
     cmsj.net
-  </title>
-
-</head>
+  </title></head>
 
 <body>
   <main>
     <header>
       <div class="site-name">
-        <a href="/">cmsj.net</a>
+        <a href="http://cmsj.net">cmsj.net</a>
       </div>
       <p>
-        <a href="./archives.html"><i class="fas fa-archive"></i> Archive</a>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
       </p>
     </header>
 
 <article>
   <div class="article__title">
-    <h1><a href="./2008/03/17/thinkpad-x300-thoughts.html">Thinkpad X300 thoughts</a></h1>
+    <h1><a href="http://cmsj.net/2008/04/08/getting-information-out-of-badly-broken.html">getting information out of a badly broken debian installer</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 17 March 2008</p>
+    <p class="article__meta__post-date">Posted on: Tue 08 April 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>You have new hardware (most likely server).
+You pop in a debian/ubuntu installer CD, tell it what kind of keyboard you have and expect it to scan the CDROM for packages, but....uh-oh, it can't find the CD!
+What do you do?! Well, realistically there's not a lot you can do to make it work, but you can do a lot to help get it fixed.
+You need to pull off /var/log/syslog, the output of lspci, lspci -v and lspci -vvnn.
+You may very well find yourself having a problem with that though, because you're still pretty early in a typical linux boot process, so you probably don't have any disks mounted and you may find yourself missing any modules to make that happen.
+You should have usb-storage.ko though. That and isofs.ko.
+Can you see where this is going? :)
+find the .udeb's on your install CD with a working computer, <code>ar -x</code> the core fs modules one and pull out ext3 (and jbd and mbcache), or vfat and its dependencies. put them in a directory, then do <code>mkisofs -o /dev/usbstick1 /path/to/modules</code>.
+You now have a partition on your USB stick that is an ISO9660 filesystem (ie a CD). Obviously make sure you don't do this on a USB stick you care about the contents of.
+Chuck the USB stick into the broken server, <code>modprobe usb-storage</code>, mount the newly appeared partition and copy the modules over to the right place in /lib/modules/. Unmount the USB stick, modprobe the drivers and now you can put in an ext3/vfat formatted USB stick and you have somewhere to write the debugging information to!
+Easy! :) Now file a bug with the debugging information you collected.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2008/03/17/thinkpad-x300-thoughts.html">Thinkpad X300 thoughts</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Mon 17 March 2008</p>
     </p>
   </div>
   <div class="article__text">
@@ -56,10 +86,10 @@ When the support is there, this will be a laptop to be highly recommended.</p>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2008/02/27/first-terminator-video-appearance.html">First terminator video appearance?</a></h1>
+    <h1><a href="http://cmsj.net/2008/02/27/first-terminator-video-appearance.html">First terminator video appearance?</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 27 February 2008</p>
+    <p class="article__meta__post-date">Posted on: Wed 27 February 2008</p>
     </p>
   </div>
   <div class="article__text">
@@ -70,10 +100,10 @@ Woo!</p>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2008/02/20/terminator-081-released.html">Terminator 0.8.1 released</a></h1>
+    <h1><a href="http://cmsj.net/2008/02/20/terminator-081-released.html">Terminator 0.8.1 released</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 20 February 2008</p>
+    <p class="article__meta__post-date">Posted on: Wed 20 February 2008</p>
     </p>
   </div>
   <div class="article__text">
@@ -83,10 +113,10 @@ Woo!</p>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2008/02/20/terminator-081-released_19.html">Terminator 0.8.1 released</a></h1>
+    <h1><a href="http://cmsj.net/2008/02/20/terminator-081-released_19.html">Terminator 0.8.1 released</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 20 February 2008</p>
+    <p class="article__meta__post-date">Posted on: Wed 20 February 2008</p>
     </p>
   </div>
   <div class="article__text">
@@ -96,10 +126,10 @@ Woo!</p>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2008/02/15/terminator-08-released.html">Terminator 0.8 released</a></h1>
+    <h1><a href="http://cmsj.net/2008/02/15/terminator-08-released.html">Terminator 0.8 released</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Fri 15 February 2008</p>
+    <p class="article__meta__post-date">Posted on: Fri 15 February 2008</p>
     </p>
   </div>
   <div class="article__text">
@@ -111,10 +141,10 @@ As usual hit up the <a href="http://www.tenshu.net/terminator/">Terminator home 
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2008/02/15/terminator-08-released_14.html">Terminator 0.8 released</a></h1>
+    <h1><a href="http://cmsj.net/2008/02/15/terminator-08-released_14.html">Terminator 0.8 released</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Fri 15 February 2008</p>
+    <p class="article__meta__post-date">Posted on: Fri 15 February 2008</p>
     </p>
   </div>
   <div class="article__text">
@@ -124,10 +154,10 @@ As usual hit up the <a href="http://www.tenshu.net/terminator/">Terminator home 
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2008/02/12/esoteric-command-line-argument-parsing.html">Esoteric command line argument parsing in python</a></h1>
+    <h1><a href="http://cmsj.net/2008/02/12/esoteric-command-line-argument-parsing.html">Esoteric command line argument parsing in python</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Tue 12 February 2008</p>
+    <p class="article__meta__post-date">Posted on: Tue 12 February 2008</p>
     </p>
   </div>
   <div class="article__text">
@@ -141,10 +171,10 @@ After looking around the docs and asking on #python, optparse seemed to be a bet
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2008/02/11/terminator-is-in-debian.html">Terminator is in Debian</a></h1>
+    <h1><a href="http://cmsj.net/2008/02/11/terminator-is-in-debian.html">Terminator is in Debian</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 11 February 2008</p>
+    <p class="article__meta__post-date">Posted on: Mon 11 February 2008</p>
     </p>
   </div>
   <div class="article__text">
@@ -154,41 +184,27 @@ After looking around the docs and asking on #python, optparse seemed to be a bet
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2008/02/07/quick-n95-note.html">A quick n95 note</a></h1>
+    <h1><a href="http://cmsj.net/2008/02/07/quick-n95-note.html">A quick n95 note</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Thu 07 February 2008</p>
+    <p class="article__meta__post-date">Posted on: Thu 07 February 2008</p>
     </p>
   </div>
   <div class="article__text">
     <p>I just found an <a href="http://davehall.com.au/tags/n95">excellent post</a> which includes some runes for getting the oh-so-ugly opensync to work with an n95. I just synced all my contacts to my laptop via Bluetooth \o/</p>
   </div>
 </article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2008/02/07/want-to-work-for-canonical.html">Want to work for Canonical?</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Thu 07 February 2008</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Maybe you're fresh out of college or university, or maybe you just love tinkering with computers so much you didn't bother with stuffy education.
-We're <a href="http://www.ubuntu.com/employment#jdce">looking for someone</a> to take on a junior role in our sysadmin team, so if you're interested, take a look at the description and mail our lovely HR people!</p>
-  </div>
-</article>
 
 <div class="pagination">
     <ul>
         <li class="pagination__prev">
-            <a href="./index13.html">&laquo;</a>
+            <a href="http://cmsj.net/index13.html">&laquo;</a>
         </li>
 
 
 
           <li>
-            <a  href="./index.html">1</a>
+            <a  href="http://cmsj.net/index.html">1</a>
           </li>
 
 
@@ -229,37 +245,37 @@ We're <a href="http://www.ubuntu.com/employment#jdce">looking for someone</a> to
 
 
           <li>
-            <a  href="./index11.html">11</a>
+            <a  href="http://cmsj.net/index11.html">11</a>
           </li>
 
 
           <li>
-            <a  href="./index12.html">12</a>
+            <a  href="http://cmsj.net/index12.html">12</a>
           </li>
 
 
           <li>
-            <a  href="./index13.html">13</a>
+            <a  href="http://cmsj.net/index13.html">13</a>
           </li>
 
 
           <li>
-            <a class="pagination__page--current" href="./index14.html">14</a>
+            <a class="pagination__page--current" href="http://cmsj.net/index14.html">14</a>
           </li>
 
 
           <li>
-            <a  href="./index15.html">15</a>
+            <a  href="http://cmsj.net/index15.html">15</a>
           </li>
 
 
           <li>
-            <a  href="./index16.html">16</a>
+            <a  href="http://cmsj.net/index16.html">16</a>
           </li>
 
 
           <li>
-            <a  href="./index17.html">17</a>
+            <a  href="http://cmsj.net/index17.html">17</a>
           </li>
 
 
@@ -284,18 +300,25 @@ We're <a href="http://www.ubuntu.com/employment#jdce">looking for someone</a> to
 
 
           <li>
-            <a  href="./index23.html">23</a>
+            <a  href="http://cmsj.net/index23.html">23</a>
           </li>
 
         <li class="pagination__next">
-            <a href="./index15.html">&raquo;</a>
+            <a href="http://cmsj.net/index15.html">&raquo;</a>
         </li>
     </ul>
 </div>
 
   </main>
     <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
       <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
         <div class="author__link">
           <ul>
             <li>
@@ -317,7 +340,7 @@ We're <a href="http://www.ubuntu.com/employment#jdce">looking for someone</a> to
         </div>
       </section>
       <div class="ending-message">
-        <p>&copy; Chris Jones.</p>
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
       </div>
     </footer>
 </body>

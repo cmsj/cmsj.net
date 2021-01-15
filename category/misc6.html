@@ -3,49 +3,71 @@
 
 <head>
   <!-- ## for client-side less
-  <link rel="stylesheet/less" type="text/css" href="../theme/css/style.less">
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
   -->
-  <link rel="icon" type="image/vnd.microsoft.icon" href="../">
-  <link rel="stylesheet" type="text/css" href="../theme/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/fontawesome-all.min.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/hatena-bookmark-icon.css">
 
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
 
   <meta charset="utf-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Chris Jones">
   <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+
+<link href="http://cmsj.net/feeds/{slug}.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net misc Category Atom" />
 
   <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
 
 
   <title>
     cmsj.net
-&ndash; Category: misc  </title>
-
-</head>
+&ndash; Category: misc  </title></head>
 
 <body>
   <main>
     <header>
       <div class="site-name">
-        <a href="/">cmsj.net</a>
+        <a href="http://cmsj.net">cmsj.net</a>
       </div>
       <p>
-        <a href="../archives.html"><i class="fas fa-archive"></i> Archive</a>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
 &gt; Category: misc
+&brvbar; <a href="http://cmsj.net/feeds/{slug}.atom.xml">Atom</a>
       </p>
     </header>
 
 <article>
   <div class="article__title">
-    <h1><a href="../2010/08/04/adventures-in-puppet.html">Adventures in Puppet</a></h1>
+    <h1><a href="http://cmsj.net/2010/08/24/terminator-095-released.html">Terminator 0.95 released!</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 04 August 2010</p>
+    <p class="article__meta__post-date">Posted on: Tue 24 August 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>This release is mostly to bring a couple of important compatibility fixes with the newest pre-release of VTE, but we also have some updated translations, improved error handling and two new features for you. The features are a URL handler plugin for Maven by Julien Nicolaud and a DBus server that was the result of some work with Andrea Corbellini - for now the only thing this is useful for is opening additional Terminator windows without spawning a new process, but we'll be exploring options in the future to allow more control and interaction with Terminator processes.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2010/08/04/adventures-in-puppet.html">Adventures in Puppet</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Wed 04 August 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -56,10 +78,10 @@ The first post is coming up immediately, I'm just writing this post as an openin
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/08/04/adventures-in-puppet-concat-module.html">Adventures in Puppet: concat module</a></h1>
+    <h1><a href="http://cmsj.net/2010/08/04/adventures-in-puppet-concat-module.html">Adventures in Puppet: concat module</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 04 August 2010</p>
+    <p class="article__meta__post-date">Posted on: Wed 04 August 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -71,7 +93,7 @@ This is what I did:</p>
 <li>Move the resulting git branch to /etc/puppet/modules/concat and add it to my top-level site manifest that includes modules</li>
 <li>Create a class to manage /etc/motd.tail. In my setup this ends up being /etc/puppet/manifests/classes/motd.pp, which is included by my default node, but your setup is probably different. This is what my class looks like:</li>
 </ul>
-<div class="highlight"><pre><span></span>    <span class="k">class</span> <span class="na">motd</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><code>    <span class="k">class</span> <span class="na">motd</span> <span class="p">{</span>
            <span class="k">include</span> <span class="na">concat</span><span class="p">::</span><span class="na">setup</span>
            <span class="nv">$motdfile</span> <span class="o">=</span> <span class="s">&quot;/etc/motd.tail&quot;</span>
 
@@ -108,8 +130,7 @@ This is what I did:</p>
           <span class="na">order</span> <span class="o">=&gt;</span> <span class="nv">$order</span>
        <span class="p">}</span>
     <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>So that's quite a mouthful. Let's break it down:
  * We have to include concat::setup so the concat module can...set... up :)
@@ -127,10 +148,10 @@ This is what I did:</p>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/08/04/adventures-in-puppet-tangled-strings.html">Adventures in Puppet: Tangled Strings</a></h1>
+    <h1><a href="http://cmsj.net/2010/08/04/adventures-in-puppet-tangled-strings.html">Adventures in Puppet: Tangled Strings</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 04 August 2010</p>
+    <p class="article__meta__post-date">Posted on: Wed 04 August 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -147,9 +168,8 @@ This message can be disabled, and you can choose to enable a persistent message 
 <a href="http://www.tenshu.net/wp-content/uploads/2010/08/tangledstrings_statusline.png"><img src="http://www.tenshu.net/wp-content/uploads/2010/08/tangledstrings_statusline.png" title="tangledstrings_statusline" class="aligncenter size-full wp-image-11574" width="403" height="127" /></a>
 (or you could choose to enable both of these methods).
 For more information, see the documentation included in the Vimball which you can display with the VIM command:</p>
-<div class="highlight"><pre><span></span>:help TangledStrings
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="err">:help TangledStrings</span>
+</code></pre></div>
 
 <p>Suggestions, improvements, patches, etc. are most welcome! Email me or use Launchpad to file bugs and propose merges.</p>
   </div>
@@ -157,10 +177,10 @@ For more information, see the documentation included in the Vimball which you ca
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/08/04/tangledstrings-10-released.html">TangledStrings 1.0 released!</a></h1>
+    <h1><a href="http://cmsj.net/2010/08/04/tangledstrings-10-released.html">TangledStrings 1.0 released!</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 04 August 2010</p>
+    <p class="article__meta__post-date">Posted on: Wed 04 August 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -170,10 +190,10 @@ For more information, see the documentation included in the Vimball which you ca
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/07/29/delightful-hybridisation.html">Delightful Hybridisation</a></h1>
+    <h1><a href="http://cmsj.net/2010/07/29/delightful-hybridisation.html">Delightful Hybridisation</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Thu 29 July 2010</p>
+    <p class="article__meta__post-date">Posted on: Thu 29 July 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -188,10 +208,10 @@ For more information, see the documentation included in the Vimball which you ca
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/07/17/dream-little-dream-of-me.html">Dream a little dream of me</a></h1>
+    <h1><a href="http://cmsj.net/2010/07/17/dream-little-dream-of-me.html">Dream a little dream of me</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Sat 17 July 2010</p>
+    <p class="article__meta__post-date">Posted on: Sat 17 July 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -204,10 +224,10 @@ For me, the best films have me leaving the cinema totally caught up in their wor
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/07/14/random-puppetry.html">Random puppetry</a></h1>
+    <h1><a href="http://cmsj.net/2010/07/14/random-puppetry.html">Random puppetry</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 14 July 2010</p>
+    <p class="article__meta__post-date">Posted on: Wed 14 July 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -218,10 +238,10 @@ Simple really, but it hadn't occurred to me.</p>
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/07/07/pick-letter-any-letter.html">Pick a letter, any letter</a></h1>
+    <h1><a href="http://cmsj.net/2010/07/07/pick-letter-any-letter.html">Pick a letter, any letter</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 07 July 2010</p>
+    <p class="article__meta__post-date">Posted on: Wed 07 July 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -232,10 +252,10 @@ It's almost a shame I didn't need to buy anything from them in return for using 
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2010/07/06/my-python-also-spins-webs.html">My python also spins webs</a></h1>
+    <h1><a href="http://cmsj.net/2010/07/06/my-python-also-spins-webs.html">My python also spins webs</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Tue 06 July 2010</p>
+    <p class="article__meta__post-date">Posted on: Tue 06 July 2010</p>
     </p>
   </div>
   <div class="article__text">
@@ -244,74 +264,17 @@ Clearly writing all the web gubbins by hand is mental, so I'm playing with Flask
 I'm not at all convinced that this is going to be in any way scalable, but it's a nice way to test my idea :)</p>
   </div>
 </article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="../2010/07/06/who-wants-to-see-something-really-ugly.html">Who wants to see something really ugly?</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Tue 06 July 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>I think it should be abundantly clear from my postings here that I'm not a very good programmer, and this means I give myself a lot of free rope to do some very stupid things.
-I'm in constant need of debugging information and in Terminator particularly where we have lots of objects all interacting and reparenting all the time. We've had a simple dbg() method for a long time, but I was getting very bored of typing out dbg('Class::method:: Some message about %d' % foo), so I decided to see what could be done about inferring the Class and method parts of the message.
-It turns out that python is very good at introspecting its own runtime, so back in January, armed with my own stupidity and some help from various folks on the Internet, I came up with the following:</p>
-<div class="highlight"><pre><span></span># set this to true to enable debugging output
-DEBUG = False
-# set this to true to additionally list filenames in debugging
-DEBUGFILES = False
-# list of classes to show debugging for. empty list means show all classes
-DEBUGCLASSES = []
-# list of methods to show debugging for. empty list means show all methods
-DEBUGMETHODS = []
-
-def dbg(log = &quot;&quot;):
-    &quot;&quot;&quot;Print a message if debugging is enabled&quot;&quot;&quot;
-    if DEBUG:
-        stackitem = inspect.stack()[1]
-        parent_frame = stackitem[0]
-        method = parent_frame.f_code.co_name
-        names, varargs, keywords, local_vars = inspect.getargvalues(parent_frame)
-        try:
-            self_name = names[0]
-            classname = local_vars[self_name].__class__.__name__
-        except IndexError:
-            classname = &quot;noclass&quot;
-        if DEBUGFILES:
-            line = stackitem[2]
-            filename = parent_frame.f_code.co_filename
-            extra = &quot; (%s:%s)&quot; % (filename, line)
-        else:
-            extra = &quot;&quot;
-        if DEBUGCLASSES != [] and classname not in DEBUGCLASSES:
-            return
-        if DEBUGMETHODS != [] and method not in DEBUGMETHODS:
-            return
-        try:
-            print &gt;&gt; sys.stderr, &quot;%s::%s: %s%s&quot; % (classname, method, log, extra)
-        except IOError:
-            pass
-</pre></div>
-
-
-<p>How's about that for shockingly bad? ;)
-It also adds a really impressive amount of overhead to the execution time.
-I added the DEBUGCLASSES and DEBUGMETHODS lists so I could cut down on the huge amount of output - these are hooked up to command line options, so you can do something like "terminator -d --debug-classes=Terminal" and only receive debugging messages from the Terminal module.
-I'm not exactly sure what I hope to gain from this post, other than ridicule on the Internet, but maybe, just maybe, someone will pop up and point out how stupid I am in a way that turns this into a 2 line, low-overhead function :D</p>
-  </div>
-</article>
 
 <div class="pagination">
     <ul>
         <li class="pagination__prev">
-            <a href="../category/misc5.html">&laquo;</a>
+            <a href="http://cmsj.net/category/misc5.html">&laquo;</a>
         </li>
 
 
 
           <li>
-            <a  href="../category/misc.html">1</a>
+            <a  href="http://cmsj.net/category/misc.html">1</a>
           </li>
 
 
@@ -320,37 +283,37 @@ I'm not exactly sure what I hope to gain from this post, other than ridicule on 
 
 
           <li>
-            <a  href="../category/misc3.html">3</a>
+            <a  href="http://cmsj.net/category/misc3.html">3</a>
           </li>
 
 
           <li>
-            <a  href="../category/misc4.html">4</a>
+            <a  href="http://cmsj.net/category/misc4.html">4</a>
           </li>
 
 
           <li>
-            <a  href="../category/misc5.html">5</a>
+            <a  href="http://cmsj.net/category/misc5.html">5</a>
           </li>
 
 
           <li>
-            <a class="pagination__page--current" href="../category/misc6.html">6</a>
+            <a class="pagination__page--current" href="http://cmsj.net/category/misc6.html">6</a>
           </li>
 
 
           <li>
-            <a  href="../category/misc7.html">7</a>
+            <a  href="http://cmsj.net/category/misc7.html">7</a>
           </li>
 
 
           <li>
-            <a  href="../category/misc8.html">8</a>
+            <a  href="http://cmsj.net/category/misc8.html">8</a>
           </li>
 
 
           <li>
-            <a  href="../category/misc9.html">9</a>
+            <a  href="http://cmsj.net/category/misc9.html">9</a>
           </li>
 
 
@@ -407,18 +370,25 @@ I'm not exactly sure what I hope to gain from this post, other than ridicule on 
 
 
           <li>
-            <a  href="../category/misc23.html">23</a>
+            <a  href="http://cmsj.net/category/misc23.html">23</a>
           </li>
 
         <li class="pagination__next">
-            <a href="../category/misc7.html">&raquo;</a>
+            <a href="http://cmsj.net/category/misc7.html">&raquo;</a>
         </li>
     </ul>
 </div>
 
   </main>
     <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
       <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
         <div class="author__link">
           <ul>
             <li>
@@ -440,7 +410,7 @@ I'm not exactly sure what I hope to gain from this post, other than ridicule on 
         </div>
       </section>
       <div class="ending-message">
-        <p>&copy; Chris Jones.</p>
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
       </div>
     </footer>
 </body>

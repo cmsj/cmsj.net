@@ -3,48 +3,91 @@
 
 <head>
   <!-- ## for client-side less
-  <link rel="stylesheet/less" type="text/css" href="./theme/css/style.less">
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
   -->
-  <link rel="icon" type="image/vnd.microsoft.icon" href="./">
-  <link rel="stylesheet" type="text/css" href="./theme/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/pygments.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/fontawesome-all.min.css">
-  <link rel="stylesheet" type="text/css" href="./theme/css/hatena-bookmark-icon.css">
 
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
 
   <meta charset="utf-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Chris Jones">
   <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+
 
   <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
 
 
   <title>
     cmsj.net
-  </title>
-
-</head>
+  </title></head>
 
 <body>
   <main>
     <header>
       <div class="site-name">
-        <a href="/">cmsj.net</a>
+        <a href="http://cmsj.net">cmsj.net</a>
       </div>
       <p>
-        <a href="./archives.html"><i class="fas fa-archive"></i> Archive</a>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
       </p>
     </header>
 
 <article>
   <div class="article__title">
-    <h1><a href="./2018/06/15/systemd-remote-syslog.html">Receiving remote syslog events with systemd</a></h1>
+    <h1><a href="http://cmsj.net/2018/06/15/homebridge-in-docker.html">Homebridge in Docker, an adventure in networking</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Fri 15 June 2018</p>
+    <p class="article__meta__post-date">Posted on: Fri 15 June 2018</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p><a href="https://github.com/nfarina/homebridge">Homebridge</a> is a great way of connecting <a href="https://www.npmjs.com/search?q=homebridge">loads</a> of devices that don't support Apple's <a href="https://www.apple.com/uk/ios/home/">HomeKit</a>, to your iOS devices. It consists of a daemon that understands the <a href="https://developer.apple.com/support/homekit-accessory-protocol/">HomeKit Accessory Protocol</a> and <a href="https://www.npmjs.com/search?q=homebridge">many plugins</a> that talk to other devices/services.</p>
+<p>My home server is running Ubuntu, so installing Homebridge is fairly trivial, except I run all my services in <a href="https://www.docker.com">Docker</a> containers. To make things even more fun, I don't build or manage the containers by hand - the building is done by <a href="https://hub.docker.com/u/cmsj/">Docker Hub</a> and the containers are deployed and managed by <a href="https://www.ansible.com/">Ansible</a>.</p>
+<p>So far so good, except that for a long time Homebridge used <a href="https://www.avahi.org/">Avahi</a> (an Open Source implementation of Apple's Bonjour host/service discovery protocol) to announce its devices. That presented a small challenge in that I didn't want to have Avahi running only in that container, so I had to bind mount <code>/var/run/avahi-daemon/</code> into the container.</p>
+<p>I recently rebuilt my Homebridge container to pull it up to the latest versions of Homebridge and the plugins I use, but it was no longer announcing devices on my LAN, and there were no mentions of Avahi in its log. After some digging, it turns out that the HomeKit Accessory Protocol (HAP) library that Homebridge uses, now instantiates its own multicast DNS stack rather than using Avahi.</p>
+<p>Apart from not actually working, this was great news, I could remove the <code>/var/run</code> bind mount from the container, making things more secure, I just needed to figure out why it wasn't showing up.</p>
+<p>The HAP library that Homebridge uses, ends up depending on <a href="https://github.com/mafintosh/multicast-dns">this library</a> to implement mDNS and it makes <a href="https://github.com/mafintosh/multicast-dns/blob/master/index.js#L147">a very simple</a> decision about which network interface it should use. In my case, it was choosing the <code>docker0</code> bridge interface which explicitly isn't connected to the outside world. With no configuration options at the Homebridge level to influence the choice of interface, I had to solve the problem at the Docker network layer.</p>
+<p>So, the answer was the following Ansible task to create a Docker network that is attached to my LAN interface (<code>bridge0</code>) and give it a small portion of a reserved segment in the IP subnet I use:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure LANbridge network</span>
+  <span class="nt">docker_network</span><span class="p">:</span>
+    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">lanbridge</span>
+    <span class="nt">driver</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">macvlan</span>
+    <span class="nt">driver_options</span><span class="p">:</span>
+      <span class="nt">parent</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">bridge0</span>
+    <span class="nt">ipam_options</span><span class="p">:</span>
+      <span class="nt">subnet</span><span class="p">:</span> <span class="s">&#39;10.0.88.0/24&#39;</span>
+      <span class="nt">gateway</span><span class="p">:</span> <span class="s">&#39;10.0.88.1&#39;</span>
+      <span class="nt">iprange</span><span class="p">:</span> <span class="s">&#39;10.0.88.32/29&#39;</span>
+</code></pre></div>
+
+<p>then change the task for the Homebridge container to use this network:</p>
+<div class="highlight"><pre><span></span><code><span class="err">  network_mode: lanbridge</span>
+</code></pre></div>
+
+<p>and now Homebridge is up to date, and working, plus I have a Docker network I can use in the future if any other containerised services need to be very close to the LAN.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2018/06/15/systemd-remote-syslog.html">Receiving remote syslog events with systemd</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Fri 15 June 2018</p>
     </p>
   </div>
   <div class="article__text">
@@ -53,9 +96,8 @@
 <p>While there are many ways to skin this goose, the method I've chosen is a tiny Python daemon that listens on syslog's UDP port (514), does minimal processing of the data and then feeds it into <code>journald</code> via its API, to get the data as rich as possible (since one of <code>journald</code>'s strengths is that it can store a lot more metadata about a log entry).</p>
 <p>So, <a href="https://gist.github.com/cmsj/e03b6d28325ce5c3d5b255256278a330">here is the source</a> for the daemon, and <a href="https://gist.github.com/cmsj/71f987d1129c5dc693243dd1aa5f8f4f">here is the systemd service file</a> that manages it - note that it runs as an unprivileged user, with the sole privilege escalation of being able to bind to low port numbers (something only root can do normally).</p>
 <p>The daemon is certainly not perfect (patches welcome!), but it works. Here is a <code>journald</code> log entry from one of my UniFi access points:</p>
-<div class="highlight"><pre><span></span>Jun 15 21:28:26 gnubert (&quot;U7PG2,802aa8d48ab3,v3.9.27.8537&quot;)[23506]: kernel: [4251792.410000] [wifi1] FWLOG: [58855274] BEACON_EVENT_SWBA_SEND_FAILED (  )
-</pre></div>
-
+<div class="highlight"><pre><span></span><code><span class="n">Jun</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="mi">21</span><span class="err">:</span><span class="mi">28</span><span class="err">:</span><span class="mi">26</span><span class="w"> </span><span class="n">gnubert</span><span class="w"> </span><span class="p">(</span><span class="ss">&quot;U7PG2,802aa8d48ab3,v3.9.27.8537&quot;</span><span class="p">)</span><span class="o">[</span><span class="n">23506</span><span class="o">]</span><span class="err">:</span><span class="w"> </span><span class="nl">kernel</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="n">4251792.410000</span><span class="o">]</span><span class="w"> </span><span class="o">[</span><span class="n">wifi1</span><span class="o">]</span><span class="w"> </span><span class="nl">FWLOG</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="n">58855274</span><span class="o">]</span><span class="w"> </span><span class="n">BEACON_EVENT_SWBA_SEND_FAILED</span><span class="w"> </span><span class="p">(</span><span class="w">  </span><span class="p">)</span><span class="w"></span>
+</code></pre></div>
 
 <p>(the more syslog-obsessed among you will notice that I'm setting the <code>identifier</code> to the hostname of the device that sent the message. Internally, the <code>facility</code> is mapped correctly, as is the <code>priority</code>. The text of the message then appears, prepended by its <code>identifier</code>.</p>
   </div>
@@ -63,16 +105,16 @@
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2018/04/13/lua-stack-adventures.html">Adventures in Lua stack overflows</a></h1>
+    <h1><a href="http://cmsj.net/2018/04/13/lua-stack-adventures.html">Adventures in Lua stack overflows</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Fri 13 April 2018</p>
+    <p class="article__meta__post-date">Posted on: Fri 13 April 2018</p>
     </p>
   </div>
   <div class="article__text">
     <p><a href="http://www.hammerspoon.org">Hammerspoon</a> is heavily dependent on <a href="http://www.lua.org">Lua</a> - it's the true core of the application, so it's unavoidable that we have to interact with Lua's C API in a lot of places. If you've never used it before, Lua's C API is designed to be very simple to integrate with other code, but it also places a fairly high burden on developers to integrate it properly.</p>
 <p>One of the ways that Lua remains simple is by being stack based - when you give Lua a C function and make it available to call from Lua code, you have to conform to a particular way of working. The function arguments supplied by the user will be presented to you on a stack, and when your C code has finished its work, the return values must have been pushed onto the stack. Here's an example:</p>
-<div class="highlight"><pre><span></span><span class="k">static</span> <span class="kt">int</span> <span class="nf">someUsefulFunction</span><span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">)</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span> <span class="kt">int</span> <span class="n">someUsefulFunction</span><span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Fetch our first argument from the stack</span>
     <span class="kt">int</span> <span class="n">someNumber</span> <span class="o">=</span> <span class="n">lua_tointeger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
 
@@ -86,13 +128,12 @@
     <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">42</span><span class="p">);</span>
     <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>All simple enough.</p>
 <p>In this scenario of calling from Lua→C, Lua creates a pseudo-stack for you, so while it's good practice to keep the stack neat and tidy (i.e. remove things from it that you don't need), it's not critical because apart from the return values, the rest of the stack is thrown away. That pseudo-stack only has 20 slots by default though, so if you're pushing a lot of return arguments, or using the stack for other things, you may need to use <code>lua_checkstack()</code> to grow it larger, up to the maximum (2048 slots).</p>
 <p>Where things get more interesting, is when you're interacting with the Lua stack without having crossed a Lua→C boundary. For example, maybe you're in a callback function that's been triggered by some event in your C program, and now you need to call a Lua function that the user gave you earlier. This might look something like this:</p>
-<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">globalLuaFunction</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">globalLuaFunction</span><span class="p">;</span>
 <span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Fetch a pointer to the shared Lua state object</span>
     <span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span> <span class="o">=</span> <span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
@@ -109,12 +150,11 @@
 
     <span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Slightly more complex than the last example, but still manageable. Unfortunately in practice this is a fairly suboptimal implementation of a C→Lua call - storing things in the <code>LUA_REGISTRYINDEX</code> table is fine, but it's often nicer to use multiple tables for different things. The big problem here though is that <code>lua_call()</code> doesn't trap errors. If the Lua code raises an exception, Lua will <code>longjmp</code> to a panic handler and <code>abort()</code> your app.</p>
 <p>So, writing this a bit more completely, we get:</p>
-<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
 <span class="kt">int</span> <span class="n">globalLuaFunctionRef</span><span class="p">;</span>
 <span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Fetch a pointer to the shared Lua state object</span>
@@ -124,7 +164,7 @@
     <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span> <span class="n">luaCallbackTable</span><span class="p">);</span>
 
     <span class="c1">// Push onto the stack, from our callback reference table, the Lua function previously supplied by the user</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
+    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
 
     <span class="c1">// Push the two arguments for the Lua function</span>
     <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aValue</span><span class="p">);</span>
@@ -135,14 +175,13 @@
 
     <span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Ok so this is looking better, we have our own table for neatly storing function references and we'll no longer <code>abort()</code> if the Lua function throws an error.</p>
 <p>However, we now have a problem, we're leaking at least one item onto Lua's stack and possibly two. Unlike in the Lua→C case, we are not operating within the safe confines of a pseudo-stack, so anything we leak here will stay permanently on the stack, and at some point that's likely to cause the stack to overflow.</p>
 <p>Now here is the kicker - stack overflows are really hard to find by default, you don't typically get a nice error, your program will simply leak stack slots until the stack overflows, far from the place where the leak is happening, then segfault, and your backtraces will have very normal looking Lua API calls in them.</p>
 <p>If we were to handle the stack properly, the above could would actually look like this (and note that we've gone from four Lua API calls in the first C→Lua example, to eight here):</p>
-<div class="highlight"><pre><span></span><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
 <span class="kt">int</span> <span class="n">globalLuaFunctionRef</span><span class="p">;</span>
 <span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
     <span class="c1">// Fetch a pointer to the shared Lua state object</span>
@@ -152,10 +191,10 @@
     <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span> <span class="n">luaCallbackTable</span><span class="p">);</span>
 
     <span class="c1">// Find globalLuaFunctionRef in luaCallbackTable, and push it onto the stack</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
+    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
 
     <span class="c1">// Remove luaCallbackTable from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
-    <span class="n">lua_remove</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">lua_remove</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-2</span><span class="p">);</span>
 
     <span class="c1">// Push the two arguments for the Lua function</span>
     <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aValue</span><span class="p">);</span>
@@ -163,26 +202,24 @@
 
     <span class="k">if</span> <span class="p">(</span><span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="nb">false</span><span class="p">)</span> <span class="p">{</span>
         <span class="c1">// Fetch the Lua error message from the stack</span>
-        <span class="kt">char</span> <span class="o">*</span><span class="n">someError</span> <span class="o">=</span> <span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="kt">char</span> <span class="o">*</span><span class="n">someError</span> <span class="o">=</span> <span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">);</span>
         <span class="n">printf</span><span class="p">(</span><span class="s">&quot;ERROR: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">someError</span><span class="p">);</span>
 
         <span class="c1">// Remove the Lua error message from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
-        <span class="n">lua_pop</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">lua_pop</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">);</span>
     <span class="p">}</span>
 
     <span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Hammerspoon has been having problems like this for the last few months - lots of crash reports that on the surface, look like completely valid code was executing. I have to admit that it took me a lot longer than it should have, to realise that these were Lua stack overflows rather than my initial suspicion (C heap corruption), but we figured it out eventually and have hopefully fixed all of the leaks.</p>
 <p>So, how did we discover that the problem was stack overflows, and how did we discover where all of the leaks were without manually auditing all of the places where we make C→Lua transitions (of which there are over 100). The answer to the first question is very simple, by defining <code>LUA_USE_APICHECK</code> when compiling Lua, it will do a little extra work to verify its consistency. Crucially, this includes calling <code>abort()</code> with a helpful message when the stack overflows. We turned this on for developers in March and then released 0.9.61 with it enabled, in early April. It's not normally recommended to have the API checker enabled in production because it calls <code>abort()</code>, but we felt that it was important to get more information about the crashes we couldn't reproduce.</p>
 <p>Within a few days we started getting crash reports with the words <code>stack overflow</code> in them (as well as a few other errors, which we were able to fix), but that is only half the battle.</p>
 <p>Having discovered that we did definitely have a stack leak somewhere, how did we discover where it was? This did involve a little brute force effort, but thankfully not a full manual audit of all 107 C→Lua call sites. Instead, I wrote two macros:</p>
-<div class="highlight"><pre><span></span><span class="cp">#define _lua_stackguard_entry(L) int __lua_stackguard_entry=lua_gettop(L);</span>
+<div class="highlight"><pre><span></span><code><span class="cp">#define _lua_stackguard_entry(L) int __lua_stackguard_entry=lua_gettop(L);</span>
 <span class="cp">#define _lua_stackguard_exit(L) assert(__lua_stackguard_entry == lua_gettop(L));</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>These are very simple to use - you call <code>_lua_stackguard_entry()</code> just after you've obtained a pointer to the Lua state object, and then you call <code>_lua_stackguard_exit()</code> at every point where the function can return after that. It records the size of the stack (<code>lua_gettop()</code>) at the entry point and <code>assert()</code>s that it's the same at the exit point (<code>assert()</code> also calls <code>abort()</code> if something is wrong, so now we would get crash logs with the crash in the actual function where the leak is happening).
 These entry/exit calls were then added to all 107 call sites 4 days after the 0.9.61 was released and I spent 3 evenings testing or manually verifying every site, before releasing 0.9.65 (0.9.62-0.9.64 fixed some of the other bugs found by the API checker in the mean time).</p>
@@ -194,10 +231,10 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2017/11/27/airpod-battery-ear-data.html">Getting battery data from AirPods in macOS</a></h1>
+    <h1><a href="http://cmsj.net/2017/11/27/airpod-battery-ear-data.html">Getting battery data from AirPods in macOS</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 27 November 2017</p>
+    <p class="article__meta__post-date">Posted on: Mon 27 November 2017</p>
     </p>
   </div>
   <div class="article__text">
@@ -209,10 +246,10 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2017/07/28/happy-10th-terminator.html">Happy 10th Birthday Terminator!</a></h1>
+    <h1><a href="http://cmsj.net/2017/07/28/happy-10th-terminator.html">Happy 10th Birthday Terminator!</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Fri 28 July 2017</p>
+    <p class="article__meta__post-date">Posted on: Fri 28 July 2017</p>
     </p>
   </div>
   <div class="article__text">
@@ -227,10 +264,10 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2017/06/30/usb-c-is-awful.html">USB Type C is awful</a></h1>
+    <h1><a href="http://cmsj.net/2017/06/30/usb-c-is-awful.html">USB Type C is awful</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Fri 30 June 2017</p>
+    <p class="article__meta__post-date">Posted on: Fri 30 June 2017</p>
     </p>
   </div>
   <div class="article__text">
@@ -259,10 +296,10 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2017/06/22/home-pro-part-1-nas.html">Home networking like a pro - Part 1 - Network Storage</a></h1>
+    <h1><a href="http://cmsj.net/2017/06/22/home-pro-part-1-nas.html">Home networking like a pro - Part 1 - Network Storage</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Thu 22 June 2017</p>
+    <p class="article__meta__post-date">Posted on: Thu 22 June 2017</p>
     </p>
   </div>
   <div class="article__text">
@@ -290,10 +327,10 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2017/06/13/karabiner-elements-sierra-hyper.html">Hyper Key in macOS Sierra with Karabiner Elements</a></h1>
+    <h1><a href="http://cmsj.net/2017/06/13/karabiner-elements-sierra-hyper.html">Hyper Key in macOS Sierra with Karabiner Elements</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Tue 13 June 2017</p>
+    <p class="article__meta__post-date">Posted on: Tue 13 June 2017</p>
     </p>
   </div>
   <div class="article__text">
@@ -310,7 +347,7 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <li>Edit <code>~/.config/karabiner/karabiner.json</code></li>
 <li>Find the <code>simple_modifications</code> section, and right after it, paste in:</li>
 </ul>
-<div class="highlight"><pre><span></span><span class="s2">&quot;complex_modifications&quot;</span><span class="err">:</span> <span class="p">{</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;complex_modifications&quot;</span><span class="p">:</span> <span class="p">{</span>
     <span class="nt">&quot;rules&quot;</span><span class="p">:</span> <span class="p">[</span>
         <span class="p">{</span>
             <span class="nt">&quot;manipulators&quot;</span><span class="p">:</span> <span class="p">[</span>
@@ -339,9 +376,8 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
             <span class="p">]</span>
         <span class="p">}</span>
     <span class="p">]</span>
-<span class="p">}</span><span class="err">,</span>
-</pre></div>
-
+<span class="p">},</span>
+</code></pre></div>
 
 <ul>
 <li>As soon as you save the file, Elements will notice it has changed, and reload its config. You should immediately have a working Hyper key 😁</li>
@@ -351,7 +387,7 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <p>I've only tested this very briefly on High Sierra, but I had to disable SIP to get the Elements <code>.kext</code> to load. I'm not quite sure what's going on, but I reported it <a href="https://github.com/tekezo/Karabiner-Elements/issues/777">on GitHub</a>. (Note that you can re-enable SIP after the kext has been loaded successfully once)</p>
 <p><em>Update</em></p>
 <p>Many people like to turn Caps into Hyper, but also have it behave as Escape if it is tapped on its own. As of Karabiner Elements 0.91.3 <a href="https://twitter.com/ttscoff/status/875029764377108480">this appears</a> to be possible by adding this to the manipulator:</p>
-<div class="highlight"><pre><span></span><span class="s2">&quot;to_if_alone&quot;</span><span class="err">:</span> <span class="p">[</span>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;to_if_alone&quot;</span><span class="p">:</span> <span class="p">[</span>
     <span class="p">{</span>
         <span class="nt">&quot;key_code&quot;</span><span class="p">:</span> <span class="s2">&quot;escape&quot;</span><span class="p">,</span>
         <span class="nt">&quot;modifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
@@ -360,9 +396,8 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
             <span class="p">]</span>
         <span class="p">}</span>
     <span class="p">}</span>
-<span class="p">]</span><span class="err">,</span>
-</pre></div>
-
+<span class="p">],</span>
+</code></pre></div>
 
 <p>(thanks to <a href="http://brettterpstra.com/">Brett Terpstra</a> for the sample of this</p>
   </div>
@@ -370,10 +405,10 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2017/06/09/new-blog.html">New blog setup</a></h1>
+    <h1><a href="http://cmsj.net/2017/06/09/new-blog.html">New blog setup</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Fri 09 June 2017</p>
+    <p class="article__meta__post-date">Posted on: Fri 09 June 2017</p>
     </p>
   </div>
   <div class="article__text">
@@ -384,139 +419,94 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="./2016/08/30/changing-gpg-key.html">Changing GPG key</a></h1>
+    <h1><a href="http://cmsj.net/2016/08/30/changing-gpg-key.html">Changing GPG key</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Tue 30 August 2016</p>
+    <p class="article__meta__post-date">Posted on: Tue 30 August 2016</p>
     </p>
   </div>
   <div class="article__text">
     <p>It's been 15 years and my GPG key is now looking hilariously out of date - 1024bit DSA key. Yuck.
 So, time to start over. Below is a statement about the change, with details of my new and old keys, signed by both keys. Since it will almost certainly not paste properly out of a browser, I have also uploaded it to GitHub: <a href="https://gist.githubusercontent.com/cmsj/3093f03e085239de0e64ea33d1b2bfab/raw/82c2cb9110e83f0aae4a8155aec954c3aa9aab3b/gpg-migration.txt.asc.asc">here</a>.</p>
-<div class="highlight"><pre><span></span>-----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+<div class="highlight"><pre><span></span><code><span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNED</span> <span class="n">MESSAGE</span><span class="o">-----</span>
+<span class="n">Hash</span><span class="p">:</span> <span class="n">SHA256</span>
 
-- -----BEGIN PGP SIGNED MESSAGE-----
-Hash: SHA256
+<span class="o">-</span> <span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNED</span> <span class="n">MESSAGE</span><span class="o">-----</span>
+<span class="n">Hash</span><span class="p">:</span> <span class="n">SHA256</span>
 
-Hello world
+<span class="n">Hello</span> <span class="n">world</span>
 
-My name is Chris Jones and I am changing my GPG key.
-The original key fingerprint is: 6C99 9021 9B3A EC6D 4A28  7EE7 C574 7646 7313 2D75
-The new key fingerprint is: 79D2 2E89 6591 210E 45F3  75D3 BCA2 36E2 E19F 727D
+<span class="n">My</span> <span class="n">name</span> <span class="n">is</span> <span class="n">Chris</span> <span class="n">Jones</span> <span class="n">and</span> <span class="n">I</span> <span class="n">am</span> <span class="n">changing</span> <span class="n">my</span> <span class="n">GPG</span> <span class="n">key</span><span class="p">.</span>
+<span class="n">The</span> <span class="n">original</span> <span class="n">key</span> <span class="n">fingerprint</span> <span class="n">is</span><span class="p">:</span> <span class="mi">6</span><span class="n">C99</span> <span class="mi">9021</span> <span class="mi">9</span><span class="n">B3A</span> <span class="n">EC6D</span> <span class="mi">4</span><span class="n">A28</span>  <span class="mi">7</span><span class="n">EE7</span> <span class="n">C574</span> <span class="mi">7646</span> <span class="mi">7313</span> <span class="mi">2</span><span class="n">D75</span>
+<span class="n">The</span> <span class="n">new</span> <span class="n">key</span> <span class="n">fingerprint</span> <span class="n">is</span><span class="p">:</span> <span class="mi">79</span><span class="n">D2</span> <span class="mi">2</span><span class="n">E89</span> <span class="mi">6591</span> <span class="mi">210</span><span class="n">E</span> <span class="mi">45</span><span class="n">F3</span>  <span class="mi">75</span><span class="n">D3</span> <span class="n">BCA2</span> <span class="mi">36</span><span class="n">E2</span> <span class="n">E19F</span> <span class="mi">727</span><span class="n">D</span>
 
-You should find this message signed by the new key, and that combined message signed by the old key, as proof that I am doing this. I have also updated my keybase.io account and secured a couple of signatures on the new key to start rebuilding my place in the web of trust.
+<span class="n">You</span> <span class="n">should</span> <span class="n">find</span> <span class="n">this</span> <span class="n">message</span> <span class="n">signed</span> <span class="n">by</span> <span class="n">the</span> <span class="n">new</span> <span class="n">key</span><span class="p">,</span> <span class="n">and</span> <span class="n">that</span> <span class="n">combined</span> <span class="n">message</span> <span class="n">signed</span> <span class="n">by</span> <span class="n">the</span> <span class="n">old</span> <span class="n">key</span><span class="p">,</span> <span class="n">as</span> <span class="n">proof</span> <span class="n">that</span> <span class="n">I</span> <span class="n">am</span> <span class="n">doing</span> <span class="n">this</span><span class="p">.</span> <span class="n">I</span> <span class="n">have</span> <span class="n">also</span> <span class="n">updated</span> <span class="n">my</span> <span class="n">keybase</span><span class="p">.</span><span class="n">io</span> <span class="n">account</span> <span class="n">and</span> <span class="n">secured</span> <span class="n">a</span> <span class="n">couple</span> <span class="n">of</span> <span class="n">signatures</span> <span class="n">on</span> <span class="n">the</span> <span class="n">new</span> <span class="n">key</span> <span class="n">to</span> <span class="n">start</span> <span class="n">rebuilding</span> <span class="n">my</span> <span class="n">place</span> <span class="n">in</span> <span class="n">the</span> <span class="n">web</span> <span class="n">of</span> <span class="n">trust</span><span class="p">.</span>
 
-Thank you for your time,
+<span class="n">Thank</span> <span class="n">you</span> <span class="n">for</span> <span class="n">your</span> <span class="n">time</span><span class="p">,</span>
 
-Chris
-- -----BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0
+<span class="n">Chris</span>
+<span class="o">-</span> <span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
+<span class="n">Version</span><span class="p">:</span> <span class="n">GnuPG</span><span class="o">/</span><span class="n">MacGPG2</span> <span class="n">v2</span><span class="p">.</span><span class="mi">0</span>
 
-iQIcBAEBCAAGBQJXxffoAAoJECwUb1eIgw1qUMEP+wfaB84vYC4tHdo9OS9szaQv
-cmNW0sIuDx/RQr4iYrcs+8QTQf2I3FPXUc6auhyF4J7Lntu67sTKI9zyfsDm0IW9
-NbIzysTP1Y35lJPA12VM9O9IRaf5G7J57BKAmAuUbpnY7icIzA0MoD4SwCgcRXtA
-QPZd8JVPDLaNpwb1O5rdQLBAdo+OUjF+bB8jZzzoORX0oVVdGhaGJFVhuq8aV1dY
-0YB/nZr71ZApUVnvSZBfj1FHsgXZ5Fai70iI+oAox/Gj6BJ0IJhBIk5hLAzAiXoR
-8EMmtqkWkKc8Jd3NonMzKRGF+qT+G3YuZIDmSptOZWjJ5volT25bYFknEBxPslwC
-TiBGSs6rKz9RhfxGxCmM350zBIVFFCn+RNCWrgn/z4OJp4xSvZJ0IwqB/CwkrmUb
-0ZhG44O2W5lpuSCDh1dhCsiryq4JeSiUy1GENyHl8eIkXjzDOjKTt6OT8wYFFPL7
-XheyIfvMbRNh86o79Skch6Qoyh7nvVALAwsLVHKSDtQRzHbVF6ED9h2ISxdABiZ2
-CkiJ95bf8JQeNVoqLJ78uwSYN96AyGPXfMQKG45SavgkzNLyqeoI1iMJE2yYuVIy
-Z9XUaKhoDI9ERLps+Fw6NY+v2BVSKTvl5MDEDHmfvjK0m3x6C4tF3/QdgwRsJmvE
-2XMWXLrBkcZx9tnYNFIG
-=9PwA
-- -----END PGP SIGNATURE-----
------BEGIN PGP SIGNATURE-----
-Version: GnuPG/MacGPG2 v2.0
+<span class="n">iQIcBAEBCAAGBQJXxffoAAoJECwUb1eIgw1qUMEP</span><span class="o">+</span><span class="n">wfaB84vYC4tHdo9OS9szaQv</span>
+<span class="n">cmNW0sIuDx</span><span class="o">/</span><span class="n">RQr4iYrcs</span><span class="o">+</span><span class="mi">8</span><span class="n">QTQf2I3FPXUc6auhyF4J7Lntu67sTKI9zyfsDm0IW9</span>
+<span class="n">NbIzysTP1Y35lJPA12VM9O9IRaf5G7J57BKAmAuUbpnY7icIzA0MoD4SwCgcRXtA</span>
+<span class="n">QPZd8JVPDLaNpwb1O5rdQLBAdo</span><span class="o">+</span><span class="n">OUjF</span><span class="o">+</span><span class="n">bB8jZzzoORX0oVVdGhaGJFVhuq8aV1dY</span>
+<span class="mi">0</span><span class="n">YB</span><span class="o">/</span><span class="n">nZr71ZApUVnvSZBfj1FHsgXZ5Fai70iI</span><span class="o">+</span><span class="n">oAox</span><span class="o">/</span><span class="n">Gj6BJ0IJhBIk5hLAzAiXoR</span>
+<span class="mi">8</span><span class="n">EMmtqkWkKc8Jd3NonMzKRGF</span><span class="o">+</span><span class="n">qT</span><span class="o">+</span><span class="n">G3YuZIDmSptOZWjJ5volT25bYFknEBxPslwC</span>
+<span class="n">TiBGSs6rKz9RhfxGxCmM350zBIVFFCn</span><span class="o">+</span><span class="n">RNCWrgn</span><span class="o">/</span><span class="n">z4OJp4xSvZJ0IwqB</span><span class="o">/</span><span class="n">CwkrmUb</span>
+<span class="mi">0</span><span class="n">ZhG44O2W5lpuSCDh1dhCsiryq4JeSiUy1GENyHl8eIkXjzDOjKTt6OT8wYFFPL7</span>
+<span class="n">XheyIfvMbRNh86o79Skch6Qoyh7nvVALAwsLVHKSDtQRzHbVF6ED9h2ISxdABiZ2</span>
+<span class="n">CkiJ95bf8JQeNVoqLJ78uwSYN96AyGPXfMQKG45SavgkzNLyqeoI1iMJE2yYuVIy</span>
+<span class="n">Z9XUaKhoDI9ERLps</span><span class="o">+</span><span class="n">Fw6NY</span><span class="o">+</span><span class="n">v2BVSKTvl5MDEDHmfvjK0m3x6C4tF3</span><span class="o">/</span><span class="n">QdgwRsJmvE</span>
+<span class="mi">2</span><span class="n">XMWXLrBkcZx9tnYNFIG</span>
+<span class="o">=</span><span class="mi">9</span><span class="n">PwA</span>
+<span class="o">-</span> <span class="o">-----</span><span class="kr">END</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
+<span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
+<span class="n">Version</span><span class="p">:</span> <span class="n">GnuPG</span><span class="o">/</span><span class="n">MacGPG2</span> <span class="n">v2</span><span class="p">.</span><span class="mi">0</span>
 
-iQEcBAEBCAAGBQJXxff1AAoJEPH//8xn2jUBNOcIAL4fqY/DViwNj2/Va4ePEg1w
-9uUWhGnMUcG4CsQGkhtODU6Qg45inrWnG0VE8jwhGilP4w5tQoIe+m53cUp5m/Rv
-ueRBvfDxBw/SrF6eFZ1SGkXv6kcUkOYjueKsDtxObaX9dN7PrDUljtZWpGTzE77k
-5EWPGfUT89oXa2eGwYnr6t7t9f76cO9eKFck7rIWT+p1tzmF6amm7IjoS8gsjfSb
-lPk3PoC0G71wSseh7iesIgw+vZRZ7tYg59RdpwWLmZjQJVhMzW/QpX87CPAM2m0A
-OcyivXLlbaSZ58AsHZSIA4ZjeoDnlWNsFHemBUSAOMa03b4JtgnGbTaHTZhiLc8=
-=/lkZ
------END PGP SIGNATURE-----
-</pre></div>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="./2015/12/08/raspberry-pi-project-pibus.html">Raspberry Pi project: PiBus</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Tue 08 December 2015</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>The premise of this project is simple - my family lives in London, there's a bus route that runs along our road, and we use it a lot to take the kids places.
-The reality of using the bus is a little more complex - getting three kids ready to go out, is a nightmare and it's not made any easier by checking a travel app on your phone to see how close the bus is.</p>
-<p>I don't think there is much I can do to make the preparation of the children any less manic, but I can certainly do something about the visibility of information about buses, mainly thanks to the excellent open APIs/data provided by <a href="https://tfl.gov.uk/info-for/open-data-users/">Transport For London</a>.</p>
-<p>So, armed with their API, a Python 3 interpreter and a <a href="https://www.raspberrypi.org/">Raspberry Pi</a>, I set out to make a little box for the kitchen wall which will show when the next 3 buses are due to arrive outside our house.</p>
-<p><a href="https://github.com/cmsj/pibus">The code itself</a> is easy enough to throw together because Python has libraries for everything (it also helps if you don't bother to design a decent architecture!). <a href="http://docs.python-requests.org/en/latest/">Requests</a> to fetch the bus data from TfL, <a href="https://docs.python.org/3/library/json.html">json</a>/<a href="https://pypi.python.org/pypi/iso8601">iso8601</a> to parse the data, <a href="https://python-pillow.github.io/">Pillow</a> to render it as an image, and <a href="https://apscheduler.readthedocs.org/en/latest/">APScheduler</a> to give it a simple run-loop.</p>
-<p>The question then becomes, how to display the data. The easiest answer would be a little LCD screen, but that brings with it the downside of having a backlight in the kitchen, which would be ugly and distracting, and it also raises the question of viewing angles. Another answer would be some kind of physical indicator, but that requires skills I don't have time for. Instead, I decided to look for an E-Ink display (think <a href="https://kindle.amazon.com/">Kindle</a>) - it would let me display simple images without producing light.</p>
-<p>The first option I looked at was the <a href="https://www.kickstarter.com/projects/pisupply/papirus-the-epaper-screen-hat-for-your-raspberry-p">PaPiRus</a>, but it's in the window between its crowdfunding drive having finished, and being available to buy. The only other option I could find was the <a href="http://www.percheron-electronics.uk/shop/e-paper-hat/">E-Paper HAT</a>, from Percheron Electronics, which also started life as a crowdfunding project, but is actually available to buy.</p>
-<p>Unfortunately, these displays are super fragile, which I discovered by destroying the first one, but Neil at Percheron was super helpful and I quickly had a new display and some tips about how to avoid cracking it.</p>
-<p>My visualisation of this data isn't going to win any awards for beauty, but it serves its purpose by showing a big number to tell us how many minutes we have, and I managed to minimise the number of times you see the white-black-white refresh cycle of the eInk display with partial screen updates.
-Here are some photos of the project in various stages of construction:</p>
-<p><img alt="Freshly assembled out of the box" src="./images/IMG_6856.JPG">
-<em>Freshly assembled out of the box</em></p>
-<p><img alt="The smallest USB WiFi adapter I've ever seen" src="./images/IMG_6857.JPG">
-<em>The smallest USB WiFi adapter I've ever seen!</em></p>
-<p><img alt="Modified PiBow case" src="./images/IMG_6858.JPG">
-<em>Sadly I had to make some modifications to the PiBow case to fit this particular rPi</em></p>
-<p><img alt="Running an eInk test program" src="./images/IMG_6864.JPG">
-<em>Running one of the eInk display test programs</em></p>
-<p>Initially I was rather hoping I could use the famous font that TfL (and London Transport before it) use, which is known as Johnston, but sadly they will not licence the font outside their own use and use by contracted partners. There is a third party clone of the font, but it may have legal issues, presumably because TfL values their braaaaaand. Instead, I decided to just drop the idea of shipping a font with the code, and exported Courier.ttf from my laptop to the Pi directly.</p>
-<p><img alt="TfL font" src="./images/IMG_6897.JPG">
-<em>This would have been nice, but I cannot have nice font things</em></p>
-<p>I did briefly try Ubuntu Mono, which is a lovely font, but the zeros look like eyes and it freaked me out.</p>
-<p><img alt="PIBUS IS WATCHING YOU" src="./images/Screenshot_2015-12-08_14.03.28.png">
-<em>PIBUS IS WATCHING YOU</em></p>
-<p>The display needs to handle various different situations, most obviously, when no data can be fetched from the API. Rather than get too bogged down in the details of whether our Internet connection is down, TfL's API servers are down, London is on fire, or it's just night time and there are no buses, I went for a simple message with a timestamp. Once this has been displayed, the code skips any further screen updates until it has valid data again. This makes it easy to see when a problem occurred.</p>
-<p><img alt="Date message" src="./images/IMG_7010.JPG">
-<em>Maybe aliens stole the Internet, maybe it's a bus strike. It doesn't matter.</em></p>
-<p>I also render a small timestamp on valid data screens too, showing when the last data fetch happened. This is mostly so I can be sure that the fetching code isn't stuck somehow. Once I trust the system a bit more, this can probably come out.</p>
-<p><img alt="Final design" src="./images/IMG_7012.JPG">
-<em>The final design, showing a fallback for when there is data for  0 &lt; x &lt; 3 buses</em></p>
-<p><img alt="Three buses" src="./images/IMG_7013.JPG">
-<em>Data for three buses, plenty of time to get ready for the second one!</em></p>
-<p>So there it is, project completed! Grab the code from <a href="https://github.com/cmsj/pibus">https://github.com/cmsj/pibus</a>, install the requirements on a Pi, give money to the awesome Percheron Electronics for the E-Paper HAT (and matching PiBow case), throw a font in the directory and edit the scripts for the bus stop and bus route that you care about!</p>
+<span class="n">iQEcBAEBCAAGBQJXxff1AAoJEPH</span><span class="o">//</span><span class="mi">8</span><span class="n">xn2jUBNOcIAL4fqY</span><span class="o">/</span><span class="n">DViwNj2</span><span class="o">/</span><span class="n">Va4ePEg1w</span>
+<span class="mi">9</span><span class="n">uUWhGnMUcG4CsQGkhtODU6Qg45inrWnG0VE8jwhGilP4w5tQoIe</span><span class="o">+</span><span class="n">m53cUp5m</span><span class="o">/</span><span class="n">Rv</span>
+<span class="n">ueRBvfDxBw</span><span class="o">/</span><span class="n">SrF6eFZ1SGkXv6kcUkOYjueKsDtxObaX9dN7PrDUljtZWpGTzE77k</span>
+<span class="mi">5</span><span class="n">EWPGfUT89oXa2eGwYnr6t7t9f76cO9eKFck7rIWT</span><span class="o">+</span><span class="n">p1tzmF6amm7IjoS8gsjfSb</span>
+<span class="n">lPk3PoC0G71wSseh7iesIgw</span><span class="o">+</span><span class="n">vZRZ7tYg59RdpwWLmZjQJVhMzW</span><span class="o">/</span><span class="n">QpX87CPAM2m0A</span>
+<span class="n">OcyivXLlbaSZ58AsHZSIA4ZjeoDnlWNsFHemBUSAOMa03b4JtgnGbTaHTZhiLc8</span><span class="o">=</span>
+<span class="o">=/</span><span class="n">lkZ</span>
+<span class="o">-----</span><span class="kr">END</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
+</code></pre></div>
   </div>
 </article>
 
 <div class="pagination">
     <ul>
         <li class="pagination__prev">
-            <a href="./index.html">&laquo;</a>
+            <a href="http://cmsj.net/index.html">&laquo;</a>
         </li>
 
 
 
           <li>
-            <a  href="./index.html">1</a>
+            <a  href="http://cmsj.net/index.html">1</a>
           </li>
 
 
           <li>
-            <a class="pagination__page--current" href="./index2.html">2</a>
+            <a class="pagination__page--current" href="http://cmsj.net/index2.html">2</a>
           </li>
 
 
           <li>
-            <a  href="./index3.html">3</a>
+            <a  href="http://cmsj.net/index3.html">3</a>
           </li>
 
 
           <li>
-            <a  href="./index4.html">4</a>
+            <a  href="http://cmsj.net/index4.html">4</a>
           </li>
 
 
           <li>
-            <a  href="./index5.html">5</a>
+            <a  href="http://cmsj.net/index5.html">5</a>
           </li>
 
 
@@ -589,18 +579,25 @@ Here are some photos of the project in various stages of construction:</p>
 
 
           <li>
-            <a  href="./index23.html">23</a>
+            <a  href="http://cmsj.net/index23.html">23</a>
           </li>
 
         <li class="pagination__next">
-            <a href="./index3.html">&raquo;</a>
+            <a href="http://cmsj.net/index3.html">&raquo;</a>
         </li>
     </ul>
 </div>
 
   </main>
     <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
       <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
         <div class="author__link">
           <ul>
             <li>
@@ -622,7 +619,7 @@ Here are some photos of the project in various stages of construction:</p>
         </div>
       </section>
       <div class="ending-message">
-        <p>&copy; Chris Jones.</p>
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
       </div>
     </footer>
 </body>

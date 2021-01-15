@@ -3,68 +3,118 @@
 
 <head>
   <!-- ## for client-side less
-  <link rel="stylesheet/less" type="text/css" href="../theme/css/style.less">
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
   <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
   -->
-  <link rel="icon" type="image/vnd.microsoft.icon" href="../">
-  <link rel="stylesheet" type="text/css" href="../theme/css/normalize.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/style.min.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/pygments.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/fontawesome-all.min.css">
-  <link rel="stylesheet" type="text/css" href="../theme/css/hatena-bookmark-icon.css">
 
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
 
   <meta charset="utf-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="author" content="Chris Jones">
   <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+
 
   <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
 
 
   <title>
     cmsj.net
-&ndash; Posts by: Chris Jones  </title>
-
-</head>
+&ndash; Posts by: Chris Jones  </title></head>
 
 <body>
   <main>
     <header>
       <div class="site-name">
-        <a href="/">cmsj.net</a>
+        <a href="http://cmsj.net">cmsj.net</a>
       </div>
       <p>
-        <a href="../archives.html"><i class="fas fa-archive"></i> Archive</a>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
 &gt; Author: Chris Jones
       </p>
     </header>
 
 <article>
   <div class="article__title">
-    <h1><a href="../2015/02/20/send-imessage-and-sms-with-applescript.html">Sending iMessages and SMS through Messages.app with AppleScript</a></h1>
+    <h1><a href="http://cmsj.net/2015/12/08/raspberry-pi-project-pibus.html">Raspberry Pi project: PiBus</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Fri 20 February 2015</p>
+    <p class="article__meta__post-date">Posted on: Tue 08 December 2015</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>The premise of this project is simple - my family lives in London, there's a bus route that runs along our road, and we use it a lot to take the kids places.
+The reality of using the bus is a little more complex - getting three kids ready to go out, is a nightmare and it's not made any easier by checking a travel app on your phone to see how close the bus is.</p>
+<p>I don't think there is much I can do to make the preparation of the children any less manic, but I can certainly do something about the visibility of information about buses, mainly thanks to the excellent open APIs/data provided by <a href="https://tfl.gov.uk/info-for/open-data-users/">Transport For London</a>.</p>
+<p>So, armed with their API, a Python 3 interpreter and a <a href="https://www.raspberrypi.org/">Raspberry Pi</a>, I set out to make a little box for the kitchen wall which will show when the next 3 buses are due to arrive outside our house.</p>
+<p><a href="https://github.com/cmsj/pibus">The code itself</a> is easy enough to throw together because Python has libraries for everything (it also helps if you don't bother to design a decent architecture!). <a href="http://docs.python-requests.org/en/latest/">Requests</a> to fetch the bus data from TfL, <a href="https://docs.python.org/3/library/json.html">json</a>/<a href="https://pypi.python.org/pypi/iso8601">iso8601</a> to parse the data, <a href="https://python-pillow.github.io/">Pillow</a> to render it as an image, and <a href="https://apscheduler.readthedocs.org/en/latest/">APScheduler</a> to give it a simple run-loop.</p>
+<p>The question then becomes, how to display the data. The easiest answer would be a little LCD screen, but that brings with it the downside of having a backlight in the kitchen, which would be ugly and distracting, and it also raises the question of viewing angles. Another answer would be some kind of physical indicator, but that requires skills I don't have time for. Instead, I decided to look for an E-Ink display (think <a href="https://kindle.amazon.com/">Kindle</a>) - it would let me display simple images without producing light.</p>
+<p>The first option I looked at was the <a href="https://www.kickstarter.com/projects/pisupply/papirus-the-epaper-screen-hat-for-your-raspberry-p">PaPiRus</a>, but it's in the window between its crowdfunding drive having finished, and being available to buy. The only other option I could find was the <a href="http://www.percheron-electronics.uk/shop/e-paper-hat/">E-Paper HAT</a>, from Percheron Electronics, which also started life as a crowdfunding project, but is actually available to buy.</p>
+<p>Unfortunately, these displays are super fragile, which I discovered by destroying the first one, but Neil at Percheron was super helpful and I quickly had a new display and some tips about how to avoid cracking it.</p>
+<p>My visualisation of this data isn't going to win any awards for beauty, but it serves its purpose by showing a big number to tell us how many minutes we have, and I managed to minimise the number of times you see the white-black-white refresh cycle of the eInk display with partial screen updates.
+Here are some photos of the project in various stages of construction:</p>
+<p><img alt="Freshly assembled out of the box" src="http://cmsj.net/images/IMG_6856.JPG">
+<em>Freshly assembled out of the box</em></p>
+<p><img alt="The smallest USB WiFi adapter I've ever seen" src="http://cmsj.net/images/IMG_6857.JPG">
+<em>The smallest USB WiFi adapter I've ever seen!</em></p>
+<p><img alt="Modified PiBow case" src="http://cmsj.net/images/IMG_6858.JPG">
+<em>Sadly I had to make some modifications to the PiBow case to fit this particular rPi</em></p>
+<p><img alt="Running an eInk test program" src="http://cmsj.net/images/IMG_6864.JPG">
+<em>Running one of the eInk display test programs</em></p>
+<p>Initially I was rather hoping I could use the famous font that TfL (and London Transport before it) use, which is known as Johnston, but sadly they will not licence the font outside their own use and use by contracted partners. There is a third party clone of the font, but it may have legal issues, presumably because TfL values their braaaaaand. Instead, I decided to just drop the idea of shipping a font with the code, and exported Courier.ttf from my laptop to the Pi directly.</p>
+<p><img alt="TfL font" src="http://cmsj.net/images/IMG_6897.JPG">
+<em>This would have been nice, but I cannot have nice font things</em></p>
+<p>I did briefly try Ubuntu Mono, which is a lovely font, but the zeros look like eyes and it freaked me out.</p>
+<p><img alt="PIBUS IS WATCHING YOU" src="http://cmsj.net/images/Screenshot_2015-12-08_14.03.28.png">
+<em>PIBUS IS WATCHING YOU</em></p>
+<p>The display needs to handle various different situations, most obviously, when no data can be fetched from the API. Rather than get too bogged down in the details of whether our Internet connection is down, TfL's API servers are down, London is on fire, or it's just night time and there are no buses, I went for a simple message with a timestamp. Once this has been displayed, the code skips any further screen updates until it has valid data again. This makes it easy to see when a problem occurred.</p>
+<p><img alt="Date message" src="http://cmsj.net/images/IMG_7010.JPG">
+<em>Maybe aliens stole the Internet, maybe it's a bus strike. It doesn't matter.</em></p>
+<p>I also render a small timestamp on valid data screens too, showing when the last data fetch happened. This is mostly so I can be sure that the fetching code isn't stuck somehow. Once I trust the system a bit more, this can probably come out.</p>
+<p><img alt="Final design" src="http://cmsj.net/images/IMG_7012.JPG">
+<em>The final design, showing a fallback for when there is data for  0 &lt; x &lt; 3 buses</em></p>
+<p><img alt="Three buses" src="http://cmsj.net/images/IMG_7013.JPG">
+<em>Data for three buses, plenty of time to get ready for the second one!</em></p>
+<p>So there it is, project completed! Grab the code from <a href="https://github.com/cmsj/pibus">https://github.com/cmsj/pibus</a>, install the requirements on a Pi, give money to the awesome Percheron Electronics for the E-Paper HAT (and matching PiBow case), throw a font in the directory and edit the scripts for the bus stop and bus route that you care about!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2015/02/20/send-imessage-and-sms-with-applescript.html">Sending iMessages and SMS through Messages.app with AppleScript</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Fri 20 February 2015</p>
     </p>
   </div>
   <div class="article__text">
     <p>I was searching around for ways to automate sending iMessages, so I could write a plugin for <a href="http://www.hammerspoon.org/">Hammerspoon</a>. I found various scripts lurking around the place for sending iMessages, but I also found one that can send SMS if you have SMS Relay enabled (which means you need OS X 10.10 and an iPhone running iOS 8.1).
 I figured I'd collect them as a single post, to help future searchers, so without further ado, here are two stripped down AppleScript snippets that let you control Messages.app to send either an iMessage, or an SMS.
 Firstly, sending an iMessage:</p>
-<div class="highlight"><pre><span></span><span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Messages&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Messages&quot;</span>
   <span class="nv">send</span> <span class="s2">&quot;This is an iMessage&quot;</span> <span class="k">to</span> <span class="nv">buddy</span> <span class="s2">&quot;foo@bar.com&quot;</span> <span class="k">of</span> <span class="p">(</span><span class="nv">service</span> <span class="mi">1</span> <span class="nb">whose</span> <span class="nv">service</span> <span class="nv">type</span> <span class="ow">is</span> <span class="nv">iMessage</span><span class="p">)</span>
 <span class="k">end</span> <span class="k">tell</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>The buddy address can be either an email or a phone number that's registered with Apple for use with iMessage.
 Secondly, sending an SMS:</p>
-<div class="highlight"><pre><span></span><span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Messages&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="k">tell</span> <span class="nb">application</span> <span class="s2">&quot;Messages&quot;</span>
   <span class="nv">send</span> <span class="s2">&quot;This is an SMS&quot;</span> <span class="k">to</span> <span class="nv">buddy</span> <span class="s2">&quot;+1234567890&quot;</span> <span class="k">of</span> <span class="nv">service</span> <span class="s2">&quot;SMS&quot;</span>
 <span class="k">end</span> <span class="k">tell</span>
-</pre></div>
-
+</code></pre></div>
 
 <p>Here, the buddy address should be a phone number.
 Simple!
@@ -74,10 +124,10 @@ Simple!
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2013/08/02/quick-thought-on-moto-x.html">The curious Moto X pricing</a></h1>
+    <h1><a href="http://cmsj.net/2013/08/02/quick-thought-on-moto-x.html">The curious Moto X pricing</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Fri 02 August 2013</p>
+    <p class="article__meta__post-date">Posted on: Fri 02 August 2013</p>
     </p>
   </div>
   <div class="article__text">
@@ -96,10 +146,10 @@ The inevitable question is why Google is happy to make almost no money off the N
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2013/07/17/moving-on-from-terminator.html">Moving on from Terminator</a></h1>
+    <h1><a href="http://cmsj.net/2013/07/17/moving-on-from-terminator.html">Moving on from Terminator</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 17 July 2013</p>
+    <p class="article__meta__post-date">Posted on: Wed 17 July 2013</p>
     </p>
   </div>
   <div class="article__text">
@@ -112,10 +162,10 @@ The inevitable question is why Google is happy to make almost no money off the N
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2013/07/17/some-keyboard-maestro-macros.html">Some Keyboard Maestro macros</a></h1>
+    <h1><a href="http://cmsj.net/2013/07/17/some-keyboard-maestro-macros.html">Some Keyboard Maestro macros</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 17 July 2013</p>
+    <p class="article__meta__post-date">Posted on: Wed 17 July 2013</p>
     </p>
   </div>
   <div class="article__text">
@@ -131,10 +181,10 @@ Here are a couple of the macros I've written that aren't completely tied to my s
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2013/06/10/the-case-against-new-mac-pro-at-wwdc.html">The (simplest) case against a new Mac Pro at WWDC</a></h1>
+    <h1><a href="http://cmsj.net/2013/06/10/the-case-against-new-mac-pro-at-wwdc.html">The (simplest) case against a new Mac Pro at WWDC</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 10 June 2013</p>
+    <p class="article__meta__post-date">Posted on: Mon 10 June 2013</p>
     </p>
   </div>
   <div class="article__text">
@@ -147,10 +197,10 @@ Here are a couple of the macros I've written that aren't completely tied to my s
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2013/06/10/thoughts-on-modular-mac-pro.html">Thoughts on a modular Mac Pro</a></h1>
+    <h1><a href="http://cmsj.net/2013/06/10/thoughts-on-modular-mac-pro.html">Thoughts on a modular Mac Pro</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Mon 10 June 2013</p>
+    <p class="article__meta__post-date">Posted on: Mon 10 June 2013</p>
     </p>
   </div>
   <div class="article__text">
@@ -183,10 +233,10 @@ Edit: I'd like to credit Thomas Hurst for helping to shape some of my thinking a
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2013/05/01/my-attempt-at-ipad-repair.html">My attempt at iPad repair.</a></h1>
+    <h1><a href="http://cmsj.net/2013/05/01/my-attempt-at-ipad-repair.html">My attempt at iPad repair.</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Wed 01 May 2013</p>
+    <p class="article__meta__post-date">Posted on: Wed 01 May 2013</p>
     </p>
   </div>
   <div class="article__text">
@@ -196,10 +246,10 @@ Edit: I'd like to credit Thomas Hurst for helping to shape some of my thinking a
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2013/04/30/alfred-2-clipboard-history.html">Alfred 2 clipboard history</a></h1>
+    <h1><a href="http://cmsj.net/2013/04/30/alfred-2-clipboard-history.html">Alfred 2 clipboard history</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Tue 30 April 2013</p>
+    <p class="article__meta__post-date">Posted on: Tue 30 April 2013</p>
     </p>
   </div>
   <div class="article__text">
@@ -216,10 +266,10 @@ Edit: I'd like to credit Thomas Hurst for helping to shape some of my thinking a
 <hr />
 <article>
   <div class="article__title">
-    <h1><a href="../2013/04/30/terminator-097-released.html">Terminator 0.97 released!</a></h1>
+    <h1><a href="http://cmsj.net/2013/04/30/terminator-097-released.html">Terminator 0.97 released!</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Tue 30 April 2013</p>
+    <p class="article__meta__post-date">Posted on: Tue 30 April 2013</p>
     </p>
   </div>
   <div class="article__text">
@@ -254,64 +304,42 @@ Here is the changelog:
 <p>With that in mind, if you think you are interested in the challenge, and up to the task of taking over the project, please talk to me (email cmsj@tenshu.net or talk to Ng in #terminator on Freenode). My suggestion would be that a direct, feature-complete port to Python3/Gtk3/GObject would immediately bump the version number to 2.0 and then get back to thinking about features, bug fixes and improving what we already have.</p>
   </div>
 </article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="../2013/04/11/some-more-awesome-alfred-2-workflows.html">Some more awesome Alfred 2 workflows</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Thu 11 April 2013</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>I keep finding super handy little things to do with Alfred 2 and so I thought I'd post some more:</p>
-<ul>
-<li><a href="http://www.alfredforum.com/topic/1582-alleyoop-update-alfred-workflows/?hl=alleyoop">Alleyoop</a> - updates installed plugins (if the workflow author supports it, which many currently do not).  I hope this will be a temporary workaround until a centralised workflow repository is created.</li>
-<li><a href="http://www.alfredforum.com/topic/1211-battery-view-summary-stats-about-your-laptop-battery/?hl=battery">Battery</a> - shows all the vital stats of your MacBook's battery without having to run an app or a Terminal command.</li>
-<li><a href="http://www.alfredforum.com/topic/1805-share-using-mountain-lion-built-in-sharing-version-17/?hl=%2Bbuilt+%2Bsharing">Built-in Sharing</a> - lets you share files directly to all the social services that OS X supports.</li>
-<li><a href="http://www.alfredforum.com/topic/1551-paste-current-url-from-safari-into-focussed-application/?hl=%2Bpaste+%2Bcurrent+%2Bsafari">Paste current Safari URL</a> - a workflow I wrote, which pastes the URL of Safari's currently visible webpage, into the application you are using. No need to flip back and forth to copy and paste the URL</li>
-<li><a href="https://github.com/bevesce/unicode-symbols-search/raw/master/Symbols.alfredworkflow">Symbols</a> - very easy, visual way to search the Unicode tables for a symbol you're looking for (e.g. arrows, hearts, snowmen, biohazard warning signs, etc)</li>
-<li><a href="https://github.com/LeEnno/alfred-terminalfinder/blob/master/TerminalFinder.alfredworkflow?raw=true">TerminalFinder</a> - lets you quickly get a Terminal for the Finder window you're looking at.</li>
-</ul>
-<p>I imagine there will be more to come, the total number of workflows is <strong>exploding</strong> at the moment!</p>
-  </div>
-</article>
 
 <div class="pagination">
     <ul>
         <li class="pagination__prev">
-            <a href="../author/chris-jones2.html">&laquo;</a>
+            <a href="http://cmsj.net/author/chris-jones2.html">&laquo;</a>
         </li>
 
 
 
           <li>
-            <a  href="../author/chris-jones.html">1</a>
+            <a  href="http://cmsj.net/author/chris-jones.html">1</a>
           </li>
 
 
           <li>
-            <a  href="../author/chris-jones2.html">2</a>
+            <a  href="http://cmsj.net/author/chris-jones2.html">2</a>
           </li>
 
 
           <li>
-            <a class="pagination__page--current" href="../author/chris-jones3.html">3</a>
+            <a class="pagination__page--current" href="http://cmsj.net/author/chris-jones3.html">3</a>
           </li>
 
 
           <li>
-            <a  href="../author/chris-jones4.html">4</a>
+            <a  href="http://cmsj.net/author/chris-jones4.html">4</a>
           </li>
 
 
           <li>
-            <a  href="../author/chris-jones5.html">5</a>
+            <a  href="http://cmsj.net/author/chris-jones5.html">5</a>
           </li>
 
 
           <li>
-            <a  href="../author/chris-jones6.html">6</a>
+            <a  href="http://cmsj.net/author/chris-jones6.html">6</a>
           </li>
 
 
@@ -380,18 +408,25 @@ Here is the changelog:
 
 
           <li>
-            <a  href="../author/chris-jones23.html">23</a>
+            <a  href="http://cmsj.net/author/chris-jones23.html">23</a>
           </li>
 
         <li class="pagination__next">
-            <a href="../author/chris-jones4.html">&raquo;</a>
+            <a href="http://cmsj.net/author/chris-jones4.html">&raquo;</a>
         </li>
     </ul>
 </div>
 
   </main>
     <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
       <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
         <div class="author__link">
           <ul>
             <li>
@@ -413,7 +448,7 @@ Here is the changelog:
         </div>
       </section>
       <div class="ending-message">
-        <p>&copy; Chris Jones.</p>
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
       </div>
     </footer>
 </body>
