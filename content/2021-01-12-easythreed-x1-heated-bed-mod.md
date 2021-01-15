@@ -86,7 +86,7 @@ This has been a super rewarding journey, and I'm incredibly grateful to all the 
 If you want to do this mod to your X1, here are some things you should know, and some things you will need:
 
  * I am not responsible for your printer. This is a physical and firmware mod, please be careful and think about what you're doing.
- * Buy the official [hotbed accessory](https://www.aliexpress.com/i/4000911088465.html), open its control box and unplug the temperature sensor cable.
+ * Buy the official [hotbed accessory](https://www.aliexpress.com/i/4000911088465.html), open its control box and unplug the temperature sensor cable. If for some reason you use a different hotbed, it needs to be 12V, draw no more than 30W, and your temp sensor will need to be something that Marlin can understand via the `TEMP_SENSOR_BED` define.
  * Buy a 12V 5A barrel plug power supply (I used [this one](https://amzn.to/3oM2VN3) but there are a million options). Use this from now on to power your X1.
  * Grab the modified Marlin source from my GitHub repo:
      * Either [EasyThreed X1](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X1-cmsj) - see the precise changes from EasyThreed's firmware [here](https://github.com/cmsj/Marlin/compare/1.1.0-RC3-EasyThreeD-X1...cmsj:1.1.0-RC3-EasyThreeD-X1-cmsj)
