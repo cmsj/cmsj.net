@@ -1,14 +1,4 @@
 {% extends "base.html" %}
-
-{% block head %}
-
-  {% if HSS_TWITTER_CARD %}
-  <meta name="twitter:title" content="{{ SITENAME }}" />
-  {% endif %}
-
-{% endblock %}
-
-
 {% block content %}
 {% for article in articles_page.object_list %}
 <article>
@@ -16,7 +6,7 @@
     <h1><a href="{{ SITEURL }}/{{ article.url }}">{{ article.title }}</a></h1>
   </div>
   <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: {{ article.locale_date }}</p>
+    <p class="article__meta__post-date">{{ article.locale_date }}</p>
     {% if DISPLAY_CATEGORIES == '' or DISPLAY_CATEGORIES %}
     <p class="article__meta__category">Category: <a href="{{ SITEURL }}/{{ article.category.url }}">{{ article.category }}</a>
     {% endif %}

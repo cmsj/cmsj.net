@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*- #
-from __future__ import unicode_literals
 
 AUTHOR = 'Chris Jones'
 SITENAME = 'cmsj.net'
@@ -8,9 +7,6 @@ SITEURL = 'http://cmsj.net'
 
 PATH = 'content'
 STATIC_PATHS = ['images', 'static']
-EXTRA_PATH_METADATA = {
-    'extra/macpro.html': {'path': 'MacPro.html'},
-}
 ARTICLE_EXCLUDES = ['static']
 
 DISPLAY_ARTICLE_INFO_ON_INDEX = True
@@ -24,15 +20,11 @@ TIMEZONE = 'Europe/London'
 DEFAULT_DATE = 'fs'
 DEFAULT_LANG = 'en'
 
-JINJA_ENVIRONMENT = {'extensions': ['jinja2.ext.i18n']}
-PLUGIN_PATHS = ['plugins']
-PLUGINS = ['i18n_subsites']
-
 # Feed generation is usually not desired when developing
 FEED_DOMAIN = SITEURL
+FEED_ALL_ATOM = None
 CATEGORY_FEED_ATOM = None
 TRANSLATION_FEED_ATOM = None
-TRANSLATION_FEED = None
 AUTHOR_FEED_ATOM = None
 AUTHOR_FEED_RSS = None
 FEED_ATOM = ('atom.xml')
@@ -46,3 +38,4 @@ SOCIAL = (('twitter', 'https://twitter.com/cmsj'),
 ARTICLE_URL = '{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 ARTICLE_SAVE_AS = '{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 ARCHIVES_URL = 'archives.html'
+
