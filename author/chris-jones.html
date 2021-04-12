@@ -63,10 +63,10 @@
 <p>There are <em>tons</em> of third party GitHub Actions available in their <a href="https://github.com/marketplace?type=actions">marketplace</a>. Almost every time I use one, I come to regret it and end up switching to just running a bash script.</p>
 <h2>More useful checkouts</h2>
 <p>If you want to do anything other than interact with the current code (e.g. access tag history) you'll find it fails. Add the <code>fetch-depth</code> argument to <code>actions/checkout</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="err">- name: Checkout foo</span>
-<span class="err">  uses: actions/checkout@v2</span>
-<span class="err">  with:</span>
-<span class="err">    fetch-depth:0</span>
+<div class="highlight"><pre><span></span><code>  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Checkout foo</span>
+    <span class="nt">uses</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">actions/checkout@v2</span>
+    <span class="nt">with</span><span class="p">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">fetch-depth:0</span>
 </code></pre></div>
 
 <h2>Checking out a private repo from a public one is weirdly hard</h2>
@@ -80,47 +80,47 @@
 <h2>Xcode scrubs the inherited environment</h2>
 <p>Normally, you can use environment variables like <code>$GITHUB_ACTIONS</code> to determine if you're running in a CI-style situation. I use this for our test framework to <a href="https://github.com/Hammerspoon/hammerspoon/blob/master/Hammerspoon%20Tests/HSTestCase.m#L94">detect CI</a> so certain tests can be skipped.</p>
 <p>Unfortunately, it seems like <code>xcodebuild</code> scrubs the environment when running script build phases, so instead I created an empty file on disk that the build scripts could check for:</p>
-<div class="highlight"><pre><span></span><code><span class="err">- name: Workaround xcodebuild scrubbing environment</span>
-<span class="err">  run: touch ../is_github_actions</span>
+<div class="highlight"><pre><span></span><code>  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Workaround xcodebuild scrubbing environment</span>
+    <span class="nt">run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">touch ../is_github_actions</span>
 </code></pre></div>
 
 <p>This allows us to skip things like uploading debug symbols to Sentry.</p>
 <h2>You can't upload artifacts from strange paths</h2>
 <p>The <code>actions/upload-artifact</code> action will refuse to upload any artifacts that have <code>../</code> or <code>./</code> in their path. I assume this is for security reasons, but that makes no sense because all you have to do is move/copy the file you want into the runner's <code>$PWD</code> and you can upload them:</p>
-<div class="highlight"><pre><span></span><code><span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">Prepare</span> <span class="n">artifacts</span>
-  <span class="n">run</span><span class="p">:</span> <span class="n">mv</span> <span class="o">../</span><span class="n">archive</span><span class="o">/</span> <span class="o">./</span>
-<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">Upload</span> <span class="n">artifact</span>
-  <span class="n">uses</span><span class="p">:</span> <span class="n">actions</span><span class="o">/</span><span class="n">upload</span><span class="o">-</span><span class="n">artifact</span><span class="err">@</span><span class="n">v2</span>
-  <span class="n">with</span><span class="p">:</span>
-    <span class="n">name</span><span class="p">:</span> <span class="n">foo</span>
-    <span class="n">path</span><span class="p">:</span> <span class="n">archive</span><span class="o">/</span><span class="n">foo</span>
+<div class="highlight"><pre><span></span><code>  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Prepare artifacts</span>
+    <span class="nt">run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mv ../archive/ ./</span>
+  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Upload artifact</span>
+    <span class="nt">uses</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">actions/upload-artifact@v2</span>
+    <span class="nt">with</span><span class="p">:</span>
+      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
+      <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">archive/foo</span>
 </code></pre></div>
 
 <h2>It's pretty easy to verify your code signature, Gatekeeper acceptance, entitlements and notarization status</h2>
 <p>For Hammerspoon these are part of a more complex <a href="https://github.com/Hammerspoon/hammerspoon/blob/master/scripts/librelease.sh">release script library</a>, but in essence these are the commands that you can use to either check return codes, or outputs, for whether your app is as signed/notarized/entitled as you expect it to be:</p>
-<div class="highlight"><pre><span></span><code><span class="s s-Atom">#</span> <span class="nv">Check</span> <span class="s s-Atom">valid</span> <span class="s s-Atom">code</span> <span class="s s-Atom">signature</span>
-<span class="s s-Atom">if</span> <span class="p">!</span> <span class="s s-Atom">codesign</span> <span class="s s-Atom">--verify</span> <span class="s s-Atom">--verbose</span><span class="o">=</span><span class="mi">4</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="p">;</span> <span class="s s-Atom">then</span>
-  <span class="s s-Atom">echo</span> <span class="s2">&quot;FAILED: Code signature check&quot;</span>
-<span class="s s-Atom">fi</span>
+<div class="highlight"><pre><span></span><code><span class="c1"># Check valid code signature</span>
+<span class="k">if</span> ! codesign --verify --verbose<span class="o">=</span><span class="m">4</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="p">;</span> <span class="k">then</span>
+  <span class="nb">echo</span> <span class="s2">&quot;FAILED: Code signature check&quot;</span>
+<span class="k">fi</span>
 
-<span class="s s-Atom">#</span> <span class="nv">Check</span> <span class="s s-Atom">valid</span> <span class="s s-Atom">code</span> <span class="s s-Atom">signing</span> <span class="s s-Atom">entity</span>
-<span class="nv">MY_KNOWN_GOOD_ENTITY</span><span class="s s-Atom">=</span><span class="s2">&quot;Authority=Developer ID Application: Jonny Appleseed (ABC123ABC)&quot;</span>
-<span class="nv">ACTUAL_SIGNER</span><span class="s s-Atom">=</span><span class="err">$</span><span class="p">(</span><span class="s s-Atom">codesign</span> <span class="s s-Atom">--display</span> <span class="s s-Atom">--verbose</span><span class="o">=</span><span class="mi">4</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="mi">2</span><span class="s s-Atom">&gt;&amp;</span><span class="mi">1</span> <span class="p">|</span> <span class="s s-Atom">grep</span> <span class="s s-Atom">^</span><span class="nv">Authority</span> <span class="p">|</span> <span class="s s-Atom">head</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
-<span class="s s-Atom">if</span> <span class="p">[</span> <span class="s2">&quot;${ACTUAL_SIGNER}&quot;</span> <span class="p">!</span><span class="o">=</span> <span class="s2">&quot;${MY_KNOWN_GOOD_ENTITY}&quot;</span> <span class="p">];</span> <span class="s s-Atom">then</span>
-  <span class="s s-Atom">echo</span> <span class="s2">&quot;FAILED: Code signing authority&quot;</span>
-<span class="s s-Atom">fi</span>
+<span class="c1"># Check valid code signing entity</span>
+<span class="nv">MY_KNOWN_GOOD_ENTITY</span><span class="o">=</span><span class="s2">&quot;Authority=Developer ID Application: Jonny Appleseed (ABC123ABC)&quot;</span>
+<span class="nv">ACTUAL_SIGNER</span><span class="o">=</span><span class="k">$(</span>codesign --display --verbose<span class="o">=</span><span class="m">4</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> grep ^Authority <span class="p">|</span> head -1<span class="k">)</span>
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">ACTUAL_SIGNER</span><span class="si">}</span><span class="s2">&quot;</span> !<span class="o">=</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">MY_KNOWN_GOOD_ENTITY</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+  <span class="nb">echo</span> <span class="s2">&quot;FAILED: Code signing authority&quot;</span>
+<span class="k">fi</span>
 
-<span class="s s-Atom">#</span> <span class="nv">Check</span> <span class="nv">Gatekeeper</span> <span class="s s-Atom">acceptance</span>
-<span class="s s-Atom">if</span> <span class="p">!</span> <span class="s s-Atom">spctl</span> <span class="s s-Atom">--verbose</span><span class="o">=</span><span class="mi">4</span> <span class="s s-Atom">--assess</span> <span class="s s-Atom">--type</span> <span class="s s-Atom">execute</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="p">;</span> <span class="s s-Atom">then</span>
-  <span class="s s-Atom">echo</span> <span class="s2">&quot;FAILED: Gatekeeper acceptance&quot;</span>
-<span class="s s-Atom">fi</span>
+<span class="c1"># Check Gatekeeper acceptance</span>
+<span class="k">if</span> ! spctl --verbose<span class="o">=</span><span class="m">4</span> --assess --type execute <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="p">;</span> <span class="k">then</span>
+  <span class="nb">echo</span> <span class="s2">&quot;FAILED: Gatekeeper acceptance&quot;</span>
+<span class="k">fi</span>
 
-<span class="s s-Atom">#</span> <span class="nv">Check</span> <span class="nv">Entitlements</span> <span class="s s-Atom">match</span>
-<span class="nv">EXPECTED</span><span class="s s-Atom">=</span><span class="err">$</span><span class="p">(</span><span class="s s-Atom">cat</span> <span class="o">/</span><span class="s s-Atom">path</span><span class="o">/</span><span class="s s-Atom">to</span><span class="o">/</span><span class="s s-Atom">source</span><span class="o">/</span><span class="nv">Foo</span><span class="p">.</span><span class="s s-Atom">entitlements</span><span class="p">)</span>
-<span class="nv">ACTUAL</span><span class="s s-Atom">=</span><span class="err">$</span><span class="p">(</span><span class="s s-Atom">codesign</span> <span class="s s-Atom">--display</span> <span class="s s-Atom">--</span><span class="nf">entitlements</span> <span class="o">:-</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span><span class="p">)</span>
-<span class="s s-Atom">if</span> <span class="p">[</span> <span class="s2">&quot;${ACTUAL}&quot;</span> <span class="p">!</span><span class="o">=</span> <span class="s2">&quot;${EXPECTED}&quot;</span> <span class="p">];</span> <span class="s s-Atom">then</span>
-  <span class="s s-Atom">echo</span> <span class="s2">&quot;FAILED: Entitlements&quot;</span>
-<span class="s s-Atom">fi</span>
+<span class="c1"># Check Entitlements match</span>
+<span class="nv">EXPECTED</span><span class="o">=</span><span class="k">$(</span>cat /path/to/source/Foo.entitlements<span class="k">)</span>
+<span class="nv">ACTUAL</span><span class="o">=</span><span class="k">$(</span>codesign --display --entitlements :- <span class="s2">&quot;/path/to/Foo.app&quot;</span><span class="k">)</span>
+<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">ACTUAL</span><span class="si">}</span><span class="s2">&quot;</span> !<span class="o">=</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">EXPECTED</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+  <span class="nb">echo</span> <span class="s2">&quot;FAILED: Entitlements&quot;</span>
+<span class="k">fi</span>
 </code></pre></div>
 
 <p>I do these even on local release builds, to ensure nothing was missed before pushing out a release, but they also make sense to do in CI.</p>

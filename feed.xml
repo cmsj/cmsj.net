@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0"><channel><title>cmsj.net</title><link>http://cmsj.net/</link><description></description><lastBuildDate>Mon, 12 Apr 2021 13:50:59 +0100</lastBuildDate><item><title>Lessons learned about using GitHub Actions to build macOS apps</title><link>http://cmsj.net/2021/04/12/macgithubactions.html</link><description>&lt;h2&gt;Introduction&lt;/h2&gt;
+<rss version="2.0"><channel><title>cmsj.net</title><link>http://cmsj.net/</link><description></description><lastBuildDate>Mon, 12 Apr 2021 13:59:49 +0100</lastBuildDate><item><title>Lessons learned about using GitHub Actions to build macOS apps</title><link>http://cmsj.net/2021/04/12/macgithubactions.html</link><description>&lt;h2&gt;Introduction&lt;/h2&gt;
 &lt;p&gt;&lt;a href="https://www.hammerspoon.org/"&gt;Hammerspoon&lt;/a&gt; now has &lt;a href="https://github.com/Hammerspoon/hammerspoon/actions/workflows/ci_nightly.yml"&gt;per-commit development builds&lt;/a&gt; generated automatically by a &lt;a href="https://github.com/features/actions"&gt;GitHub Actions&lt;/a&gt; &lt;a href="https://github.com/Hammerspoon/hammerspoon/blob/master/.github/workflows/ci_nightly.yml"&gt;workflow&lt;/a&gt;.&lt;/p&gt;
 &lt;p&gt;This was a surprisingly slow and painful process to set up, so here are some things I learned along the way.&lt;/p&gt;
 &lt;h2&gt;I prefer scripts to actions&lt;/h2&gt;
 &lt;p&gt;There are &lt;em&gt;tons&lt;/em&gt; of third party GitHub Actions available in their &lt;a href="https://github.com/marketplace?type=actions"&gt;marketplace&lt;/a&gt;. Almost every time I use one, I come to regret it and end up switching to just running a bash script.&lt;/p&gt;
 &lt;h2&gt;More useful checkouts&lt;/h2&gt;
 &lt;p&gt;If you want to do anything other than interact with the current code (e.g. access tag history) you'll find it fails. Add the &lt;code&gt;fetch-depth&lt;/code&gt; argument to &lt;code&gt;actions/checkout&lt;/code&gt;:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- name: Checkout foo&lt;/span&gt;
-&lt;span class="err"&gt;  uses: actions/checkout@v2&lt;/span&gt;
-&lt;span class="err"&gt;  with:&lt;/span&gt;
-&lt;span class="err"&gt;    fetch-depth:0&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;  &lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Checkout foo&lt;/span&gt;
+    &lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;actions/checkout@v2&lt;/span&gt;
+    &lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="l l-Scalar l-Scalar-Plain"&gt;fetch-depth:0&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h2&gt;Checking out a private repo from a public one is weirdly hard&lt;/h2&gt;
@@ -23,47 +23,47 @@
 &lt;h2&gt;Xcode scrubs the inherited environment&lt;/h2&gt;
 &lt;p&gt;Normally, you can use environment variables like &lt;code&gt;$GITHUB_ACTIONS&lt;/code&gt; to determine if you're running in a CI-style situation. I use this for our test framework to &lt;a href="https://github.com/Hammerspoon/hammerspoon/blob/master/Hammerspoon%20Tests/HSTestCase.m#L94"&gt;detect CI&lt;/a&gt; so certain tests can be skipped.&lt;/p&gt;
 &lt;p&gt;Unfortunately, it seems like &lt;code&gt;xcodebuild&lt;/code&gt; scrubs the environment when running script build phases, so instead I created an empty file on disk that the build scripts could check for:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="err"&gt;- name: Workaround xcodebuild scrubbing environment&lt;/span&gt;
-&lt;span class="err"&gt;  run: touch ../is_github_actions&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;  &lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Workaround xcodebuild scrubbing environment&lt;/span&gt;
+    &lt;span class="nt"&gt;run&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;touch ../is_github_actions&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;This allows us to skip things like uploading debug symbols to Sentry.&lt;/p&gt;
 &lt;h2&gt;You can't upload artifacts from strange paths&lt;/h2&gt;
 &lt;p&gt;The &lt;code&gt;actions/upload-artifact&lt;/code&gt; action will refuse to upload any artifacts that have &lt;code&gt;../&lt;/code&gt; or &lt;code&gt;./&lt;/code&gt; in their path. I assume this is for security reasons, but that makes no sense because all you have to do is move/copy the file you want into the runner's &lt;code&gt;$PWD&lt;/code&gt; and you can upload them:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Prepare&lt;/span&gt; &lt;span class="n"&gt;artifacts&lt;/span&gt;
-  &lt;span class="n"&gt;run&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;mv&lt;/span&gt; &lt;span class="o"&gt;../&lt;/span&gt;&lt;span class="n"&gt;archive&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt; &lt;span class="o"&gt;./&lt;/span&gt;
-&lt;span class="o"&gt;-&lt;/span&gt; &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;Upload&lt;/span&gt; &lt;span class="n"&gt;artifact&lt;/span&gt;
-  &lt;span class="n"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;actions&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;upload&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;artifact&lt;/span&gt;&lt;span class="err"&gt;@&lt;/span&gt;&lt;span class="n"&gt;v2&lt;/span&gt;
-  &lt;span class="n"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
-    &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;foo&lt;/span&gt;
-    &lt;span class="n"&gt;path&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;archive&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="n"&gt;foo&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;  &lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Prepare artifacts&lt;/span&gt;
+    &lt;span class="nt"&gt;run&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;mv ../archive/ ./&lt;/span&gt;
+  &lt;span class="p p-Indicator"&gt;-&lt;/span&gt; &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;Upload artifact&lt;/span&gt;
+    &lt;span class="nt"&gt;uses&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;actions/upload-artifact@v2&lt;/span&gt;
+    &lt;span class="nt"&gt;with&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;
+      &lt;span class="nt"&gt;name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;foo&lt;/span&gt;
+      &lt;span class="nt"&gt;path&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="l l-Scalar l-Scalar-Plain"&gt;archive/foo&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;h2&gt;It's pretty easy to verify your code signature, Gatekeeper acceptance, entitlements and notarization status&lt;/h2&gt;
 &lt;p&gt;For Hammerspoon these are part of a more complex &lt;a href="https://github.com/Hammerspoon/hammerspoon/blob/master/scripts/librelease.sh"&gt;release script library&lt;/a&gt;, but in essence these are the commands that you can use to either check return codes, or outputs, for whether your app is as signed/notarized/entitled as you expect it to be:&lt;/p&gt;
-&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="s s-Atom"&gt;#&lt;/span&gt; &lt;span class="nv"&gt;Check&lt;/span&gt; &lt;span class="s s-Atom"&gt;valid&lt;/span&gt; &lt;span class="s s-Atom"&gt;code&lt;/span&gt; &lt;span class="s s-Atom"&gt;signature&lt;/span&gt;
-&lt;span class="s s-Atom"&gt;if&lt;/span&gt; &lt;span class="p"&gt;!&lt;/span&gt; &lt;span class="s s-Atom"&gt;codesign&lt;/span&gt; &lt;span class="s s-Atom"&gt;--verify&lt;/span&gt; &lt;span class="s s-Atom"&gt;--verbose&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/path/to/Foo.app&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="s s-Atom"&gt;then&lt;/span&gt;
-  &lt;span class="s s-Atom"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;FAILED: Code signature check&amp;quot;&lt;/span&gt;
-&lt;span class="s s-Atom"&gt;fi&lt;/span&gt;
+&lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# Check valid code signature&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; ! codesign --verify --verbose&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/path/to/Foo.app&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;FAILED: Code signature check&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;fi&lt;/span&gt;
 
-&lt;span class="s s-Atom"&gt;#&lt;/span&gt; &lt;span class="nv"&gt;Check&lt;/span&gt; &lt;span class="s s-Atom"&gt;valid&lt;/span&gt; &lt;span class="s s-Atom"&gt;code&lt;/span&gt; &lt;span class="s s-Atom"&gt;signing&lt;/span&gt; &lt;span class="s s-Atom"&gt;entity&lt;/span&gt;
-&lt;span class="nv"&gt;MY_KNOWN_GOOD_ENTITY&lt;/span&gt;&lt;span class="s s-Atom"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Authority=Developer ID Application: Jonny Appleseed (ABC123ABC)&amp;quot;&lt;/span&gt;
-&lt;span class="nv"&gt;ACTUAL_SIGNER&lt;/span&gt;&lt;span class="s s-Atom"&gt;=&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s s-Atom"&gt;codesign&lt;/span&gt; &lt;span class="s s-Atom"&gt;--display&lt;/span&gt; &lt;span class="s s-Atom"&gt;--verbose&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/path/to/Foo.app&amp;quot;&lt;/span&gt; &lt;span class="mi"&gt;2&lt;/span&gt;&lt;span class="s s-Atom"&gt;&amp;gt;&amp;amp;&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="s s-Atom"&gt;grep&lt;/span&gt; &lt;span class="s s-Atom"&gt;^&lt;/span&gt;&lt;span class="nv"&gt;Authority&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; &lt;span class="s s-Atom"&gt;head&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="mi"&gt;1&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="s s-Atom"&gt;if&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;${ACTUAL_SIGNER}&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;${MY_KNOWN_GOOD_ENTITY}&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;];&lt;/span&gt; &lt;span class="s s-Atom"&gt;then&lt;/span&gt;
-  &lt;span class="s s-Atom"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;FAILED: Code signing authority&amp;quot;&lt;/span&gt;
-&lt;span class="s s-Atom"&gt;fi&lt;/span&gt;
+&lt;span class="c1"&gt;# Check valid code signing entity&lt;/span&gt;
+&lt;span class="nv"&gt;MY_KNOWN_GOOD_ENTITY&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;Authority=Developer ID Application: Jonny Appleseed (ABC123ABC)&amp;quot;&lt;/span&gt;
+&lt;span class="nv"&gt;ACTUAL_SIGNER&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;codesign --display --verbose&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/path/to/Foo.app&amp;quot;&lt;/span&gt; &lt;span class="m"&gt;2&lt;/span&gt;&amp;gt;&lt;span class="p"&gt;&amp;amp;&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; &lt;span class="p"&gt;|&lt;/span&gt; grep ^Authority &lt;span class="p"&gt;|&lt;/span&gt; head -1&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;ACTUAL_SIGNER&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; !&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;MY_KNOWN_GOOD_ENTITY&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;FAILED: Code signing authority&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;fi&lt;/span&gt;
 
-&lt;span class="s s-Atom"&gt;#&lt;/span&gt; &lt;span class="nv"&gt;Check&lt;/span&gt; &lt;span class="nv"&gt;Gatekeeper&lt;/span&gt; &lt;span class="s s-Atom"&gt;acceptance&lt;/span&gt;
-&lt;span class="s s-Atom"&gt;if&lt;/span&gt; &lt;span class="p"&gt;!&lt;/span&gt; &lt;span class="s s-Atom"&gt;spctl&lt;/span&gt; &lt;span class="s s-Atom"&gt;--verbose&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="mi"&gt;4&lt;/span&gt; &lt;span class="s s-Atom"&gt;--assess&lt;/span&gt; &lt;span class="s s-Atom"&gt;--type&lt;/span&gt; &lt;span class="s s-Atom"&gt;execute&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/path/to/Foo.app&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="s s-Atom"&gt;then&lt;/span&gt;
-  &lt;span class="s s-Atom"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;FAILED: Gatekeeper acceptance&amp;quot;&lt;/span&gt;
-&lt;span class="s s-Atom"&gt;fi&lt;/span&gt;
+&lt;span class="c1"&gt;# Check Gatekeeper acceptance&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; ! spctl --verbose&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;4&lt;/span&gt; --assess --type execute &lt;span class="s2"&gt;&amp;quot;/path/to/Foo.app&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;FAILED: Gatekeeper acceptance&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;fi&lt;/span&gt;
 
-&lt;span class="s s-Atom"&gt;#&lt;/span&gt; &lt;span class="nv"&gt;Check&lt;/span&gt; &lt;span class="nv"&gt;Entitlements&lt;/span&gt; &lt;span class="s s-Atom"&gt;match&lt;/span&gt;
-&lt;span class="nv"&gt;EXPECTED&lt;/span&gt;&lt;span class="s s-Atom"&gt;=&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s s-Atom"&gt;cat&lt;/span&gt; &lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="s s-Atom"&gt;path&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="s s-Atom"&gt;to&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="s s-Atom"&gt;source&lt;/span&gt;&lt;span class="o"&gt;/&lt;/span&gt;&lt;span class="nv"&gt;Foo&lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="s s-Atom"&gt;entitlements&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="nv"&gt;ACTUAL&lt;/span&gt;&lt;span class="s s-Atom"&gt;=&lt;/span&gt;&lt;span class="err"&gt;$&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s s-Atom"&gt;codesign&lt;/span&gt; &lt;span class="s s-Atom"&gt;--display&lt;/span&gt; &lt;span class="s s-Atom"&gt;--&lt;/span&gt;&lt;span class="nf"&gt;entitlements&lt;/span&gt; &lt;span class="o"&gt;:-&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;/path/to/Foo.app&amp;quot;&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
-&lt;span class="s s-Atom"&gt;if&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;${ACTUAL}&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;!&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;${EXPECTED}&amp;quot;&lt;/span&gt; &lt;span class="p"&gt;];&lt;/span&gt; &lt;span class="s s-Atom"&gt;then&lt;/span&gt;
-  &lt;span class="s s-Atom"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;FAILED: Entitlements&amp;quot;&lt;/span&gt;
-&lt;span class="s s-Atom"&gt;fi&lt;/span&gt;
+&lt;span class="c1"&gt;# Check Entitlements match&lt;/span&gt;
+&lt;span class="nv"&gt;EXPECTED&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;cat /path/to/source/Foo.entitlements&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;span class="nv"&gt;ACTUAL&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="k"&gt;$(&lt;/span&gt;codesign --display --entitlements :- &lt;span class="s2"&gt;&amp;quot;/path/to/Foo.app&amp;quot;&lt;/span&gt;&lt;span class="k"&gt;)&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt; &lt;span class="o"&gt;[&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;ACTUAL&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; !&lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;&lt;/span&gt;&lt;span class="si"&gt;${&lt;/span&gt;&lt;span class="nv"&gt;EXPECTED&lt;/span&gt;&lt;span class="si"&gt;}&lt;/span&gt;&lt;span class="s2"&gt;&amp;quot;&lt;/span&gt; &lt;span class="o"&gt;]&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt; &lt;span class="k"&gt;then&lt;/span&gt;
+  &lt;span class="nb"&gt;echo&lt;/span&gt; &lt;span class="s2"&gt;&amp;quot;FAILED: Entitlements&amp;quot;&lt;/span&gt;
+&lt;span class="k"&gt;fi&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;
 
 &lt;p&gt;I do these even on local release builds, to ensure nothing was missed before pushing out a release, but they also make sense to do in CI.&lt;/p&gt;
