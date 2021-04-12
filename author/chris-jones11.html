@@ -49,6 +49,20 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2009/01/21/terminator-012-released.html">Terminator 0.12 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Wed 21 January 2009</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Sadly a small translation change slipped in at the last minute, but I'm otherwise pleased to announce the release of Terminator 0.12!
+Bug fixes and some new features (including the very shiny "simultaneous typing").</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2009/01/21/terminator-012-released_20.html">Terminator 0.12 released!</a></h1>
   </div>
   <div class="article__meta">
@@ -278,20 +292,6 @@ Out of sheer curiosity last night I fired up the excellent <em>powertop</em> and
 Previously I have always resisted applying tweaks to my laptop that would attempt to reduce power, but since things were improving, the temptation was simply too great and I started digging out all the resources on this (by far the most useful being the tips on Intel's grammatically horrific <a href="http://www.lesswatts.org/">http://www.lesswatts.org/</a>. I had two reasons for not doing this previously - firstly I didn't want to deviate too much from a default install of Ubuntu (if only because it makes it much harder to reproduce bugs), but secondly I kept running into little weirdnesses. The most inconvenient of these was enabling AHCI link power management (which basically puts the hard disk bus to sleep when there is no IO); Enabling this and then suspending the laptop produced a 5 second delay on resuming because the kernel was forgetting it had put the bus to sleep and so had to wait for it to time out and be reset.
 This particular niggle is fixed in 2.6.27 and so my 3-4 second resume times are preserved and I can save power! \o/
 After a little while tweaking disk, AHCI, USB, filesystem, wireless, sound and ethernet options I ended up with a system which runs between 8 and 9 Watts when idle, down from 10-14 Watts, which I think is a pretty impressive saving and I'm very curious to find out from other Thinkpad X300 owners how well Windows performs in the power usage stakes - we always hear that Linux is a bit worse, but I'd be really quite surprised if the machine can run with very much less - it's spending (when idle, obviously) 99% of its time in the deepest processor sleep state and is only generating about a hundred interrupts per second (about 70-80% of which are due to my using a 3D desktop and wireless).</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2008/09/21/terminator-011-released_20.html">Terminator 0.11 released!</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Sun 21 September 2008</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Head over to the <a href="http://www.tenshu.net/terminator" title="Terminator">Terminator Homepage</a> to get the goodness that is version 0.11. Mostly just bugfixes this time, for things which hurt 0.10 users. Also present is support for X Session Management, although until we have proper profiling support, this is of limited use.
-The source tarball is up, of course, and the Hardy/Intrepid PPAs should have packages by the time you read this.</p>
   </div>
 </article>
 

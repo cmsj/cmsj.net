@@ -49,6 +49,21 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2018/06/19/trello-mac-app-automation.html">A little bit of automation of the Trello Mac App</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Tue 19 June 2018</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p><a href="https://www.trello.com">Trello</a> have a Mac app, which I use for work and it struck me this morning that several recurring calendar events I have, which exist to remind me to review a particular board, would be much more pleasant if they contained a link that would open the board directly.</p>
+<p>That would be easy if I used the Trello website, but I quite like the app (even though it's really just a browser pretending to be an app), so I went spelunking.</p>
+<p>To cut a long story short, the Trello Mac app registers itself as a handler for <code>trello://</code> URLs, so if you take any <code>trello.com</code> board URL and replace the <code>https://</code> part with <code>trello://</code> you can use it as a link in your calendar (or anywhere else) and it will open the board in the app.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2018/06/15/homebridge-in-docker.html">Homebridge in Docker, an adventure in networking</a></h1>
   </div>
   <div class="article__meta">
@@ -415,66 +430,6 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
   <div class="article__text">
     <p>Bye bye Blogger, hello GitHub Pages. This means no more comments, and probably a bunch of posts have terrible formatting at the moment, but at least my blog is now just static Markdown files I can edit nicely 😁</p>
 <p>(Also the domain has changed, cmsj.net is the new tenshu.net :)</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2016/08/30/changing-gpg-key.html">Changing GPG key</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Tue 30 August 2016</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>It's been 15 years and my GPG key is now looking hilariously out of date - 1024bit DSA key. Yuck.
-So, time to start over. Below is a statement about the change, with details of my new and old keys, signed by both keys. Since it will almost certainly not paste properly out of a browser, I have also uploaded it to GitHub: <a href="https://gist.githubusercontent.com/cmsj/3093f03e085239de0e64ea33d1b2bfab/raw/82c2cb9110e83f0aae4a8155aec954c3aa9aab3b/gpg-migration.txt.asc.asc">here</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNED</span> <span class="n">MESSAGE</span><span class="o">-----</span>
-<span class="n">Hash</span><span class="p">:</span> <span class="n">SHA256</span>
-
-<span class="o">-</span> <span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNED</span> <span class="n">MESSAGE</span><span class="o">-----</span>
-<span class="n">Hash</span><span class="p">:</span> <span class="n">SHA256</span>
-
-<span class="n">Hello</span> <span class="n">world</span>
-
-<span class="n">My</span> <span class="n">name</span> <span class="n">is</span> <span class="n">Chris</span> <span class="n">Jones</span> <span class="n">and</span> <span class="n">I</span> <span class="n">am</span> <span class="n">changing</span> <span class="n">my</span> <span class="n">GPG</span> <span class="n">key</span><span class="p">.</span>
-<span class="n">The</span> <span class="n">original</span> <span class="n">key</span> <span class="n">fingerprint</span> <span class="n">is</span><span class="p">:</span> <span class="mi">6</span><span class="n">C99</span> <span class="mi">9021</span> <span class="mi">9</span><span class="n">B3A</span> <span class="n">EC6D</span> <span class="mi">4</span><span class="n">A28</span>  <span class="mi">7</span><span class="n">EE7</span> <span class="n">C574</span> <span class="mi">7646</span> <span class="mi">7313</span> <span class="mi">2</span><span class="n">D75</span>
-<span class="n">The</span> <span class="n">new</span> <span class="n">key</span> <span class="n">fingerprint</span> <span class="n">is</span><span class="p">:</span> <span class="mi">79</span><span class="n">D2</span> <span class="mi">2</span><span class="n">E89</span> <span class="mi">6591</span> <span class="mi">210</span><span class="n">E</span> <span class="mi">45</span><span class="n">F3</span>  <span class="mi">75</span><span class="n">D3</span> <span class="n">BCA2</span> <span class="mi">36</span><span class="n">E2</span> <span class="n">E19F</span> <span class="mi">727</span><span class="n">D</span>
-
-<span class="n">You</span> <span class="n">should</span> <span class="n">find</span> <span class="n">this</span> <span class="n">message</span> <span class="n">signed</span> <span class="n">by</span> <span class="n">the</span> <span class="n">new</span> <span class="n">key</span><span class="p">,</span> <span class="n">and</span> <span class="n">that</span> <span class="n">combined</span> <span class="n">message</span> <span class="n">signed</span> <span class="n">by</span> <span class="n">the</span> <span class="n">old</span> <span class="n">key</span><span class="p">,</span> <span class="n">as</span> <span class="n">proof</span> <span class="n">that</span> <span class="n">I</span> <span class="n">am</span> <span class="n">doing</span> <span class="n">this</span><span class="p">.</span> <span class="n">I</span> <span class="n">have</span> <span class="n">also</span> <span class="n">updated</span> <span class="n">my</span> <span class="n">keybase</span><span class="p">.</span><span class="n">io</span> <span class="n">account</span> <span class="n">and</span> <span class="n">secured</span> <span class="n">a</span> <span class="n">couple</span> <span class="n">of</span> <span class="n">signatures</span> <span class="n">on</span> <span class="n">the</span> <span class="n">new</span> <span class="n">key</span> <span class="n">to</span> <span class="n">start</span> <span class="n">rebuilding</span> <span class="n">my</span> <span class="n">place</span> <span class="n">in</span> <span class="n">the</span> <span class="n">web</span> <span class="n">of</span> <span class="n">trust</span><span class="p">.</span>
-
-<span class="n">Thank</span> <span class="n">you</span> <span class="n">for</span> <span class="n">your</span> <span class="n">time</span><span class="p">,</span>
-
-<span class="n">Chris</span>
-<span class="o">-</span> <span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
-<span class="n">Version</span><span class="p">:</span> <span class="n">GnuPG</span><span class="o">/</span><span class="n">MacGPG2</span> <span class="n">v2</span><span class="p">.</span><span class="mi">0</span>
-
-<span class="n">iQIcBAEBCAAGBQJXxffoAAoJECwUb1eIgw1qUMEP</span><span class="o">+</span><span class="n">wfaB84vYC4tHdo9OS9szaQv</span>
-<span class="n">cmNW0sIuDx</span><span class="o">/</span><span class="n">RQr4iYrcs</span><span class="o">+</span><span class="mi">8</span><span class="n">QTQf2I3FPXUc6auhyF4J7Lntu67sTKI9zyfsDm0IW9</span>
-<span class="n">NbIzysTP1Y35lJPA12VM9O9IRaf5G7J57BKAmAuUbpnY7icIzA0MoD4SwCgcRXtA</span>
-<span class="n">QPZd8JVPDLaNpwb1O5rdQLBAdo</span><span class="o">+</span><span class="n">OUjF</span><span class="o">+</span><span class="n">bB8jZzzoORX0oVVdGhaGJFVhuq8aV1dY</span>
-<span class="mi">0</span><span class="n">YB</span><span class="o">/</span><span class="n">nZr71ZApUVnvSZBfj1FHsgXZ5Fai70iI</span><span class="o">+</span><span class="n">oAox</span><span class="o">/</span><span class="n">Gj6BJ0IJhBIk5hLAzAiXoR</span>
-<span class="mi">8</span><span class="n">EMmtqkWkKc8Jd3NonMzKRGF</span><span class="o">+</span><span class="n">qT</span><span class="o">+</span><span class="n">G3YuZIDmSptOZWjJ5volT25bYFknEBxPslwC</span>
-<span class="n">TiBGSs6rKz9RhfxGxCmM350zBIVFFCn</span><span class="o">+</span><span class="n">RNCWrgn</span><span class="o">/</span><span class="n">z4OJp4xSvZJ0IwqB</span><span class="o">/</span><span class="n">CwkrmUb</span>
-<span class="mi">0</span><span class="n">ZhG44O2W5lpuSCDh1dhCsiryq4JeSiUy1GENyHl8eIkXjzDOjKTt6OT8wYFFPL7</span>
-<span class="n">XheyIfvMbRNh86o79Skch6Qoyh7nvVALAwsLVHKSDtQRzHbVF6ED9h2ISxdABiZ2</span>
-<span class="n">CkiJ95bf8JQeNVoqLJ78uwSYN96AyGPXfMQKG45SavgkzNLyqeoI1iMJE2yYuVIy</span>
-<span class="n">Z9XUaKhoDI9ERLps</span><span class="o">+</span><span class="n">Fw6NY</span><span class="o">+</span><span class="n">v2BVSKTvl5MDEDHmfvjK0m3x6C4tF3</span><span class="o">/</span><span class="n">QdgwRsJmvE</span>
-<span class="mi">2</span><span class="n">XMWXLrBkcZx9tnYNFIG</span>
-<span class="o">=</span><span class="mi">9</span><span class="n">PwA</span>
-<span class="o">-</span> <span class="o">-----</span><span class="kr">END</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
-<span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
-<span class="n">Version</span><span class="p">:</span> <span class="n">GnuPG</span><span class="o">/</span><span class="n">MacGPG2</span> <span class="n">v2</span><span class="p">.</span><span class="mi">0</span>
-
-<span class="n">iQEcBAEBCAAGBQJXxff1AAoJEPH</span><span class="o">//</span><span class="mi">8</span><span class="n">xn2jUBNOcIAL4fqY</span><span class="o">/</span><span class="n">DViwNj2</span><span class="o">/</span><span class="n">Va4ePEg1w</span>
-<span class="mi">9</span><span class="n">uUWhGnMUcG4CsQGkhtODU6Qg45inrWnG0VE8jwhGilP4w5tQoIe</span><span class="o">+</span><span class="n">m53cUp5m</span><span class="o">/</span><span class="n">Rv</span>
-<span class="n">ueRBvfDxBw</span><span class="o">/</span><span class="n">SrF6eFZ1SGkXv6kcUkOYjueKsDtxObaX9dN7PrDUljtZWpGTzE77k</span>
-<span class="mi">5</span><span class="n">EWPGfUT89oXa2eGwYnr6t7t9f76cO9eKFck7rIWT</span><span class="o">+</span><span class="n">p1tzmF6amm7IjoS8gsjfSb</span>
-<span class="n">lPk3PoC0G71wSseh7iesIgw</span><span class="o">+</span><span class="n">vZRZ7tYg59RdpwWLmZjQJVhMzW</span><span class="o">/</span><span class="n">QpX87CPAM2m0A</span>
-<span class="n">OcyivXLlbaSZ58AsHZSIA4ZjeoDnlWNsFHemBUSAOMa03b4JtgnGbTaHTZhiLc8</span><span class="o">=</span>
-<span class="o">=/</span><span class="n">lkZ</span>
-<span class="o">-----</span><span class="kr">END</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
-</code></pre></div>
   </div>
 </article>
 

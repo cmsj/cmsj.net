@@ -48,6 +48,33 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2008/07/08/terminator-09-released_07.html">Terminator 0.9 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Tue 08 July 2008</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>It's been far too long, but here it is. Terminator 0.9.
+As usual, head over to the <a href="http://www.tenshu.net/terminator/" title="Terminator Home Page">home page</a> to get all the links and information you need.
+"So what's new in this release?" Well let's have a little look at the ChangeLog:</p>
+<ul>
+<li>Tab support</li>
+<li>Drag &amp; Drop support</li>
+<li>Added support for ~/.config/terminator/config</li>
+<li>Switch the meanings of "horizontal" and "vertical" wrt splitting, after extensive user feedback. Added context menu icons to try and make the meaning clearer.</li>
+<li>Added keybindings for terms size and scrollbar manipulation. Thanks Emmanuel Bretelle.</li>
+<li>Completely revamped config system which now transparently makes use of gconf settings if they are available, falls back to sensible defaults if not, and can be overridden entirely by ~/.config/terminator/config</li>
+<li>Support terminal zooming - now you can quickly hide all terminals apart from one and either scale the fontsize or not.</li>
+<li>New application icon from Cory Kontros</li>
+<li>FreeBSD support (thanks to Thomas Hurst)</li>
+<li>and a whole heap of bug fixes. Rock on!</li>
+</ul>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2008/07/06/terminator-09-almost-ready.html">Terminator 0.9 almost ready</a></h1>
   </div>
   <div class="article__meta">
@@ -189,26 +216,6 @@ First off, in a stunning piece of fail, Lenovo have used a drive from one of the
 Secondly, and more worryingly, there is a new BIOS release for the X300, but one report from a Linux user thus far suggests that the machine has started hard locking. I can't confirm because this machine is far too important to me (ie I use it for work), so I am holding back on the update until I know what's going on.
 <em>Update</em> It occurred to me that it might be useful to document how I changed the region code - install <code>regionset</code> and run it. It will show you your current region code (0xFF for me, ie region 0) and how many changes you have left, then ask if you want to change it.
 <em>Second update</em> Lenovo actually withdrew the BIOS update, so clearly something was wrong with it. <a href="http://www-307.ibm.com/pc/support/site.wss/MIGR-69703.html">This page</a> lists the models for which they have pushed out a fixed version. The X300 is currently still listed as "Coming Soon" :(</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2008/04/18/terminator-progress.html">Terminator progress</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Fri 18 April 2008</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Just a quick update on how things are going.
-I've been pretty slow lately because of trying to get as many bugs fixed in Hardy as possible.
-However, we've still been working away a bit and the team has continued to grow.</p>
-<p>Reliance on gnome is being reduced, and portability is being increased - you can now run Terminator on FreeBSD without a full GNOME install.
-Configuration has been entirely replaced - we now offer a stack of config options. If you have gconf available we will look there for gnome terminal settings. If that doesn't work out we'll look for a config file in your home directory and if that fails we have comprehensive default settings.
-I'm hoping to push out a release soon because we've also accumulated a few small bugfixes.
-The plan from here is to have a major release to land the tabs feature, and then go all out for a massive 1.0 when we can save/restore meta-profiles.
-Woo!</p>
   </div>
 </article>
 

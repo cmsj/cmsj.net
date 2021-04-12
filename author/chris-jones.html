@@ -49,6 +49,88 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2021/04/12/macgithubactions.html">Lessons learned about using GitHub Actions to build macOS apps</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Mon 12 April 2021</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <h2>Introduction</h2>
+<p><a href="https://www.hammerspoon.org/">Hammerspoon</a> now has <a href="https://github.com/Hammerspoon/hammerspoon/actions/workflows/ci_nightly.yml">per-commit development builds</a> generated automatically by a <a href="https://github.com/features/actions">GitHub Actions</a> <a href="https://github.com/Hammerspoon/hammerspoon/blob/master/.github/workflows/ci_nightly.yml">workflow</a>.</p>
+<p>This was a surprisingly slow and painful process to set up, so here are some things I learned along the way.</p>
+<h2>I prefer scripts to actions</h2>
+<p>There are <em>tons</em> of third party GitHub Actions available in their <a href="https://github.com/marketplace?type=actions">marketplace</a>. Almost every time I use one, I come to regret it and end up switching to just running a bash script.</p>
+<h2>More useful checkouts</h2>
+<p>If you want to do anything other than interact with the current code (e.g. access tag history) you'll find it fails. Add the <code>fetch-depth</code> argument to <code>actions/checkout</code>:</p>
+<div class="highlight"><pre><span></span><code><span class="err">- name: Checkout foo</span>
+<span class="err">  uses: actions/checkout@v2</span>
+<span class="err">  with:</span>
+<span class="err">    fetch-depth:0</span>
+</code></pre></div>
+
+<h2>Checking out a private repo from a public one is weirdly hard</h2>
+<p>Since these development builds are signed, they need access to a signing key. GitHub has a system for sharing secrets with a repo, but it's limited to 64KB values. For anything else, you need to encrypt the secrets in a repo and set a repository secret with the passphrase.</p>
+<p>It seemed to me like it would be a good idea to keep the encrypted secrets in a private repository that the build process would check out, so the ciphertext is never exposed to the gaze of the Internet.</p>
+<p>Unfortuantely, GitHub's <a href="https://docs.github.com/en/developers/apps/scopes-for-oauth-apps">OAuth scopes</a> only allow you to give full read/write permission to all repositories a user can access, there's no way to grant read-only access.</p>
+<p>So, I decided it was safer to just try and be extra-careful about how I encrypt my secrets, and keep them in a public repository.</p>
+<h2>Code signing a macOS app in CI needs a custom keychain</h2>
+<p>The default login keychain requires a password to unlock, so if you put a signing certificate there, your CI builds will hang indefinitely waiting for a password to be entered into a UI dialog you can't see.</p>
+<p>I took some ideas from the <a href="https://github.com/devbotsxyz/import-signing-certificate">devbotsxyz action</a> and a couple of blog posts, to come up with <a href="https://github.com/Hammerspoon/hammerspoon/blob/master/scripts/github-ci-nightly-keychain.sh">my own script</a> to create a keychain, unlock it, import the signing certificate, disable the keychain's lock timeout, and allow codesigning tools to use the keychain without a password.</p>
+<h2>Xcode scrubs the inherited environment</h2>
+<p>Normally, you can use environment variables like <code>$GITHUB_ACTIONS</code> to determine if you're running in a CI-style situation. I use this for our test framework to <a href="https://github.com/Hammerspoon/hammerspoon/blob/master/Hammerspoon%20Tests/HSTestCase.m#L94">detect CI</a> so certain tests can be skipped.</p>
+<p>Unfortunately, it seems like <code>xcodebuild</code> scrubs the environment when running script build phases, so instead I created an empty file on disk that the build scripts could check for:</p>
+<div class="highlight"><pre><span></span><code><span class="err">- name: Workaround xcodebuild scrubbing environment</span>
+<span class="err">  run: touch ../is_github_actions</span>
+</code></pre></div>
+
+<p>This allows us to skip things like uploading debug symbols to Sentry.</p>
+<h2>You can't upload artifacts from strange paths</h2>
+<p>The <code>actions/upload-artifact</code> action will refuse to upload any artifacts that have <code>../</code> or <code>./</code> in their path. I assume this is for security reasons, but that makes no sense because all you have to do is move/copy the file you want into the runner's <code>$PWD</code> and you can upload them:</p>
+<div class="highlight"><pre><span></span><code><span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">Prepare</span> <span class="n">artifacts</span>
+  <span class="n">run</span><span class="p">:</span> <span class="n">mv</span> <span class="o">../</span><span class="n">archive</span><span class="o">/</span> <span class="o">./</span>
+<span class="o">-</span> <span class="n">name</span><span class="p">:</span> <span class="n">Upload</span> <span class="n">artifact</span>
+  <span class="n">uses</span><span class="p">:</span> <span class="n">actions</span><span class="o">/</span><span class="n">upload</span><span class="o">-</span><span class="n">artifact</span><span class="err">@</span><span class="n">v2</span>
+  <span class="n">with</span><span class="p">:</span>
+    <span class="n">name</span><span class="p">:</span> <span class="n">foo</span>
+    <span class="n">path</span><span class="p">:</span> <span class="n">archive</span><span class="o">/</span><span class="n">foo</span>
+</code></pre></div>
+
+<h2>It's pretty easy to verify your code signature, Gatekeeper acceptance, entitlements and notarization status</h2>
+<p>For Hammerspoon these are part of a more complex <a href="https://github.com/Hammerspoon/hammerspoon/blob/master/scripts/librelease.sh">release script library</a>, but in essence these are the commands that you can use to either check return codes, or outputs, for whether your app is as signed/notarized/entitled as you expect it to be:</p>
+<div class="highlight"><pre><span></span><code><span class="s s-Atom">#</span> <span class="nv">Check</span> <span class="s s-Atom">valid</span> <span class="s s-Atom">code</span> <span class="s s-Atom">signature</span>
+<span class="s s-Atom">if</span> <span class="p">!</span> <span class="s s-Atom">codesign</span> <span class="s s-Atom">--verify</span> <span class="s s-Atom">--verbose</span><span class="o">=</span><span class="mi">4</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="p">;</span> <span class="s s-Atom">then</span>
+  <span class="s s-Atom">echo</span> <span class="s2">&quot;FAILED: Code signature check&quot;</span>
+<span class="s s-Atom">fi</span>
+
+<span class="s s-Atom">#</span> <span class="nv">Check</span> <span class="s s-Atom">valid</span> <span class="s s-Atom">code</span> <span class="s s-Atom">signing</span> <span class="s s-Atom">entity</span>
+<span class="nv">MY_KNOWN_GOOD_ENTITY</span><span class="s s-Atom">=</span><span class="s2">&quot;Authority=Developer ID Application: Jonny Appleseed (ABC123ABC)&quot;</span>
+<span class="nv">ACTUAL_SIGNER</span><span class="s s-Atom">=</span><span class="err">$</span><span class="p">(</span><span class="s s-Atom">codesign</span> <span class="s s-Atom">--display</span> <span class="s s-Atom">--verbose</span><span class="o">=</span><span class="mi">4</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="mi">2</span><span class="s s-Atom">&gt;&amp;</span><span class="mi">1</span> <span class="p">|</span> <span class="s s-Atom">grep</span> <span class="s s-Atom">^</span><span class="nv">Authority</span> <span class="p">|</span> <span class="s s-Atom">head</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+<span class="s s-Atom">if</span> <span class="p">[</span> <span class="s2">&quot;${ACTUAL_SIGNER}&quot;</span> <span class="p">!</span><span class="o">=</span> <span class="s2">&quot;${MY_KNOWN_GOOD_ENTITY}&quot;</span> <span class="p">];</span> <span class="s s-Atom">then</span>
+  <span class="s s-Atom">echo</span> <span class="s2">&quot;FAILED: Code signing authority&quot;</span>
+<span class="s s-Atom">fi</span>
+
+<span class="s s-Atom">#</span> <span class="nv">Check</span> <span class="nv">Gatekeeper</span> <span class="s s-Atom">acceptance</span>
+<span class="s s-Atom">if</span> <span class="p">!</span> <span class="s s-Atom">spctl</span> <span class="s s-Atom">--verbose</span><span class="o">=</span><span class="mi">4</span> <span class="s s-Atom">--assess</span> <span class="s s-Atom">--type</span> <span class="s s-Atom">execute</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="p">;</span> <span class="s s-Atom">then</span>
+  <span class="s s-Atom">echo</span> <span class="s2">&quot;FAILED: Gatekeeper acceptance&quot;</span>
+<span class="s s-Atom">fi</span>
+
+<span class="s s-Atom">#</span> <span class="nv">Check</span> <span class="nv">Entitlements</span> <span class="s s-Atom">match</span>
+<span class="nv">EXPECTED</span><span class="s s-Atom">=</span><span class="err">$</span><span class="p">(</span><span class="s s-Atom">cat</span> <span class="o">/</span><span class="s s-Atom">path</span><span class="o">/</span><span class="s s-Atom">to</span><span class="o">/</span><span class="s s-Atom">source</span><span class="o">/</span><span class="nv">Foo</span><span class="p">.</span><span class="s s-Atom">entitlements</span><span class="p">)</span>
+<span class="nv">ACTUAL</span><span class="s s-Atom">=</span><span class="err">$</span><span class="p">(</span><span class="s s-Atom">codesign</span> <span class="s s-Atom">--display</span> <span class="s s-Atom">--</span><span class="nf">entitlements</span> <span class="o">:-</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span><span class="p">)</span>
+<span class="s s-Atom">if</span> <span class="p">[</span> <span class="s2">&quot;${ACTUAL}&quot;</span> <span class="p">!</span><span class="o">=</span> <span class="s2">&quot;${EXPECTED}&quot;</span> <span class="p">];</span> <span class="s s-Atom">then</span>
+  <span class="s s-Atom">echo</span> <span class="s2">&quot;FAILED: Entitlements&quot;</span>
+<span class="s s-Atom">fi</span>
+</code></pre></div>
+
+<p>I do these even on local release builds, to ensure nothing was missed before pushing out a release, but they also make sense to do in CI.</p>
+<h2>That's it</h2>
+<p>Not a ground-shaking set of things to learn, but combined they took several hours to figure out, so maybe this post saves someone else some time.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2021/01/12/ez3dbedmod.html">EasyThreeD X1 Heated Bed Mod</a></h1>
   </div>
   <div class="article__meta">
@@ -424,21 +506,6 @@ I also modified the build version strings in <code>Default_Version.h</code> so I
 <p>(<code>gnubert</code> is the hostname of my server).</p>
 <p>Below is a screenshot showing the server's CPU temperature mingling with all of the Nest and Arlo items :)</p>
 <p><img alt="Screenshot" src="http://cmsj.net/images/2018-07-02-server-temp-homekit.jpg"></p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2018/06/19/trello-mac-app-automation.html">A little bit of automation of the Trello Mac App</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Tue 19 June 2018</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p><a href="https://www.trello.com">Trello</a> have a Mac app, which I use for work and it struck me this morning that several recurring calendar events I have, which exist to remind me to review a particular board, would be much more pleasant if they contained a link that would open the board directly.</p>
-<p>That would be easy if I used the Trello website, but I quite like the app (even though it's really just a browser pretending to be an app), so I went spelunking.</p>
-<p>To cut a long story short, the Trello Mac app registers itself as a handler for <code>trello://</code> URLs, so if you take any <code>trello.com</code> board URL and replace the <code>https://</code> part with <code>trello://</code> you can use it as a link in your calendar (or anywhere else) and it will open the board in the app.</p>
   </div>
 </article>
 

@@ -48,6 +48,20 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2010/04/07/terminator-092-released.html">Terminator 0.92 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Wed 07 April 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Hot on the heels of 0.91 we have a new release for you. This is another bugfix release, stomping on as many regressions from 0.14 as we can find. Many, many thanks to all of the people who have been in touch with the project to tel us about the things that are affecting them. If you find more regressions/bugs, please let us know!
+Also in this release the Palette section of the Profile editor in the Preferences GUI is now fully active, which means that all of the config file options should now be fully editable in the GUI.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2010/03/31/terminator-090-released.html">Terminator 0.90 released!</a></h1>
   </div>
   <div class="article__meta">
@@ -215,27 +229,6 @@ Things I know are broken right now:</p>
 -   Config file reading. At some point I'll write something that migrates old Terminator configs to the new format, but for now you'll have to live without your old config file. The new one isn't documented yet either, but it is a whole bunch better!</p>
 <p>Now would also be a great time to start writing plugins for Terminator and telling me about them. I'm happy to ship good plugins, but more importantly I want feedback about the weaknesses/strengths of our plugin system. Right now you can only hook into URL mangling and the terminal context menu, but the latter of those gives you pretty serious flexibility I think. Obviously one massive weakness is a lack of documentation about the plugin API, but I'll get to that, I promise!
 So there we have it, another step along the way to me being able to merge this branch into trunk and put out a real release of 0.90 and then eventually 1.0!</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2009/12/31/python-wanderings-part-two.html">Python wanderings, part two</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Thu 31 December 2009</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <h2>2. Plugging it all in</h2>
-<p>Sometimes we get feature requests and merge proposals for features that are clearly useful for someone, but not appropriate for the general use cases. It's always unfortunate to have to say no to these folks, but we have a slim menu UI and I'm wary of cluttering it with niche features. Still, turning away legitimate users is something I don't like doing, so for a while we've been considering how to fix this.
-The obvious answer is that we should support plugins, and I've been working on such a system for my epic refactoring. This is a quick wander through some thoughts I've had.
-I started out by googling for python plugin systems; One if the top hits was <a href="http://lucumr.pocoo.org/2006/7/3/python-plugin-system">this page</a> by Armin Ronacher . In it he demonstrates a plugin system in under 40 lines of Python. It's simple and flexible, but there are some issues, like it makes doctest very sad.
-I asked about this in #python and was politely informed that I was Doing It Wrong. I chatted for a while with the helpful residents and came away with a list of plugin frameworks to look at, namely twisted.plugin and zope.interface.
-Pulling in external dependencies is a big deal for us - many of our users are on Ubuntu or similar desktops with lots of python packages already installed, but some are not using GNOME or a Linux desktop at all, so we have to be sure that we need a library before we depend on it.
-After playing a little with both of the options I came to the conclusion that while they are both really well made and capable, they are far more formal than we need, and the added dependency issues continued to concern me.
-I revisited Armin's plugin system and removed the use of .__subclasses__() that was breaking doctest and offending #python instead having a list in each .py file which the plugin system extracts and treats any classes mentioned in that list as plugins. I also extended it to always instantiate the plugins and look for the plugin files in both the system directories and the user's home directory.
-<a href="http://bazaar.launchpad.net/%7Ecmsj/%2Bjunk/terminator-epic-refactor/annotate/head%3A/terminatorlib/plugin.py">This plugin system</a> is currently hooked into two places in the branch, URL mangling and the context menu. This allows plugins to add support for new URL types (e.g. we just added support for Launchpad code URLs like lp:~cmsj/+junk/terminator-epic-refactor), and insert new options into the context menu. I'm not sure if we need to go further, but if you would like to hook into other parts let me know - it's pretty easy to arrange now :)</p>
   </div>
 </article>
 
