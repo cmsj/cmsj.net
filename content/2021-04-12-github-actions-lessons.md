@@ -17,11 +17,11 @@ There are *tons* of third party GitHub Actions available in their [marketplace](
 
 If you want to do anything other than interact with the current code (e.g. access tag history) you'll find it fails. Add the `fetch-depth` argument to `actions/checkout`:
 
-```
-- name: Checkout foo
-  uses: actions/checkout@v2
-  with:
-    fetch-depth:0
+```yaml
+  - name: Checkout foo
+    uses: actions/checkout@v2
+    with:
+      fetch-depth:0
 ```
 
 ## Checking out a private repo from a public one is weirdly hard
@@ -46,9 +46,9 @@ Normally, you can use environment variables like `$GITHUB_ACTIONS` to determine 
 
 Unfortunately, it seems like `xcodebuild` scrubs the environment when running script build phases, so instead I created an empty file on disk that the build scripts could check for:
 
-```
-- name: Workaround xcodebuild scrubbing environment
-  run: touch ../is_github_actions
+```yaml
+  - name: Workaround xcodebuild scrubbing environment
+    run: touch ../is_github_actions
 ```
 
 This allows us to skip things like uploading debug symbols to Sentry.
@@ -57,21 +57,21 @@ This allows us to skip things like uploading debug symbols to Sentry.
 
 The `actions/upload-artifact` action will refuse to upload any artifacts that have `../` or `./` in their path. I assume this is for security reasons, but that makes no sense because all you have to do is move/copy the file you want into the runner's `$PWD` and you can upload them:
 
-```
-- name: Prepare artifacts
-  run: mv ../archive/ ./
-- name: Upload artifact
-  uses: actions/upload-artifact@v2
-  with:
-    name: foo
-    path: archive/foo
+```yaml
+  - name: Prepare artifacts
+    run: mv ../archive/ ./
+  - name: Upload artifact
+    uses: actions/upload-artifact@v2
+    with:
+      name: foo
+      path: archive/foo
 ```
 
 ## It's pretty easy to verify your code signature, Gatekeeper acceptance, entitlements and notarization status
 
 For Hammerspoon these are part of a more complex [release script library](https://github.com/Hammerspoon/hammerspoon/blob/master/scripts/librelease.sh), but in essence these are the commands that you can use to either check return codes, or outputs, for whether your app is as signed/notarized/entitled as you expect it to be:
 
-```
+```bash
 # Check valid code signature
 if ! codesign --verify --verbose=4 "/path/to/Foo.app" ; then
   echo "FAILED: Code signature check"
