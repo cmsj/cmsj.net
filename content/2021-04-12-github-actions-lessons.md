@@ -71,7 +71,7 @@ The `actions/upload-artifact` action will refuse to upload any artifacts that ha
 
 ## It's pretty easy to verify your code signature, Gatekeeper acceptance, entitlements and notarization status
 
-For Hammerspoon these are part of a more complex [release script library](https://github.com/Hammerspoon/hammerspoon/blob/master/scripts/librelease.sh), but in essence these are the commands that you can use to either check return codes, or outputs, for whether your app is as signed/notarized/entitled as you expect it to be:
+For Hammerspoon these are part of a more complex [release script library](https://github.com/Hammerspoon/hammerspoon/blob/master/scripts/libbuild.sh), but in essence these are the commands that you can use to either check return codes, or outputs, for whether your app is as signed/notarized/entitled as you expect it to be:
 
 ```bash
 # Check valid code signature
