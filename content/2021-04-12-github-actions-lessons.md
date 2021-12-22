@@ -42,6 +42,8 @@ I took some ideas from the [devbotsxyz action](https://github.com/devbotsxyz/imp
 
 ## Xcode scrubs the inherited environment
 
+Update: This is not actually true. When I wrote this item, I had forgotten that our build system included a Makefile and it's *make* not Xcode that was scrubbing the environment.
+
 Normally, you can use environment variables like `$GITHUB_ACTIONS` to determine if you're running in a CI-style situation. I use this for our test framework to [detect CI](https://github.com/Hammerspoon/hammerspoon/blob/master/Hammerspoon%20Tests/HSTestCase.m#L94) so certain tests can be skipped.
 
 Unfortunately, it seems like `xcodebuild` scrubs the environment when running script build phases, so instead I created an empty file on disk that the build scripts could check for:
