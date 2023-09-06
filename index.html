@@ -91,10 +91,12 @@
 <span class="n">LABEL</span><span class="o">=</span><span class="s2">&quot;abort_rule&quot;</span>
 </code></pre></div>
 
-<p>Notes:
- * As far as I know, the mountpoint for the Scrypted add-on should be stable, but I can't promise this.
- * This should be very safe as it will ignore any partition that isn't labelled <code>NVR</code>.
- * This should work with removable disks (e.g. USB), however, the Scrypted addon will not be stopped if you unplug the disk, so I would strongly recommend not doing that without stopping Scrypted first.</p>
+<p>Notes:</p>
+<ul>
+<li>As far as I know, the mountpoint for the Scrypted add-on should be stable, but I can't promise this.</li>
+<li>This should be very safe as it will ignore any partition that isn't labelled <code>NVR</code>.</li>
+<li>This should work with removable disks (e.g. USB), however, the Scrypted addon will not be stopped if you unplug the disk, so I would strongly recommend not doing that without stopping Scrypted first.</li>
+</ul>
   </div>
 </article>
 <hr />
@@ -135,11 +137,13 @@
 <span class="w">      </span><span class="nt">com.centurylinklabs.watchtower.enable</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
 </code></pre></div>
 
-<p>Important things to note are:
- * <code>TS_STATE_DIR</code> is useful if you want a persistent node rather than an Ephemeral one (I'm not running this as part of some app deployment, this is LAN infrastructure)
- * <code>TS_USERSPACE</code> shouldn't just always default to <code>true</code>, it should check if <code>/dev/net/tun</code> is available, but it doesn't, so you have to force it to <code>false</code> if you want kernel networking.
- * <code>TS_AUTH_ONCE</code> is great, but if you have an error in the lower level networking setup, having this set to <code>true</code> will hide it on restarts of the container. I suggest keeping this <code>false</code>.
- * <code>TS_ROUTES</code> is currently wrong in the documentation. It is described as being for <em>accepting</em> routes <em>from</em> other hosts, but it's actually for <em>advertising</em> routes <em>to</em> other hosts.</p>
+<p>Important things to note are:</p>
+<ul>
+<li><code>TS_STATE_DIR</code> is useful if you want a persistent node rather than an Ephemeral one (I'm not running this as part of some app deployment, this is LAN infrastructure)</li>
+<li><code>TS_USERSPACE</code> shouldn't just always default to <code>true</code>, it should check if <code>/dev/net/tun</code> is available, but it doesn't, so you have to force it to <code>false</code> if you want kernel networking.</li>
+<li><code>TS_AUTH_ONCE</code> is great, but if you have an error in the lower level networking setup, having this set to <code>true</code> will hide it on restarts of the container. I suggest keeping this <code>false</code>.</li>
+<li><code>TS_ROUTES</code> is currently wrong in the documentation. It is described as being for <em>accepting</em> routes <em>from</em> other hosts, but it's actually for <em>advertising</em> routes <em>to</em> other hosts.</li>
+</ul>
   </div>
 </article>
 <hr />
