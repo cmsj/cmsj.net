@@ -46,6 +46,7 @@ LABEL="abort_rule"
 ```
 
 Notes:
+
  * As far as I know, the mountpoint for the Scrypted add-on should be stable, but I can't promise this.
  * This should be very safe as it will ignore any partition that isn't labelled `NVR`.
  * This should work with removable disks (e.g. USB), however, the Scrypted addon will not be stopped if you unplug the disk, so I would strongly recommend not doing that without stopping Scrypted first.

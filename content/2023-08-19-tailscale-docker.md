@@ -36,6 +36,7 @@ Here is my resulting Docker compose yaml:
 ```
 
 Important things to note are:
+
  * `TS_STATE_DIR` is useful if you want a persistent node rather than an Ephemeral one (I'm not running this as part of some app deployment, this is LAN infrastructure)
  * `TS_USERSPACE` shouldn't just always default to `true`, it should check if `/dev/net/tun` is available, but it doesn't, so you have to force it to `false` if you want kernel networking.
  * `TS_AUTH_ONCE` is great, but if you have an error in the lower level networking setup, having this set to `true` will hide it on restarts of the container. I suggest keeping this `false`.
