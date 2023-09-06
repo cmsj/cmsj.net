@@ -48,6 +48,167 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2012/07/01/photo-import-workflow.html">Photo import workflow</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Sun 01 July 2012</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <h2><strong>Introduction</strong></h2>
+<p>Since I'm writing about workflows today, I thought I'd also quickly chuck in a guide to how I get the photos and movies that I've taken with my iPhone, onto my laptop and specifically, imported into Aperture.
+The Mechanics
+This requires a few moving parts to produce a final workflow. The high-level process is:
+1.  Plug iPhone into a USB port
+2.  Copy photos from the iPhone into a temporary directory, deleting them as they are successfully retrieved
+3.  Import the photos into Aperture, ensuring they are copied into its library and deleted from the temporary directory</p>
+<p>Simple, right? Well yes and no.
+<strong>Retrieval from iPhone</strong></p>
+<hr>
+<p>This really ought to be easier than it is, but at least it is possible.
+Aperture can import photos from devices, but it doesn't seem to offer the ability to delete them from the device after import. That alone makes it not even worth bothering with if you don't want to build up a ton of old photos on your phone.
+OS X does ship with a tool that can import photos from camera devices and delete the photos afterwards, a tool called AutoImporter.app, but you won't find it without looking hard. It lives at:
+<code>/System/Library/Image Capture/Support/Application/AutoImporter.app</code></p>
+<p>If you run that tool, you will see no window, just a dock icon and some menus. Go into its Preferences and you will be able to choose a directory to import to, and choose whether or not to delete the files:
+<img alt="prefs" src="http://cmsj.net/images/autoimporter.png"></p>
+<p>Easy!
+<strong>Importing into Aperture</strong></p>
+<hr>
+<p>This involves using Automator to build a Folder Action workflow for the directory that AutoImporter is pulling the photos into. All it does is check to see if AutoImporter is still running and if so wait, then launch Aperture and tell it to import everything from that directory into a particular Project, and then delete the source files:
+<img alt="Aperture autoimport workflow" src="http://cmsj.net/images/aperture-autoimport-workflow.png"></p>
+<h2><strong>That's it!</strong></h2>
+<p>Really, that's all there is. Now whenever you plug in your iPhone, all of the pictures and movies you've taken recently, will get imported into Aperture for you to process, archive, touch-up, export or whatever else it is that you do with your photos and movies.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2012/02/07/sysadmin-talks-openssh-tips-and-tricks.html">A sysadmin talks OpenSSH tips and tricks</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Tue 07 February 2012</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <h1>My take on more advanced SSH usage</h1>
+<p>I've seen a few articles recently on sites like HackerNews which claimed to cover some advanced SSH techniques/tricks. They were good articles, but for me (as a systems administrator) didn't get into the really powerful guts of OpenSSH.</p>
+<p>So, I figured that I ought to pony up and write about some of the more advanced tricks that I have either used or seen others use. These will most likely be relevant to people who manage tens/hundreds of servers via SSH. Some of them are about actual configuration options for OpenSSH, others are recommendations for ways of working with OpenSSH.</p>
+<h2>Generate your ~/.ssh/config</h2>
+<p>This isn't strictly an OpenSSH trick, but it's worth noting. If you have other sources of knowledge about your systems, automation can do a lot of the legwork for you in creating an SSH config. A perfect example here would be if you have some kind of database which knows about all your servers - you can use that to produce a fragment of an SSH config, then download it to your workstation and concatenate it with various other fragments into a final config. If you mix this with distributed version control, your entire team can share a broadly identical SSH config, with allowance for each person to have a personal fragment for their own preferences and personal hosts. I can't recommend this sort of collaborative working enough.</p>
+<h2>Generate your ~/.ssh/known_hosts</h2>
+<p>This follows on from the previous item. If you have some kind of database of servers, teach it the SSH host key of each (usually something like <code>/etc/ssh/ssh_host_rsa_key.pub</code>) then you can export a file with the keys and hostnames in the correct format to use as a <code>known_hosts</code> file, e.g.:</p>
+<p><code>server1.company.com 10.0.0.101 ssh-rsa BLAHBLAHCRYPTOMUMBO</code></p>
+<p>You can then associate this with all the relevant hosts by including something like this in your <code>~/.ssh/config</code>:</p>
+<div class="highlight"><pre><span></span><code>Host *.mycompany.com
+    UserKnownHostsFile ~/.ssh/generated_known_hosts
+    StrictHostKeyChecking yes
+</code></pre></div>
+
+<p>This brings some serious advantages:</p>
+<ul>
+<li>Safer - because you have pre-loaded all of the host keys and specified strict host key checking, SSH will prompt you if you connect to a machine and something has changed.</li>
+<li>Discoverable - if you have tab completion, your shell will let you explore your infrastructure just by prodding the Tab key.</li>
+</ul>
+<h2>Keep your private keys, private, private</h2>
+<p>This seems like it ought to be more obvious than it perhaps is... the private halves of your SSH keys are very privileged things. You should treat them with a great deal of respect. Don't put them on multiple machines (SSH keys are cheap to generate and revoke) and don't back them up.</p>
+<h2>Know your limits</h2>
+<p>If you're going to write a config snippet that applies to a lot of hosts you can't match with a wildcard, you may end up with a very long <code>Host</code> line in your ssh config. It's worth remembering that there is a limit to the length of lines: 1024 characters. If you're going to need to exceed that, you will have to just have multiple <code>Host</code> sections with the same options.</p>
+<h2>Set sane global defaults</h2>
+<div class="highlight"><pre><span></span><code>HashKnownHosts no
+Host *
+    GSSAPIAuthentication no
+    ForwardAgent no
+</code></pre></div>
+
+<p>These are very sane global defaults:</p>
+<ul>
+<li>Known hosts hashing is good for keeping your hostnames secret from people who obtain your <code>known_hosts</code> file, but is also really very inconvenient as you are also unable to get any useful information out of the file yourself (such as tab completion). If you're still feeling paranoid you might consider tightening the permissions on your <code>known_hosts</code> file as it may be readable by other users on your workstation.</li>
+<li>GSSAPI is very unlikely to be something you need, it's just slowing things down if it's enabled.</li>
+<li>Agent forwarding can be tremendously dangerous and should, I think, be actively and passionately discouraged. It ought to be a nice feature, but it requires that you trust remote hosts unequivocally as if they had your private keys, because functionally speaking, they do. They don't actually have the private key material, but any sufficiently privileged process on the remote server can connect back to the SSH agent running on your workstation and request it respond to challenges from an SSH server. If you keep your keys unlocked in an SSH agent, this gives any privileged attacker on a server you are logged into, trivial access to any other machine your keys can SSH into. If you somehow depend on using agent forwarding with Internet facing servers, please re-consider your security model (unless you are able to robustly and accurately argue why your usage is safe, but if that is the case then you don't need to be reading a post like this!)</li>
+</ul>
+<h2>Notify useful metadata</h2>
+<p>If you're using a Linux or OSX desktop, you either have something like <code>notify-send(1)</code> or Growl for desktop notifications. You can hook this into your SSH config to display useful metadata to yourself. The easiest way to do this is via the <code>LocalCommand</code> option:</p>
+<div class="highlight"><pre><span></span><code>Host *
+    PermitLocalCommand yes
+    LocalCommand /home/user/bin/ssh-notify.sh %h
+</code></pre></div>
+
+<p>This will call the <code>ssh-notify.sh</code> script every time you SSH to a host, passing the hostname you gave, as an argument.  In the script you probably want to ensure you're actually in an interactive terminal and not some kind of backgrounded batch session - this can be done trivially by ensuring that <code>tty -s</code> returns zero. Now the script just needs to go and fetch some metadata about the server you're connecting to (e.g. its physical location, the services that run on it, its hardware specs, etc.) and format them into a command that will display a notification.</p>
+<h2>Sidestep overzealous key agents</h2>
+<p>If you have a lot of SSH keys in your ssh-agent (e.g. more than about 5) you may have noticed that SSHing to machines which want a password, or those which you wish to use a specific key that isn't in your agent, can be quite tricky. The reason for this is that OpenSSH currently seems to talk to the agent in preference to obeying command line options (i.e. <code>-i</code>) or config file directives (i.e. <code>IdentityFile</code> or PreferredAuthentications). You can force the behaviour you are asking for with the <code>IdentitiesOnly</code> option, e.g.:</p>
+<div class="highlight"><pre><span></span><code>Host server1.company.com
+    IdentityFile /some/rarely/used/ssh.key
+    IdentitiesOnly yes
+</code></pre></div>
+
+<p>(on a command line you would add this with <code>-o IdentitiesOnly=yes</code>)</p>
+<h2>Match hosts with wildcards</h2>
+<p>Sometimes you need to talk to a lot of almost identically-named servers. Obviously SSH has a way to make this easier or I wouldn't be mentioning this. For example, if you needed to ssh to a cluster of remote management devices:</p>
+<div class="highlight"><pre><span></span><code>Host *.company.com management-rack-??.company.com
+    User root
+    PreferredAuthentications password
+</code></pre></div>
+
+<p>This will match anything ending in <code>.company.com</code> and also anything that starts with <code>management-rack-</code> and then has two characters, followed by <code>.company.com</code>.</p>
+<h2>Per-host SSH keys</h2>
+<p>You may have some machines where you have a different key for each machine. By naming them after the fully qualified domain names of the hosts they relate to, you can skip over a more tedious SSH config with something like the following:</p>
+<div class="highlight"><pre><span></span><code>Host server-??.company.com
+    IdentityFile /some/path/id_rsa-%h
+</code></pre></div>
+
+<p>(the <code>%h</code> will be substituted with the FQDN you're SSHing to. The <code>ssh_config</code> man page lists a few other available substitutions.)</p>
+<h2>Use fake, per-network port forwarding hosts</h2>
+<p>If you have network management devices which require web access that you normally forward ports for with the <code>-L</code> option, consider constructing a fake host in your SSH config which establishes all of the port forwards you need for that network/datacentre/etc:</p>
+<div class="highlight"><pre><span></span><code>Host port-forwards-site1.company.com
+    Hostname server1.company.com
+    LocalForward 1234 10.0.0.101:1234
+</code></pre></div>
+
+<p>This also means that your forwards will be on the same port each time, which makes saving certificates in your browser a reasonable undertaking. All you need to do is <code>ssh port-forwards-site1.company.com</code> (using nifty Tab completion of course!) and you're done. If you don't want it tying up a terminal you can add the options <code>-f</code> and <code>-N</code> to your command line, which will establish the ssh connection in the background.</p>
+<p>If you're using programs which support SOCKS (e.g. Firefox and many other desktop Linux apps) you can use the <code>DynamicForward</code> option to send traffic over the SSH connection without having to add <code>LocalForward</code> entries for each port you care about. Used with a browser extension such as FoxyProxy (which lets you configure multiple proxies based on wildcard/regexp URL matches) makes for a very flexible setup.</p>
+<h2>Use an SSH jump host</h2>
+<p>Rather than have tens/dozens/hundreds/etc of servers holding their SSH port open to the Internet and being battered with brute force password cracking attempts, you might consider having a single host listening (or a single host per network perhaps), which you can proxy your SSH connections through.</p>
+<p>If you do consider something like this, you must resist the temptation to place private keys on the jump host - to do so would utterly defeat the point.</p>
+<p>Instead, you can use an old, but very nifty trick that completely hides the jump host from your day-to-day usage:</p>
+<div class="highlight"><pre><span></span><code>Host jumphost.company.com
+    ProxyCommand none
+Host *.company.com
+    ProxyCommand ssh jumphost.company.com nc -q0 %h %p
+</code></pre></div>
+
+<p>You might wonder what on earth that is doing, but it's really quite simple. The first <code>Host</code> stanza just means we won't use any special commands to connect to the jump host itself. The second <code>Host</code> stanza says that in order to connect to anything ending in <code>.company.com</code> (but excluding <code>jumphost.company.com</code> because it just matched the previous stanza) we will first SSH to the jump host and then use <code>nc(1)</code> (i.e. netcat) to connect to the relevant port (<code>%p</code>) on the host we originally asked for (<code>%h</code>). Your local SSH client now has a session open to the jump host which is acting like it's a socket to the SSH port on the host you wanted to talk to, so it just uses that connection to establish an SSH session with the machine you wanted. Simple!</p>
+<p>For those of you lucky enough to be connecting to servers that have OpenSSH 5.4 or newer, you can replace the jump host <code>ProxyCommand</code> with:</p>
+<p><code>ProxyCommand ssh -W %h:%p jumphost.company.com</code></p>
+<h2>Re-use existing SSH connections</h2>
+<p>Some people swear by this trick, but because I'm very close to my servers and have a decent CPU, the setup time for connections doesn't bother me. Folks who are many milliseconds from their servers, or who don't have unquenchable techno-lust for new workstations, may appreciate saving some time when establishing SSH connections.</p>
+<p>The idea is that OpenSSH can place connections into the background automatically, and re-use those existing secure channels when you ask for a new <code>ssh(1)</code>, <code>scp(1)</code> or <code>sftp(1)</code> connections to hosts you have already spoken to. The configuration I would recommend for this, would be:</p>
+<div class="highlight"><pre><span></span><code>Host *
+    ControlMaster auto
+    ControlPath ~/.ssh/control/%h-%l-%p
+    ControlPersist 600
+</code></pre></div>
+
+<p>This will do several things:</p>
+<ul>
+<li><code>ControlMaster auto</code> will cause OpenSSH to establish the "master" connection sockets as needed, falling back to normal connections if something is wrong.</li>
+<li>The <code>ControlPath</code> option specifies where the connection sockets will live. Here we are placing them in a directory and giving them filenames that consist of the hostname, login username and port, which ought to be sufficient to uniquely identify each connection. If you need to get more specific, you can place this section near the end of your config and have explicit <code>ControlPath</code> entries in earlier <code>Host</code> stanzas.</li>
+<li><code>ControlPersist 600</code> causes the master connections to die if they are idle for 10 minutes. The default is that they live on as long as your network is connected - if you have hundreds of servers this will add up to an awful lot of <code>ssh(1)</code> processes running on your workstation! Depending on your needs, 10 minutes may not be long enough.</li>
+</ul>
+<p><em>Note:</em> You should make the <code>~/.ssh/control</code> directory ahead of time and ensure that only your user can access it.</p>
+<h2>Cope with old/buggy SSH devices</h2>
+<p>Perhaps you have a bunch of management devices in your infrastructure and some of them are a few years old already. Should you find yourself trying to SSH to them, you might find that your connections don't work very well. Perhaps your SSH client is too new and is offering algorithms their creaky old SSH servers can't abide. You can strip down the long default list of algorithms to this to ones that a particular device supports, e.g.:</p>
+<div class="highlight"><pre><span></span><code>Host power-device-1.company.com
+    HostkeyAlgorithms ssh-rsa,ssh-dss
+</code></pre></div>
+
+<h2>That's all folks</h2>
+<p>Those are the most useful tips and tricks I have for now. Hopefully someone will read this and think "hah! I can do <strong><em>much</em></strong> more advanced stuff than that!" and one-up me :)</p>
+<p>Do feel free to comment if you do have something sneaky to add, I'll gladly steal your ideas!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2012/01/23/evil-shell-genius.html">Evil shell genius</a></h1>
   </div>
   <div class="article__meta">
@@ -172,11 +333,11 @@ Please keep doing that for a very long time</p>
 I'm officially done hosting my own Wordpress blog. Not because it's particularly hard, but because it's quite boring. I would have done a straight export/import into a wordpress.com blog, but their options for hosting on a personal domain are pretty insane - if you want to host your blog on domain.com or www.domain.com you have to just point the entire domain at the wordpress.com DNS servers.
 I'm not prepared to trust my domain to a bunch of PHP bloggers, so instead I've shoved the blog over to Blogger (by way of a very helpful <a href="http://wordpress2blogger.appspot.com/">online conversion tool</a>), but this still presents a few niggles around URLs.
 You can have Blogger send 404s to another vhost, so for now I just have a tiny little vhost somewhere else which uses mod_rewrite to catch the old page names and attempt to catch the blog post names. Ideally I'd fetch all the old post URLs and make a proper map to the new ones, but I can't really be bothered to do that, so I just went for the approximate:</p>
-<div class="highlight"><pre><span></span><code><span class="err">RewriteRule ^/archives/(\[0-9\]{4})/(\[0-9\]{2})/(\[0-9\]{2})/(\[a-zA-Z0-9\\-\]{1,39}).\*$ http://www.tenshu.net/$1/$2/$4.html \[R=301,L\]</span>
+<div class="highlight"><pre><span></span><code>RewriteRule ^/archives/(\[0-9\]{4})/(\[0-9\]{2})/(\[0-9\]{2})/(\[a-zA-Z0-9\\-\]{1,39}).\*$ http://www.tenshu.net/$1/$2/$4.html \[R=301,L\]
 </code></pre></div>
 
 <p>Another obvious sticking point is that Wordpress categories become Blogger labels, so another rewrite rule can take care of them (although not so much if you've used nested categories, but again I can't really be bothered to account for that):</p>
-<div class="highlight"><pre><span></span><code>RewriteRule ^/archives/category/(.)(.\*) http://www.tenshu.net/search/label/<span class="cp">${</span><span class="n">upmap</span><span class="p">:</span><span class="err">$</span><span class="mi">1</span><span class="cp">}</span>$2 \[R=301,L\]
+<div class="highlight"><pre><span></span><code>RewriteRule<span class="w"> </span>^/archives/category/(.)(.\*)<span class="w"> </span>http://www.tenshu.net/search/label/<span class="cp">${</span><span class="n">upmap</span><span class="p">:</span><span class="err">$</span><span class="mi">1</span><span class="cp">}</span>$2<span class="w"> </span>\[R=301,L\]
 </code></pre></div>
 
 <p>Also cloudified so far is the DNS for tenshu.net - I'm trying out Amazon's Route53 and it seems to be pretty good so far. Next up will be email and then I can pretty much entirely stop faffing around running my own infrastructure :)</p>
@@ -211,81 +372,6 @@ So if you don't need the MIB file, what do you need?</p>
     -   ln -s /path/to/snmp__airport snmp_myairport_airport_noise
     -   ln -s /path/to/snmp__airport snmp_myairport_airport_rate</p>
 <p>There is an explicit assumption that your SNMP community is the default of 'public'. If it's not then you'll need to hack the script. Otherwise, you're done! Now you win pretty graphs showing lots of juicy information about your Airport. Yay! You're welcome ;)</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2010/12/14/old-and-new-mixing-irssi-and-iphones.html">Old and new: Mixing irssi and iPhones for fun and no profit</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Tue 14 December 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <h1>Introduction</h1>
-<p>I use irssi for IRC and an iPhone for pocket Internets; These two choices are both excellent, but they're not terribly compatible - typing in irssi on an iPhone via SSH is quite slow and annoying.</p>
-<p>Obviously the thing to do is run an iPhone IRC client, but then I'm signing in and out all the time and I have multiple nicknames - what I want is a way to be connected to the same IRC session as normal, but from my phone using the excellent IRC client Colloquy. By taking advantage of several different pieces of Free Software, this is entirely doable! When we're not connected to IRC, messages which trigger irssi's highlight will be forwarded to the iPhone as a Push Notification.</p>
-<h1>Preparation</h1>
-<p>These are the tools we are going to use to make this happen:
--   A patched irssi (don't worry though, the patch is <em>tiny</em>)
--   An irssi script (just some Perl really)
--   irssi-proxy
--   stunnel
--   Colloquy Mobile (from the iPhone App Store)</p>
-<p>Throughout I will be assuming that you're running Ubuntu 10.04 (Lucid Lynx) as this is the currently most recent LTS release and thus most suited to servers. Also it's what I run, and this is my fun evening project :)</p>
-<p>Although it will not be necessary to download it, I would like to note the original location of the patch and script that this method relies on. You can obtain both <a href="http://static.ssji.net/colloquy_push.pl.txt" title="Colloquy Push script">here</a>.</p>
-<p>Instead, we are going to install a patched irssi from one of my PPAs, but if you do not care for this idea, the above URL will let you build your own patched irssi and contains the colloquy_push.pl script.</p>
-<h1>Installation</h1>
-<p>These commands will install the patched irssi and the colloquy_push.pl script:</p>
-<div class="highlight"><pre><span></span><code><span class="err">sudo add-apt-repository ppa:cmsj/irssi-colloquy-push</span>
-<span class="err">sudo apt-get update</span>
-<span class="err">sudo apt-get install irssi</span>
-</code></pre></div>
-
-<p>(If you don't have <code>add-apt-repository</code> available, it's in the <code>python-software-properties</code> package).</p>
-<h1>Configuration</h1>
-<h2>irssi-proxy</h2>
-<p>The first step is to load irssi-proxy. This is distributed as a plugin library in the irssi package, you can load it with:</p>
-<div class="highlight"><pre><span></span><code><span class="o">/</span><span class="nb">load</span> <span class="n">proxy</span>
-<span class="o">/</span><span class="n">set</span> <span class="n">irssiproxy_bind</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span>
-<span class="o">/</span><span class="n">set</span> <span class="n">irssiproxy_password</span> <span class="n">PICKAGOODPASSWORD</span>
-<span class="o">/</span><span class="n">set</span> <span class="n">irssiproxy_ports</span> <span class="n">network1</span><span class="o">=</span><span class="mi">31337</span> <span class="n">network2</span><span class="o">=</span><span class="mi">31338</span> <span class="n">network3</span><span class="o">=</span><span class="mi">31339</span>
-</code></pre></div>
-
-<p>Obviously you'll need to replace <code>PICKAGOODPASSWORD</code> with a password, preferably a good one. Also you'll need to replace <code>network1</code>/<code>network2</code>/<code>network3</code> with the names of the networks you've configured in irssi (which you can see with the command <code>/network list</code>) and switch them to different ports if you want.</p>
-<p>Finally you should run <code>/save</code> so irssi writes out its config file with all of these changes. Et voila, we have a running proxy, but as you noticed, we forced it to listed on 127.0.0.1, so we can't yet connect to it from the Internet. The reason we've done this is that irssi_proxy is not able to directly offer encrypted connections. It would be a bad idea to allow all our proxy password and general IRC traffic to flow around unencrypted (even though many IRC server connections are unencrypted).</p>
-<h2>Stunnel</h2>
-<p>Stunnel is a very simple tool that lets you  add SSL support to anything listening on a TCP socket. To get started, install the <code>stunnel4</code> package and edit <code>/etc/default/stunnel4</code> and change <code>ENABLED=0</code> to <code>ENABLED=1</code>.</p>
-<p>Now we need to construct /etc/stunnel/stunnel.conf. The default contains various options we don't really care about, but one important one is the <code>cert =</code> line - we need an SSL certificate for this to work. You can either buy one or generate your own (a so-called "snake-oil" certificate). There are many guides to generating a .crt file and this is left as an exercise for the reader. With that file in place somewhere, edit stunnel.conf to point at it.</p>
-<p>The final step for stunnel is to add port configurations. Jump to the bottom of the file and add a section like this for each of the ports irssi_proxy is listening on:</p>
-<div class="highlight"><pre><span></span><code><span class="k">[myfirststunnel]</span>
-<span class="na">accept</span><span class="o">=</span><span class="s">123.123.123.123:31337</span>
-<span class="na">connect</span><span class="o">=</span><span class="s">127.0.0.1:31337</span>
-</code></pre></div>
-
-<p>What we have done here is told stunnel to listen on our public IP on the same port that it will then connect to on 127.0.0.1. This might seem confusing, but I think it makes sense that the port numbers stay directly mapped between tunnels and proxy ports. Restart the stunnel4 service and you should see the appropriate ports being listened on.</p>
-<h2>colloquy_push.pl</h2>
-<p>This is the irssi script which glues all the magic together - it receives special commands from the iPhone version of Colloquy and uses those to pass on Push Notifications when necessary. To load it, type <code>/script load colloquy_push.pl</code> and you probably want to symlink <code>/usr/share/irssi/scripts/colloquy_push.pl</code> into <code>~/.irssi/scripts/autorun/</code>.</p>
-<h2>Colloquy</h2>
-<p>Now configure a new IRC Connection in Colloquy on your iPhone. Enter its hostname/IP and the port you have stunnel listening on (the port settings are in Advanced) and enable SSL. Finally, set Push Notifications to On and you're done.</p>
-<h1>Shortcomings</h1>
-<p>The script, while excellent, has one or two drawbacks - it's not yet able to detect when you're watching irssi, so it may well send lots of notifications to your phone unnecessarily (I'm looking into expanding it to detect if you're running in screen/tmux and are attached), also it doesn't have any concept of sleeping hours, so you may get woken up by notifications! Nonetheless, this is an excellent way to use your awesome iPhone and not sacrifice the magnificence of irssi!</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2010/10/28/gstreamer-thread-oddness.html">GStreamer thread oddness</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Thu 28 October 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>I sometimes find myself in a place where there are a number of Icecast streams going out at once and I'm interested in finding better ways of monitoring these. It seems like a nice option would be a window showing a visualisation of each stream.
-I quickly whipped up some python to do this, but it almost always locks up when I run it, but I'm not sure if I've done something fundementally wrong or if I've found a bug somewhere.
-If you are a gstreamer expert, please take a look a <a href="http://bazaar.launchpad.net/~cmsj/%2Bjunk/icecastvis/annotate/head%3A/icecastvisualiser.py" title="Some python">this code</a> and let me know what I should do next! If you know a gstreamer expert, please try and bribe them to read this post ;)</p>
   </div>
 </article>
 

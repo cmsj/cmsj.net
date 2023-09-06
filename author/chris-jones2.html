@@ -49,6 +49,115 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2018/07/04/home-pro-part1-update.html">Home networking like a pro - Part 1.1 - Network Storage Redux</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Wed 04 July 2018</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Back in <a href="/2017/06/22/home-pro-part-1-nas.html">this post</a> I described having switched from a Mac Mini + DAS setup, to a Synology and an Intel NUC setup, for my file storage and server needs.</p>
+<p>For a time it was good, but I found myself wanting to run more server daemons, and the NUC wasn't really able to keep up. The Synology was plodding along fine, but I made the decision to unify them all into a more beefy Linux machine.</p>
+<p>So, I bought an AMD Ryzen 5 1600 CPU and an A320M motherboard, 16GB of RAM and a micro ATX case with 8 drive bays, and set to work. That quickly proved to be a disaster because Linux wasn't stable on the AMD CPU - I hadn't even thought to check, because why wouldn't Linux be stable on an x86_64 CPU in 2018?! With that lesson learned, I swapped out the board/CPU for an Intel i7-8700 and a Z370 motherboard.</p>
+<p>I didn't go with FreeNAS as my previous post suggested I might, because ultimately I wanted complete control, so it's a plain Ubuntu Server machine that is fully managed by Ansible playbooks. In retrospect it was a mistake to try and delegate server tasks to an appliance like the Synology, and it was a further mistake to try and deal with that by getting the NUC - I should have just cut my losses and gone straight to a Linux server. Lesson learned!</p>
+<p>Instead of getting lost in the weeds of purchase choices and justifications, instead let's look at some of the things I'm doing to the server with Ansible.</p>
+<p>First up is root disk encryption - it's nice to know that your data is private when at rest, but a headless machine in a cupboard is not a fun place to be typing a password on boot. Fortunately I have two ways round this - firstly, a KVM (a Lantronix Spider) and secondly, one can add dropbear to an initramfs so you can ssh into the initramfs to enter the password.</p>
+<p>Here's the playbook tasks that put dropbear into the initramfs:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dropbear-initramfs</span>
+<span class="w">  </span><span class="nt">apt</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install busybox-static</span>
+<span class="w">  </span><span class="nt">apt</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox-static</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+
+<span class="c1"># This is necessary because of https://bugs.launchpad.net/ubuntu/+source/busybox/+bug/1651818</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Add initramfs hook to fix cryptroot-unlock</span>
+<span class="w">  </span><span class="nt">copy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/initramfs-tools/hooks/zz-busybox-initramfs-fix</span>
+<span class="w">    </span><span class="nt">src</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/zz-busybox-initramfs-fix</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0744</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">  </span><span class="nt">notify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure dropbear-initramfs</span>
+<span class="w">  </span><span class="nt">lineinfile</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/config</span>
+<span class="w">    </span><span class="nt">regexp</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;DROPBEAR_OPTIONS&#39;</span>
+<span class="w">    </span><span class="nt">line</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;DROPBEAR_OPTIONS=&quot;-p</span><span class="nv"> </span><span class="s">31337</span><span class="nv"> </span><span class="s">-s</span><span class="nv"> </span><span class="s">-j</span><span class="nv"> </span><span class="s">-k</span><span class="nv"> </span><span class="s">-I</span><span class="nv"> </span><span class="s">60&quot;&#39;</span>
+<span class="w">  </span><span class="nt">notify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
+
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Add dropbear authorized_keys</span>
+<span class="w">  </span><span class="nt">copy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/authorized_keys</span>
+<span class="w">    </span><span class="nt">src</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/dropbear-authorized_keys</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0600</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">  </span><span class="nt">notify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
+
+<span class="c1"># The format of the ip= kernel parameter is: &lt;client-ip&gt;:&lt;server-ip&gt;:&lt;gw-ip&gt;:&lt;netmask&gt;:&lt;hostname&gt;:&lt;device&gt;:&lt;autoconf&gt;</span>
+<span class="c1"># It comes from https://git.kernel.org/pub/scm/libs/klibc/klibc.git/tree/usr/kinit/ipconfig/README.ipconfig?id=HEAD</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure boot IP and consoleblanking</span>
+<span class="w">  </span><span class="nt">lineinfile</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/default/grub</span>
+<span class="w">    </span><span class="nt">regexp</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT&#39;</span>
+<span class="w">    </span><span class="nt">line</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT=&quot;ip=10.0.88.11::10.0.88.1:255.255.255.0:gnubert:enp0s31f6:none</span><span class="nv"> </span><span class="s">loglevel=7</span><span class="nv"> </span><span class="s">consoleblank=0&quot;&#39;</span>
+<span class="w">  </span><span class="nt">notify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update grub</span>
+</code></pre></div>
+
+<p>While this does rely on some external files, the important one is <code>zz-busybox-initramfs-fix</code> which works around <a href="https://bugs.launchpad.net/ubuntu/+source/busybox/+bug/1651818">a bug</a> in the busybox build that Ubuntu is currently using. Rather than paste the whole script here, you can see it <a href="https://gist.github.com/cmsj/515fbf602f983e796ea11f95ce32d537">here</a>.</p>
+<p>The last task in the playbook configures Linux to boot with a particular networking config on a particular NIC, so you can ssh in. Once you're in, just run <code>cryptsetup-unlock</code> and your encrypted root is unlocked!</p>
+<p>Another interesting thing I'm doing, is using <a href="https://github.com/borgbackup">Borg</a> for some backups. It's a pretty clever backup system, and it works over SSH, so I use the following Ansible task to allow a particular SSH key to log in to the server as root, in a way that forces it to use Borg:</p>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deploy ssh borg access</span>
+<span class="w">  </span><span class="nt">authorized_key</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">key_options</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;command=&quot;/usr/bin/borg</span><span class="nv"> </span><span class="s">serve</span><span class="nv"> </span><span class="s">--restrict-to-path</span><span class="nv"> </span><span class="s">/srv/tank/backups/borg&quot;,restrict&#39;</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ssh-rsa</span><span class="nv"> </span><span class="s">BLAHBLAH</span><span class="nv"> </span><span class="s">cmsj@foo&quot;</span>
+</code></pre></div>
+
+<p>Now on client machines I can run <code>borg create --exclude-caches --compression=zlib -v -p -s ssh://gnuborg:22/srv/tank/backups/borg/foo/backups.borg::cmsj-{utcnow} $HOME</code> and because <code>gnuborg</code> is defined in <code>~/.ssh/config</code> it will use all the right ssh options (username, hostname and the SSH key created for this purpose):</p>
+<div class="highlight"><pre><span></span><code>Host gnuborg
+  User root
+  Hostname gnubert.local
+  IdentityFile ~/.ssh/id_rsa_herborg
+</code></pre></div>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2018/07/02/homebridge-server-monitoring.html">Homebridge server monitoring</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Mon 02 July 2018</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p><a href="https://github.com/nfarina/homebridge">Homebridge</a> is a great way to expose arbitrary devices to Apple's HomeKit platform. It has helped bridge the Google Nest and Netgear Arlo devices I have in my home, into my iOS devices, since neither of those manufacturers appear to be interested in becoming officially HomeKit compatible.</p>
+<p>London has been having a little bit of a heatwave recently and it got me thinking about the Linux server I have running in a closet under the stairs - it has pretty poor airflow available to it, and I didn't know how hot its CPU was getting.</p>
+<p>So, by the power of JavaScript, Homebridge and Linux's <code>/sys</code> filesystem, I was able to quickly whip up <a href="https://github.com/cmsj/homebridge-linux-temperature">a plugin</a> for Homebridge that will read an entry from Linux's temperature monitoring interface, and present it to HomeKit. In theory I could use it for sending notifications, but in practice I'm doing that via <a href="https://grafana.com/">Grafana</a> - the purpose of getting the information in HomeKit is so I can ask Siri what the server's temperature is.</p>
+<p>The configuration is very simple, allowing you to configure one temperature sensor per instance of the plugin (but you could define multiple instances in your Homebridge <code>config.json</code>):</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;accessory&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LinuxTemperature&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gnubert&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sensor_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/sys/bus/platform/devices/coretemp.0/hwmon/hwmon0/temp1_input&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;divisor&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>(<code>gnubert</code> is the hostname of my server).</p>
+<p>Below is a screenshot showing the server's CPU temperature mingling with all of the Nest and Arlo items :)</p>
+<p><img alt="Screenshot" src="http://cmsj.net/images/2018-07-02-server-temp-homekit.jpg"></p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2018/06/19/trello-mac-app-automation.html">A little bit of automation of the Trello Mac App</a></h1>
   </div>
   <div class="article__meta">
@@ -78,20 +187,20 @@
 <p>Apart from not actually working, this was great news, I could remove the <code>/var/run</code> bind mount from the container, making things more secure, I just needed to figure out why it wasn't showing up.</p>
 <p>The HAP library that Homebridge uses, ends up depending on <a href="https://github.com/mafintosh/multicast-dns">this library</a> to implement mDNS and it makes <a href="https://github.com/mafintosh/multicast-dns/blob/master/index.js#L147">a very simple</a> decision about which network interface it should use. In my case, it was choosing the <code>docker0</code> bridge interface which explicitly isn't connected to the outside world. With no configuration options at the Homebridge level to influence the choice of interface, I had to solve the problem at the Docker network layer.</p>
 <p>So, the answer was the following Ansible task to create a Docker network that is attached to my LAN interface (<code>bridge0</code>) and give it a small portion of a reserved segment in the IP subnet I use:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure LANbridge network</span>
-  <span class="nt">docker_network</span><span class="p">:</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">lanbridge</span>
-    <span class="nt">driver</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">macvlan</span>
-    <span class="nt">driver_options</span><span class="p">:</span>
-      <span class="nt">parent</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">bridge0</span>
-    <span class="nt">ipam_options</span><span class="p">:</span>
-      <span class="nt">subnet</span><span class="p">:</span> <span class="s">&#39;10.0.88.0/24&#39;</span>
-      <span class="nt">gateway</span><span class="p">:</span> <span class="s">&#39;10.0.88.1&#39;</span>
-      <span class="nt">iprange</span><span class="p">:</span> <span class="s">&#39;10.0.88.32/29&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure LANbridge network</span>
+<span class="w">  </span><span class="nt">docker_network</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">lanbridge</span>
+<span class="w">    </span><span class="nt">driver</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">macvlan</span>
+<span class="w">    </span><span class="nt">driver_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">parent</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">bridge0</span>
+<span class="w">    </span><span class="nt">ipam_options</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">subnet</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10.0.88.0/24&#39;</span>
+<span class="w">      </span><span class="nt">gateway</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10.0.88.1&#39;</span>
+<span class="w">      </span><span class="nt">iprange</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;10.0.88.32/29&#39;</span>
 </code></pre></div>
 
 <p>then change the task for the Homebridge container to use this network:</p>
-<div class="highlight"><pre><span></span><code><span class="err">  network_mode: lanbridge</span>
+<div class="highlight"><pre><span></span><code>  network_mode: lanbridge
 </code></pre></div>
 
 <p>and now Homebridge is up to date, and working, plus I have a Docker network I can use in the future if any other containerised services need to be very close to the LAN.</p>
@@ -112,7 +221,7 @@
 <p>While there are many ways to skin this goose, the method I've chosen is a tiny Python daemon that listens on syslog's UDP port (514), does minimal processing of the data and then feeds it into <code>journald</code> via its API, to get the data as rich as possible (since one of <code>journald</code>'s strengths is that it can store a lot more metadata about a log entry).</p>
 <p>So, <a href="https://gist.github.com/cmsj/e03b6d28325ce5c3d5b255256278a330">here is the source</a> for the daemon, and <a href="https://gist.github.com/cmsj/71f987d1129c5dc693243dd1aa5f8f4f">here is the systemd service file</a> that manages it - note that it runs as an unprivileged user, with the sole privilege escalation of being able to bind to low port numbers (something only root can do normally).</p>
 <p>The daemon is certainly not perfect (patches welcome!), but it works. Here is a <code>journald</code> log entry from one of my UniFi access points:</p>
-<div class="highlight"><pre><span></span><code><span class="n">Jun</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="mi">21</span><span class="err">:</span><span class="mi">28</span><span class="err">:</span><span class="mi">26</span><span class="w"> </span><span class="n">gnubert</span><span class="w"> </span><span class="p">(</span><span class="ss">&quot;U7PG2,802aa8d48ab3,v3.9.27.8537&quot;</span><span class="p">)</span><span class="o">[</span><span class="n">23506</span><span class="o">]</span><span class="err">:</span><span class="w"> </span><span class="nl">kernel</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="n">4251792.410000</span><span class="o">]</span><span class="w"> </span><span class="o">[</span><span class="n">wifi1</span><span class="o">]</span><span class="w"> </span><span class="nl">FWLOG</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="n">58855274</span><span class="o">]</span><span class="w"> </span><span class="n">BEACON_EVENT_SWBA_SEND_FAILED</span><span class="w"> </span><span class="p">(</span><span class="w">  </span><span class="p">)</span><span class="w"></span>
+<div class="highlight"><pre><span></span><code><span class="n">Jun</span><span class="w"> </span><span class="mi">15</span><span class="w"> </span><span class="mi">21</span><span class="err">:</span><span class="mi">28</span><span class="err">:</span><span class="mi">26</span><span class="w"> </span><span class="n">gnubert</span><span class="w"> </span><span class="p">(</span><span class="ss">&quot;U7PG2,802aa8d48ab3,v3.9.27.8537&quot;</span><span class="p">)</span><span class="o">[</span><span class="n">23506</span><span class="o">]</span><span class="err">:</span><span class="w"> </span><span class="nl">kernel</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="n">4251792.410000</span><span class="o">]</span><span class="w"> </span><span class="o">[</span><span class="n">wifi1</span><span class="o">]</span><span class="w"> </span><span class="nl">FWLOG</span><span class="p">:</span><span class="w"> </span><span class="o">[</span><span class="n">58855274</span><span class="o">]</span><span class="w"> </span><span class="n">BEACON_EVENT_SWBA_SEND_FAILED</span><span class="w"> </span><span class="p">(</span><span class="w">  </span><span class="p">)</span>
 </code></pre></div>
 
 <p>(the more syslog-obsessed among you will notice that I'm setting the <code>identifier</code> to the hostname of the device that sent the message. Internally, the <code>facility</code> is mapped correctly, as is the <code>priority</code>. The text of the message then appears, prepended by its <code>identifier</code>.</p>
@@ -130,66 +239,66 @@
   <div class="article__text">
     <p><a href="http://www.hammerspoon.org">Hammerspoon</a> is heavily dependent on <a href="http://www.lua.org">Lua</a> - it's the true core of the application, so it's unavoidable that we have to interact with Lua's C API in a lot of places. If you've never used it before, Lua's C API is designed to be very simple to integrate with other code, but it also places a fairly high burden on developers to integrate it properly.</p>
 <p>One of the ways that Lua remains simple is by being stack based - when you give Lua a C function and make it available to call from Lua code, you have to conform to a particular way of working. The function arguments supplied by the user will be presented to you on a stack, and when your C code has finished its work, the return values must have been pushed onto the stack. Here's an example:</p>
-<div class="highlight"><pre><span></span><code><span class="k">static</span> <span class="kt">int</span> <span class="n">someUsefulFunction</span><span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// Fetch our first argument from the stack</span>
-    <span class="kt">int</span> <span class="n">someNumber</span> <span class="o">=</span> <span class="n">lua_tointeger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">someUsefulFunction</span><span class="p">(</span><span class="n">lua_State</span><span class="w"> </span><span class="o">*</span><span class="n">L</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Fetch our first argument from the stack</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">someNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lua_tointeger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
 
-    <span class="c1">// Fetch our second argument from the stack</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">someString</span> <span class="o">=</span> <span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Fetch our second argument from the stack</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">someString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
 
-    <span class="cm">/* Do some useful work here */</span>
+<span class="w">    </span><span class="cm">/* Do some useful work here */</span>
 
-    <span class="c1">// Push two return values onto the stack and return 2 so Lua knows how many return values we provided</span>
-    <span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="s">&quot;some result text&quot;</span><span class="p">);</span>
-    <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">42</span><span class="p">);</span>
-    <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// Push two return values onto the stack and return 2 so Lua knows how many return values we provided</span>
+<span class="w">    </span><span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;some result text&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
 
 <p>All simple enough.</p>
 <p>In this scenario of calling from Lua→C, Lua creates a pseudo-stack for you, so while it's good practice to keep the stack neat and tidy (i.e. remove things from it that you don't need), it's not critical because apart from the return values, the rest of the stack is thrown away. That pseudo-stack only has 20 slots by default though, so if you're pushing a lot of return arguments, or using the stack for other things, you may need to use <code>lua_checkstack()</code> to grow it larger, up to the maximum (2048 slots).</p>
 <p>Where things get more interesting, is when you're interacting with the Lua stack without having crossed a Lua→C boundary. For example, maybe you're in a callback function that's been triggered by some event in your C program, and now you need to call a Lua function that the user gave you earlier. This might look something like this:</p>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">globalLuaFunction</span><span class="p">;</span>
-<span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// Fetch a pointer to the shared Lua state object</span>
-    <span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span> <span class="o">=</span> <span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">globalLuaFunction</span><span class="p">;</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">aValue</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">aString</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Fetch a pointer to the shared Lua state object</span>
+<span class="w">    </span><span class="n">lua_State</span><span class="w"> </span><span class="o">*</span><span class="n">L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
 
-    <span class="c1">// Push onto the stack, the Lua function previously supplied by the user, from Lua&#39;s global registry</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span> <span class="n">globalLuaFunction</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push onto the stack, the Lua function previously supplied by the user, from Lua&#39;s global registry</span>
+<span class="w">    </span><span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span><span class="w"> </span><span class="n">globalLuaFunction</span><span class="p">);</span>
 
-    <span class="c1">// Push the two arguments for the Lua function</span>
-    <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aValue</span><span class="p">);</span>
-    <span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aString</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push the two arguments for the Lua function</span>
+<span class="w">    </span><span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aValue</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aString</span><span class="p">);</span>
 
-    <span class="c1">// Call the Lua function, telling Lua to expect two arguments</span>
-    <span class="n">lua_call</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Call the Lua function, telling Lua to expect two arguments</span>
+<span class="w">    </span><span class="n">lua_call</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 
-    <span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
 
 <p>Slightly more complex than the last example, but still manageable. Unfortunately in practice this is a fairly suboptimal implementation of a C→Lua call - storing things in the <code>LUA_REGISTRYINDEX</code> table is fine, but it's often nicer to use multiple tables for different things. The big problem here though is that <code>lua_call()</code> doesn't trap errors. If the Lua code raises an exception, Lua will <code>longjmp</code> to a panic handler and <code>abort()</code> your app.</p>
 <p>So, writing this a bit more completely, we get:</p>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
-<span class="kt">int</span> <span class="n">globalLuaFunctionRef</span><span class="p">;</span>
-<span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// Fetch a pointer to the shared Lua state object</span>
-    <span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span> <span class="o">=</span> <span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">luaCallbackTable</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">globalLuaFunctionRef</span><span class="p">;</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">aValue</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">aString</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Fetch a pointer to the shared Lua state object</span>
+<span class="w">    </span><span class="n">lua_State</span><span class="w"> </span><span class="o">*</span><span class="n">L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
 
-    <span class="c1">// Push onto the stack, the table we keep callback references in, from Lua&#39;s global registry</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span> <span class="n">luaCallbackTable</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push onto the stack, the table we keep callback references in, from Lua&#39;s global registry</span>
+<span class="w">    </span><span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span><span class="w"> </span><span class="n">luaCallbackTable</span><span class="p">);</span>
 
-    <span class="c1">// Push onto the stack, from our callback reference table, the Lua function previously supplied by the user</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push onto the stack, from our callback reference table, the Lua function previously supplied by the user</span>
+<span class="w">    </span><span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="n">globalLuaFunctionRef</span><span class="p">);</span>
 
-    <span class="c1">// Push the two arguments for the Lua function</span>
-    <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aValue</span><span class="p">);</span>
-    <span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aString</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push the two arguments for the Lua function</span>
+<span class="w">    </span><span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aValue</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aString</span><span class="p">);</span>
 
-    <span class="c1">// Protected call to the Lua function, telling Lua to expect two arguments</span>
-    <span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Protected call to the Lua function, telling Lua to expect two arguments</span>
+<span class="w">    </span><span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 
-    <span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -197,35 +306,35 @@
 <p>However, we now have a problem, we're leaking at least one item onto Lua's stack and possibly two. Unlike in the Lua→C case, we are not operating within the safe confines of a pseudo-stack, so anything we leak here will stay permanently on the stack, and at some point that's likely to cause the stack to overflow.</p>
 <p>Now here is the kicker - stack overflows are really hard to find by default, you don't typically get a nice error, your program will simply leak stack slots until the stack overflows, far from the place where the leak is happening, then segfault, and your backtraces will have very normal looking Lua API calls in them.</p>
 <p>If we were to handle the stack properly, the above could would actually look like this (and note that we've gone from four Lua API calls in the first C→Lua example, to eight here):</p>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
-<span class="kt">int</span> <span class="n">globalLuaFunctionRef</span><span class="p">;</span>
-<span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// Fetch a pointer to the shared Lua state object</span>
-    <span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span> <span class="o">=</span> <span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">luaCallbackTable</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">globalLuaFunctionRef</span><span class="p">;</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">aValue</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">aString</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Fetch a pointer to the shared Lua state object</span>
+<span class="w">    </span><span class="n">lua_State</span><span class="w"> </span><span class="o">*</span><span class="n">L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
 
-    <span class="c1">// Find luaCallbackTable in the Lua registry, and push it onto the stack</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span> <span class="n">luaCallbackTable</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Find luaCallbackTable in the Lua registry, and push it onto the stack</span>
+<span class="w">    </span><span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span><span class="w"> </span><span class="n">luaCallbackTable</span><span class="p">);</span>
 
-    <span class="c1">// Find globalLuaFunctionRef in luaCallbackTable, and push it onto the stack</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Find globalLuaFunctionRef in luaCallbackTable, and push it onto the stack</span>
+<span class="w">    </span><span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="n">globalLuaFunctionRef</span><span class="p">);</span>
 
-    <span class="c1">// Remove luaCallbackTable from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
-    <span class="n">lua_remove</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-2</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Remove luaCallbackTable from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
+<span class="w">    </span><span class="n">lua_remove</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">-2</span><span class="p">);</span>
 
-    <span class="c1">// Push the two arguments for the Lua function</span>
-    <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aValue</span><span class="p">);</span>
-    <span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aString</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push the two arguments for the Lua function</span>
+<span class="w">    </span><span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aValue</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aString</span><span class="p">);</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="nb">false</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// Fetch the Lua error message from the stack</span>
-        <span class="kt">char</span> <span class="o">*</span><span class="n">someError</span> <span class="o">=</span> <span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">);</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;ERROR: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">someError</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Fetch the Lua error message from the stack</span>
+<span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">someError</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;ERROR: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">someError</span><span class="p">);</span>
 
-        <span class="c1">// Remove the Lua error message from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
-        <span class="n">lua_pop</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">);</span>
-    <span class="p">}</span>
+<span class="w">        </span><span class="c1">// Remove the Lua error message from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
+<span class="w">        </span><span class="n">lua_pop</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
 
-    <span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -338,98 +447,6 @@ These entry/exit calls were then added to all 107 call sites 4 days after the 0.
 <h2>Conclusion</h2>
 <p>Overall, I like the Synology, but I think if I'd known about the Docker issue, I might have built my own machine and put something like <a href="http://www.freenas.org/">FreeNAS</a> on it. More work, less support, but more flexibility.</p>
 <p>The recent 5-8 drive Synologies now support running VMs, which seems like a very interesting prospect, since it ought to isolate you from Synology's choices of software versions.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2017/06/13/karabiner-elements-sierra-hyper.html">Hyper Key in macOS Sierra with Karabiner Elements</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Tue 13 June 2017</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Over the last few years, <a href="http://brettterpstra.com/2012/12/08/a-useful-caps-lock-key/">various</a> <a href="https://www.nadeau.tv/configure-hyper-key-osx/">people</a> have used <a href="https://pqrs.org/osx/karabiner/">Karabiner</a> to remap Caps Lock to cmd+shift+opt+ctrl, which is such an unusual combination of modifier keys, that it effectively makes Caps behave as a completely new modifier (which we have collectively called "Hyper", in reference to old UNIX workstation keyboards).</p>
-<p>And for a time, it was good.</p>
-<p>Then came macOS Sierra, which changed enough of the input layers of its kernel, that Karabiner was unable to function. Thankfully, Karabiner's author, Fumihiko Takayama, began work on a complete rewrite of Karabiner, which is currently called <a href="https://github.com/tekezo/Karabiner-Elements">Karabiner Elements</a>.</p>
-<p>Initially, Elements only supported very simple keyboard modifications - you could swap one key for another, but that was it. Various folk quickly got to work offering <a href="https://github.com/tekezo/Karabiner-Elements/pull/170">quick hacks</a> to get a Hyper key to work, and others started to try to <a href="http://brettterpstra.com/2016/09/29/a-better-hyper-key-hack-for-sierra/">work around</a> the missing support, with other tools.</p>
-<p>I'm very glad to say that it is now possible to do a proper Hyper remap with Karabiner Elements (and to be clear, none of this is my work, all credit goes to Fumihiko).</p>
-<p>Here's how you can get it:</p>
-<ul>
-<li>Download and install <a href="https://pqrs.org/latest/karabiner-elements-latest.dmg">https://pqrs.org/latest/karabiner-elements-latest.dmg</a></li>
-<li>Launch the Karabiner Elements app, go to the Misc tab and check which version you have, if it's less than 0.91.1, click either <code>Check for updates</code> or <code>Check for beta updates</code> until you get offered 0.91.1 or higher, then install that update and re-launch the Karabiner Elements app.</li>
-<li>You probably want to remove the example entry in the Simple Modifications tab.</li>
-<li>Edit <code>~/.config/karabiner/karabiner.json</code></li>
-<li>Find the <code>simple_modifications</code> section, and right after it, paste in:</li>
-</ul>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;complex_modifications&quot;</span><span class="p">:</span> <span class="p">{</span>
-    <span class="nt">&quot;rules&quot;</span><span class="p">:</span> <span class="p">[</span>
-        <span class="p">{</span>
-            <span class="nt">&quot;manipulators&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="p">{</span>
-                    <span class="nt">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Change caps_lock to command+control+option+shift.&quot;</span><span class="p">,</span>
-                    <span class="nt">&quot;from&quot;</span><span class="p">:</span> <span class="p">{</span>
-                        <span class="nt">&quot;key_code&quot;</span><span class="p">:</span> <span class="s2">&quot;caps_lock&quot;</span><span class="p">,</span>
-                        <span class="nt">&quot;modifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
-                            <span class="nt">&quot;optional&quot;</span><span class="p">:</span> <span class="p">[</span>
-                                <span class="s2">&quot;any&quot;</span>
-                            <span class="p">]</span>
-                        <span class="p">}</span>
-                    <span class="p">},</span>
-                    <span class="nt">&quot;to&quot;</span><span class="p">:</span> <span class="p">[</span>
-                        <span class="p">{</span>
-                            <span class="nt">&quot;key_code&quot;</span><span class="p">:</span> <span class="s2">&quot;left_shift&quot;</span><span class="p">,</span>
-                            <span class="nt">&quot;modifiers&quot;</span><span class="p">:</span> <span class="p">[</span>
-                                <span class="s2">&quot;left_command&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;left_control&quot;</span><span class="p">,</span>
-                                <span class="s2">&quot;left_option&quot;</span>
-                            <span class="p">]</span>
-                        <span class="p">}</span>
-                    <span class="p">],</span>
-                    <span class="nt">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;basic&quot;</span>
-                <span class="p">}</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">]</span>
-<span class="p">},</span>
-</code></pre></div>
-
-<ul>
-<li>As soon as you save the file, Elements will notice it has changed, and reload its config. You should immediately have a working Hyper key 😁</li>
-</ul>
-<p>If you're not confident at your ability to hand-merge JSON like this, and don't need anything from Elements other than the basic defaults, plus Hyper, feel free to grab <a href="https://gist.githubusercontent.com/cmsj/23ca8a570c060e8ccb2a36cee70ed28b/raw/60cb590411193f24a56fb8f52f96093c5191ba22/karabiner.json">my config</a> and drop it in <code>~/.config/karabiner/</code>.</p>
-<p><em>Supplemental note for High Sierra</em></p>
-<p>I've only tested this very briefly on High Sierra, but I had to disable SIP to get the Elements <code>.kext</code> to load. I'm not quite sure what's going on, but I reported it <a href="https://github.com/tekezo/Karabiner-Elements/issues/777">on GitHub</a>. (Note that you can re-enable SIP after the kext has been loaded successfully once)</p>
-<p><em>Update</em></p>
-<p>Many people like to turn Caps into Hyper, but also have it behave as Escape if it is tapped on its own. As of Karabiner Elements 0.91.3 <a href="https://twitter.com/ttscoff/status/875029764377108480">this appears</a> to be possible by adding this to the manipulator:</p>
-<div class="highlight"><pre><span></span><code><span class="nt">&quot;to_if_alone&quot;</span><span class="p">:</span> <span class="p">[</span>
-    <span class="p">{</span>
-        <span class="nt">&quot;key_code&quot;</span><span class="p">:</span> <span class="s2">&quot;escape&quot;</span><span class="p">,</span>
-        <span class="nt">&quot;modifiers&quot;</span><span class="p">:</span> <span class="p">{</span>
-            <span class="nt">&quot;optional&quot;</span><span class="p">:</span> <span class="p">[</span>
-                <span class="s2">&quot;any&quot;</span>
-            <span class="p">]</span>
-        <span class="p">}</span>
-    <span class="p">}</span>
-<span class="p">],</span>
-</code></pre></div>
-
-<p>(thanks to <a href="http://brettterpstra.com/">Brett Terpstra</a> for the sample of this</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2017/06/09/new-blog.html">New blog setup</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Fri 09 June 2017</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Bye bye Blogger, hello GitHub Pages. This means no more comments, and probably a bunch of posts have terrible formatting at the moment, but at least my blog is now just static Markdown files I can edit nicely 😁</p>
-<p>(Also the domain has changed, cmsj.net is the new tenshu.net :)</p>
   </div>
 </article>
 

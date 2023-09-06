@@ -63,18 +63,7 @@
 That means, for example, when I am working with pygtk and I look at the API for pynotify, I am sad, because it's a polling API and I hate polling.
 What I like is GTK's event model. I like telling it what to run when things happen and letting it take care of all the pain for me. Obviously it's possible to write some code which will do the polling and then trigger an event, but that compromises my freedom to be lazy.
 Step in pygobject, which contains the bindings for GIO. Within the bowels of this beastie are the required components to monitor a file for changes in a very few lines of python:</p>
-<table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre> 1
- 2
- 3
- 4
- 5
- 6
- 7
- 8
- 9
-10
-11
-12</pre></div></td><td class="code"><div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/python</span>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/python</span>
 <span class="kn">import</span> <span class="nn">gtk</span>
 <span class="kn">import</span> <span class="nn">gio</span>
 
@@ -87,7 +76,7 @@ Step in pygobject, which contains the bindings for GIO. Within the bowels of thi
 <span class="n">monitor</span><span class="o">.</span><span class="n">connect</span> <span class="p">(</span><span class="s2">&quot;changed&quot;</span><span class="p">,</span> <span class="n">file_changed</span><span class="p">)</span>
 <span class="n">gtk</span><span class="o">.</span><span class="n">main</span><span class="p">()</span>
 </code></pre></div>
-</td></tr></table>
+
 <p>That's it. I don't know what the "unknown" argument for the callback is, probably the optional user_data connect() argument and this is but a small part of what inotify/GIO can do, but if you just care about being told when a file is updated, it'll do (with caveats that you can never really know when a file has finished being changed, so be careful to validate it before you trust its contents).</p>
   </div>
 

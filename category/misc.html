@@ -51,6 +51,103 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2023/09/06/haosscryptednvr.html">Mounting a separate partition for Scrypted NVR storage in Home Assistant OS</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Wed 06 September 2023</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>All of my smart home stuff is running in Home Assistant, and I'm using their OS on a Mini PC.</p>
+<p>One of the things I'm running on that OS is the Scrypted Add-On to bridge my generic RTSP cameras into HomeKit, and to use Scrypted's NVR.</p>
+<p>By default, Scrypted will be storing NVR recordings in HassOS' <code>data</code> partition. I wanted to make sure that even if the NVR goes wild and fills the disk, the rest of my Home Assistant system wouldn't have to deal with running out of disk space, so I started looking for a way to configure HassOS and/or Scrypted to store the NVR recordings elsewhere. Turns out that isn't directly possible, but there is a very useful feature of HassOS that makes it possible.</p>
+<p>Specifically, that feature is that you can import <code>udev</code> rules. With that I can ensure that a dedicated partition can be mounted in the location that the NVR recordings will be written, and now even if Scrypted goes haywire and runs that partition out of space, the rest of the system will function normally.</p>
+<p>The official documentation for how to import <code>udev</code> rules (amongst many other useful things) is <a href="https://github.com/home-assistant/operating-system/blob/dev/Documentation/configuration.md">here</a>, but the approximate set of steps is:</p>
+<ul>
+<li>Arrange for there to be a partition available on your Home Assistant OS machine, formatted as <code>ext4</code>, with the label <code>NVR</code>. I put a second disk in, so it's completely separate from the boot disk which Home Assistant OS may choose to modify later.</li>
+<li>Format a USB stick as FAT32, named <code>CONFIG</code></li>
+<li>Create a directory on that stick with the name <code>udev</code></li>
+<li>In that <code>udev</code> folder create a plain text file called <code>80-mount-scrypted-nvr-volume.rules</code></li>
+</ul>
+<p>The contents of that rules file should be:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># This will mount a partition with the label &quot;NVR&quot; to: /mnt/data/supervisor/addons/data/09e60fb6_scrypted/scrypted_nvr/</span>
+
+<span class="c1"># Import partition info into environment variables</span>
+<span class="n">IMPORT</span><span class="p">{</span><span class="n">program</span><span class="p">}</span><span class="o">=</span><span class="s2">&quot;/usr/sbin/blkid -o udev -p %N&quot;</span>
+
+<span class="c1"># Exit if the partition is not a filesystem</span>
+<span class="n">ENV</span><span class="p">{</span><span class="n">ID_FS_USAGE</span><span class="p">}</span><span class="o">!=</span><span class="s2">&quot;filesystem&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">GOTO</span><span class="o">=</span><span class="s2">&quot;abort_rule&quot;</span>
+
+<span class="c1"># Exit if the partition isn&#39;t for NVR data</span>
+<span class="n">ENV</span><span class="p">{</span><span class="n">ID_FS_LABEL</span><span class="p">}</span><span class="o">!=</span><span class="s2">&quot;NVR&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">GOTO</span><span class="o">=</span><span class="s2">&quot;abort_rule&quot;</span>
+
+<span class="c1"># Store the mountpoint</span>
+<span class="n">ENV</span><span class="p">{</span><span class="n">mount_point</span><span class="p">}</span><span class="o">=</span><span class="s2">&quot;/mnt/data/supervisor/addons/data/09e60fb6_scrypted/scrypted_nvr/&quot;</span>
+
+<span class="c1"># Mount the device on &#39;add&#39; action (e.g. it was just connected to USB)</span>
+<span class="n">ACTION</span><span class="o">==</span><span class="s2">&quot;add&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">RUN</span><span class="p">{</span><span class="n">program</span><span class="p">}</span><span class="o">+=</span><span class="s2">&quot;/usr/bin/mkdir -p </span><span class="si">%E</span><span class="s2">{mount_point}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">RUN</span><span class="p">{</span><span class="n">program</span><span class="p">}</span><span class="o">+=</span><span class="s2">&quot;/usr/bin/systemd-mount --no-block --automount=no --collect $devnode </span><span class="si">%E</span><span class="s2">{mount_point}&quot;</span>
+
+<span class="c1"># Umount the device on &#39;remove&#39; action (a.k.a unplug or eject the USB drive)</span>
+<span class="n">ACTION</span><span class="o">==</span><span class="s2">&quot;remove&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ENV</span><span class="p">{</span><span class="n">dir_name</span><span class="p">}</span><span class="o">!=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">RUN</span><span class="p">{</span><span class="n">program</span><span class="p">}</span><span class="o">+=</span><span class="s2">&quot;/usr/bin/systemd-umount </span><span class="si">%E</span><span class="s2">{mount_point}&quot;</span>
+
+<span class="c1"># Exit</span>
+<span class="n">LABEL</span><span class="o">=</span><span class="s2">&quot;abort_rule&quot;</span>
+</code></pre></div>
+
+<p>Notes:
+ * As far as I know, the mountpoint for the Scrypted add-on should be stable, but I can't promise this.
+ * This should be very safe as it will ignore any partition that isn't labelled <code>NVR</code>.
+ * This should work with removable disks (e.g. USB), however, the Scrypted addon will not be stopped if you unplug the disk, so I would strongly recommend not doing that without stopping Scrypted first.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2023/08/19/tailscaledocker.html">Running Tailscale in Docker</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Sat 19 August 2023</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I run most of my home services in Docker, and I decided it was time to migrate Tailscale from the host into Docker too.</p>
+<p>This turned out to be an interesting journey, but I figured I'd talk about it here for anyone else hitting the same issues.</p>
+<p>Here is my resulting Docker compose yaml:</p>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nt">tailscale</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">hostname</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tailscale</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">tailscale/tailscale:latest</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+<span class="w">    </span><span class="nt">network_mode</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;host&quot;</span><span class="w"> </span><span class="c1"># Easy mode</span>
+<span class="w">    </span><span class="nt">privileged</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span><span class="w"> </span><span class="c1"># I&#39;m only about 80% sure this is required</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/srv/ssdtank/docker/tailscale/data:/var/lib</span><span class="w"> </span><span class="c1"># tailscale/tailscale.state in here is where our authkey lives</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/dev/net/tun:/dev/net/tun</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/var/run/dbus/system_bus_socket:/var/run/dbus/system_bus_socket</span><span class="w"> </span><span class="c1"># This seems kinda terrible, but the daemon complains a lot if it can&#39;t connect to this</span>
+<span class="w">    </span><span class="nt">cap_add</span><span class="p">:</span><span class="w"> </span><span class="c1"># Required</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NET_ADMIN</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">NET_RAW</span>
+<span class="w">    </span><span class="nt">environment</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">TS_HOSTNAME</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;lolserver&quot;</span>
+<span class="w">      </span><span class="nt">TS_STATE_DIR</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;/var/lib/tailscale&quot;</span><span class="w"> </span><span class="c1"># This gives us a persistent entry in TS Machines, rather than Epehmeral</span>
+<span class="w">      </span><span class="nt">TS_USERSPACE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1"># Bizarrely, even if you bind /dev/net/tun in, you still need to tell the image to not use userspace networking</span>
+<span class="w">      </span><span class="nt">TS_AUTH_ONCE</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1"># If you have a config error somewhere, and this is set to true, it&#39;ll be really hard to figure it out</span>
+<span class="w">      </span><span class="nt">TS_ACCEPT_DNS</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">false</span><span class="w"> </span><span class="c1"># I don&#39;t want TS pushing any DNS to me.</span>
+<span class="w">      </span><span class="nt">TS_ROUTES</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;10.0.88.0/24,10.0.91.0/24&quot;</span><span class="w"> </span><span class="c1"># Docs say this is for accepting routes. Code says it&#39;s for advertising routes. Awesome.</span>
+<span class="w">      </span><span class="nt">TS_EXTRA_ARGS</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;--advertise-exit-node&quot;</span>
+<span class="w">    </span><span class="nt">labels</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">com.centurylinklabs.watchtower.enable</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;true&quot;</span>
+</code></pre></div>
+
+<p>Important things to note are:
+ * <code>TS_STATE_DIR</code> is useful if you want a persistent node rather than an Ephemeral one (I'm not running this as part of some app deployment, this is LAN infrastructure)
+ * <code>TS_USERSPACE</code> shouldn't just always default to <code>true</code>, it should check if <code>/dev/net/tun</code> is available, but it doesn't, so you have to force it to <code>false</code> if you want kernel networking.
+ * <code>TS_AUTH_ONCE</code> is great, but if you have an error in the lower level networking setup, having this set to <code>true</code> will hide it on restarts of the container. I suggest keeping this <code>false</code>.
+ * <code>TS_ROUTES</code> is currently wrong in the documentation. It is described as being for <em>accepting</em> routes <em>from</em> other hosts, but it's actually for <em>advertising</em> routes <em>to</em> other hosts.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2021/04/12/macgithubactions.html">Lessons learned about using GitHub Actions to build macOS apps</a></h1>
   </div>
   <div class="article__meta">
@@ -65,10 +162,10 @@
 <p>There are <em>tons</em> of third party GitHub Actions available in their <a href="https://github.com/marketplace?type=actions">marketplace</a>. Almost every time I use one, I come to regret it and end up switching to just running a bash script.</p>
 <h2>More useful checkouts</h2>
 <p>If you want to do anything other than interact with the current code (e.g. access tag history) you'll find it fails. Add the <code>fetch-depth</code> argument to <code>actions/checkout</code>:</p>
-<div class="highlight"><pre><span></span><code>  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Checkout foo</span>
-    <span class="nt">uses</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">actions/checkout@v2</span>
-    <span class="nt">with</span><span class="p">:</span>
-      <span class="l l-Scalar l-Scalar-Plain">fetch-depth:0</span>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Checkout foo</span>
+<span class="w">    </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v2</span>
+<span class="w">    </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">      </span><span class="l l-Scalar l-Scalar-Plain">fetch-depth:0</span>
 </code></pre></div>
 
 <h2>Checking out a private repo from a public one is weirdly hard</h2>
@@ -80,48 +177,49 @@
 <p>The default login keychain requires a password to unlock, so if you put a signing certificate there, your CI builds will hang indefinitely waiting for a password to be entered into a UI dialog you can't see.</p>
 <p>I took some ideas from the <a href="https://github.com/devbotsxyz/import-signing-certificate">devbotsxyz action</a> and a couple of blog posts, to come up with <a href="https://github.com/Hammerspoon/hammerspoon/blob/master/scripts/github-ci-nightly-keychain.sh">my own script</a> to create a keychain, unlock it, import the signing certificate, disable the keychain's lock timeout, and allow codesigning tools to use the keychain without a password.</p>
 <h2>Xcode scrubs the inherited environment</h2>
+<p>Update: This is not actually true. When I wrote this item, I had forgotten that our build system included a Makefile and it's <em>make</em> not Xcode that was scrubbing the environment.</p>
 <p>Normally, you can use environment variables like <code>$GITHUB_ACTIONS</code> to determine if you're running in a CI-style situation. I use this for our test framework to <a href="https://github.com/Hammerspoon/hammerspoon/blob/master/Hammerspoon%20Tests/HSTestCase.m#L94">detect CI</a> so certain tests can be skipped.</p>
 <p>Unfortunately, it seems like <code>xcodebuild</code> scrubs the environment when running script build phases, so instead I created an empty file on disk that the build scripts could check for:</p>
-<div class="highlight"><pre><span></span><code>  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Workaround xcodebuild scrubbing environment</span>
-    <span class="nt">run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">touch ../is_github_actions</span>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Workaround xcodebuild scrubbing environment</span>
+<span class="w">    </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">touch ../is_github_actions</span>
 </code></pre></div>
 
 <p>This allows us to skip things like uploading debug symbols to Sentry.</p>
 <h2>You can't upload artifacts from strange paths</h2>
 <p>The <code>actions/upload-artifact</code> action will refuse to upload any artifacts that have <code>../</code> or <code>./</code> in their path. I assume this is for security reasons, but that makes no sense because all you have to do is move/copy the file you want into the runner's <code>$PWD</code> and you can upload them:</p>
-<div class="highlight"><pre><span></span><code>  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Prepare artifacts</span>
-    <span class="nt">run</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">mv ../archive/ ./</span>
-  <span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Upload artifact</span>
-    <span class="nt">uses</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">actions/upload-artifact@v2</span>
-    <span class="nt">with</span><span class="p">:</span>
-      <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">foo</span>
-      <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">archive/foo</span>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Prepare artifacts</span>
+<span class="w">    </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">mv ../archive/ ./</span>
+<span class="w">  </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Upload artifact</span>
+<span class="w">    </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/upload-artifact@v2</span>
+<span class="w">    </span><span class="nt">with</span><span class="p">:</span>
+<span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">foo</span>
+<span class="w">      </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">archive/foo</span>
 </code></pre></div>
 
 <h2>It's pretty easy to verify your code signature, Gatekeeper acceptance, entitlements and notarization status</h2>
-<p>For Hammerspoon these are part of a more complex <a href="https://github.com/Hammerspoon/hammerspoon/blob/master/scripts/librelease.sh">release script library</a>, but in essence these are the commands that you can use to either check return codes, or outputs, for whether your app is as signed/notarized/entitled as you expect it to be:</p>
+<p>For Hammerspoon these are part of a more complex <a href="https://github.com/Hammerspoon/hammerspoon/blob/master/scripts/libbuild.sh">release script library</a>, but in essence these are the commands that you can use to either check return codes, or outputs, for whether your app is as signed/notarized/entitled as you expect it to be:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># Check valid code signature</span>
-<span class="k">if</span> ! codesign --verify --verbose<span class="o">=</span><span class="m">4</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="p">;</span> <span class="k">then</span>
-  <span class="nb">echo</span> <span class="s2">&quot;FAILED: Code signature check&quot;</span>
+<span class="k">if</span><span class="w"> </span>!<span class="w"> </span>codesign<span class="w"> </span>--verify<span class="w"> </span>--verbose<span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="s2">&quot;/path/to/Foo.app&quot;</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;FAILED: Code signature check&quot;</span>
 <span class="k">fi</span>
 
 <span class="c1"># Check valid code signing entity</span>
 <span class="nv">MY_KNOWN_GOOD_ENTITY</span><span class="o">=</span><span class="s2">&quot;Authority=Developer ID Application: Jonny Appleseed (ABC123ABC)&quot;</span>
-<span class="nv">ACTUAL_SIGNER</span><span class="o">=</span><span class="k">$(</span>codesign --display --verbose<span class="o">=</span><span class="m">4</span> <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span> <span class="p">|</span> grep ^Authority <span class="p">|</span> head -1<span class="k">)</span>
-<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">ACTUAL_SIGNER</span><span class="si">}</span><span class="s2">&quot;</span> !<span class="o">=</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">MY_KNOWN_GOOD_ENTITY</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-  <span class="nb">echo</span> <span class="s2">&quot;FAILED: Code signing authority&quot;</span>
+<span class="nv">ACTUAL_SIGNER</span><span class="o">=</span><span class="k">$(</span>codesign<span class="w"> </span>--display<span class="w"> </span>--verbose<span class="o">=</span><span class="m">4</span><span class="w"> </span><span class="s2">&quot;/path/to/Foo.app&quot;</span><span class="w"> </span><span class="m">2</span>&gt;<span class="p">&amp;</span><span class="m">1</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>^Authority<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-1<span class="k">)</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ACTUAL_SIGNER</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>!<span class="o">=</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">MY_KNOWN_GOOD_ENTITY</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;FAILED: Code signing authority&quot;</span>
 <span class="k">fi</span>
 
 <span class="c1"># Check Gatekeeper acceptance</span>
-<span class="k">if</span> ! spctl --verbose<span class="o">=</span><span class="m">4</span> --assess --type execute <span class="s2">&quot;/path/to/Foo.app&quot;</span> <span class="p">;</span> <span class="k">then</span>
-  <span class="nb">echo</span> <span class="s2">&quot;FAILED: Gatekeeper acceptance&quot;</span>
+<span class="k">if</span><span class="w"> </span>!<span class="w"> </span>spctl<span class="w"> </span>--verbose<span class="o">=</span><span class="m">4</span><span class="w"> </span>--assess<span class="w"> </span>--type<span class="w"> </span>execute<span class="w"> </span><span class="s2">&quot;/path/to/Foo.app&quot;</span><span class="w"> </span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;FAILED: Gatekeeper acceptance&quot;</span>
 <span class="k">fi</span>
 
 <span class="c1"># Check Entitlements match</span>
-<span class="nv">EXPECTED</span><span class="o">=</span><span class="k">$(</span>cat /path/to/source/Foo.entitlements<span class="k">)</span>
-<span class="nv">ACTUAL</span><span class="o">=</span><span class="k">$(</span>codesign --display --entitlements :- <span class="s2">&quot;/path/to/Foo.app&quot;</span><span class="k">)</span>
-<span class="k">if</span> <span class="o">[</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">ACTUAL</span><span class="si">}</span><span class="s2">&quot;</span> !<span class="o">=</span> <span class="s2">&quot;</span><span class="si">${</span><span class="nv">EXPECTED</span><span class="si">}</span><span class="s2">&quot;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
-  <span class="nb">echo</span> <span class="s2">&quot;FAILED: Entitlements&quot;</span>
+<span class="nv">EXPECTED</span><span class="o">=</span><span class="k">$(</span>cat<span class="w"> </span>/path/to/source/Foo.entitlements<span class="k">)</span>
+<span class="nv">ACTUAL</span><span class="o">=</span><span class="k">$(</span>codesign<span class="w"> </span>--display<span class="w"> </span>--entitlements<span class="w"> </span>:-<span class="w"> </span><span class="s2">&quot;/path/to/Foo.app&quot;</span><span class="k">)</span>
+<span class="k">if</span><span class="w"> </span><span class="o">[</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">ACTUAL</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span>!<span class="o">=</span><span class="w"> </span><span class="s2">&quot;</span><span class="si">${</span><span class="nv">EXPECTED</span><span class="si">}</span><span class="s2">&quot;</span><span class="w"> </span><span class="o">]</span><span class="p">;</span><span class="w"> </span><span class="k">then</span>
+<span class="w">  </span><span class="nb">echo</span><span class="w"> </span><span class="s2">&quot;FAILED: Entitlements&quot;</span>
 <span class="k">fi</span>
 </code></pre></div>
 
@@ -246,14 +344,14 @@ I also modified the build version strings in <code>Default_Version.h</code> so I
 <p>The first piece was a simple bash script that calls imapsync with all of the necessary command line options:</p>
 <div class="highlight"><pre><span></span><code><span class="ch">#!/bin/bash</span>
 <span class="c1"># This is /usr/local/bin/imapsync-user-isp-fancyplace.sh</span>
-/usr/bin/docker run -u root --rm -v/root/.imap-pass-isp.txt:/isp-pass.txt -v/root/.imap-pass-fancyplace.txt:/fancyplace-pass.txt gilleslamiral/imapsync <span class="se">\</span>
-    imapsync <span class="se">\</span>
-        --host1 imap.isp.net --port1 <span class="m">993</span> --user1 olduser@isp.net --passfile1 /isp-pass.txt --ssl1 --sslargs1 <span class="nv">SSL_verify_mode</span><span class="o">=</span><span class="m">1</span> <span class="se">\</span>
-        --host2 imap.fancyplace.com --port2 <span class="m">993</span> --user2 newuser@fancyplace.com --passfile2 /fancyplace-pass.txt --ssl2 --sslargs2 <span class="nv">SSL_verify_mode</span><span class="o">=</span><span class="m">1</span> <span class="se">\</span>
-        --automap <span class="se">\</span>
-        --nofoldersizes --nofoldersizesatend <span class="se">\</span>
-        --delete1 --noexpungeaftereach <span class="se">\</span>
-        --expunge1
+/usr/bin/docker<span class="w"> </span>run<span class="w"> </span>-u<span class="w"> </span>root<span class="w"> </span>--rm<span class="w"> </span>-v/root/.imap-pass-isp.txt:/isp-pass.txt<span class="w"> </span>-v/root/.imap-pass-fancyplace.txt:/fancyplace-pass.txt<span class="w"> </span>gilleslamiral/imapsync<span class="w"> </span><span class="se">\</span>
+<span class="w">    </span>imapsync<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--host1<span class="w"> </span>imap.isp.net<span class="w"> </span>--port1<span class="w"> </span><span class="m">993</span><span class="w"> </span>--user1<span class="w"> </span>olduser@isp.net<span class="w"> </span>--passfile1<span class="w"> </span>/isp-pass.txt<span class="w"> </span>--ssl1<span class="w"> </span>--sslargs1<span class="w"> </span><span class="nv">SSL_verify_mode</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--host2<span class="w"> </span>imap.fancyplace.com<span class="w"> </span>--port2<span class="w"> </span><span class="m">993</span><span class="w"> </span>--user2<span class="w"> </span>newuser@fancyplace.com<span class="w"> </span>--passfile2<span class="w"> </span>/fancyplace-pass.txt<span class="w"> </span>--ssl2<span class="w"> </span>--sslargs2<span class="w"> </span><span class="nv">SSL_verify_mode</span><span class="o">=</span><span class="m">1</span><span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--automap<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--nofoldersizes<span class="w"> </span>--nofoldersizesatend<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--delete1<span class="w"> </span>--noexpungeaftereach<span class="w"> </span><span class="se">\</span>
+<span class="w">        </span>--expunge1
 </code></pre></div>
 
 <p>Please test this with the <code>--dry</code> option if you ever want to do this - the <code>--automap</code> option worked incredibly well for me (even translating between languages for folders like "Sent Messages"), but check that for yourself.</p>
@@ -289,12 +387,12 @@ I also modified the build version strings in <code>Default_Version.h</code> so I
 <p>This will trigger every 10 minutes and start the specified service, which executes the script that starts the Dockule to sync the email. Simple!</p>
 <p>And just to show a useful command, you can check when the timer last triggered, and when it will trigger next, like this:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># systemctl list-timers</span>
-<span class="n">NEXT</span>                         <span class="n">LEFT</span>          <span class="n">LAST</span>                         <span class="n">PASSED</span>             <span class="n">UNIT</span>                               <span class="n">ACTIVATES</span>
-<span class="n">Mon</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">20</span> <span class="mi">17</span><span class="p">:</span><span class="mi">38</span><span class="p">:</span><span class="mi">13</span> <span class="n">BST</span>  <span class="mi">27</span><span class="n">s</span> <span class="n">left</span>      <span class="n">Mon</span> <span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">20</span> <span class="mi">17</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">13</span> <span class="n">BST</span>  <span class="mi">9</span><span class="nb">min</span> <span class="n">ago</span>           <span class="n">imapsync</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">isp</span><span class="o">-</span><span class="n">fancyplace</span><span class="o">.</span><span class="n">timer</span> <span class="n">imapsync</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">isp</span><span class="o">-</span><span class="n">fancyplace</span><span class="o">.</span><span class="n">service</span>
-<span class="p">[</span><span class="n">snip</span> <span class="n">unrelated</span> <span class="n">timers</span><span class="p">]</span>
+<span class="n">NEXT</span><span class="w">                         </span><span class="n">LEFT</span><span class="w">          </span><span class="n">LAST</span><span class="w">                         </span><span class="n">PASSED</span><span class="w">             </span><span class="n">UNIT</span><span class="w">                               </span><span class="n">ACTIVATES</span>
+<span class="n">Mon</span><span class="w"> </span><span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">17</span><span class="p">:</span><span class="mi">38</span><span class="p">:</span><span class="mi">13</span><span class="w"> </span><span class="n">BST</span><span class="w">  </span><span class="mi">27</span><span class="n">s</span><span class="w"> </span><span class="n">left</span><span class="w">      </span><span class="n">Mon</span><span class="w"> </span><span class="mi">2019</span><span class="o">-</span><span class="mi">05</span><span class="o">-</span><span class="mi">20</span><span class="w"> </span><span class="mi">17</span><span class="p">:</span><span class="mi">28</span><span class="p">:</span><span class="mi">13</span><span class="w"> </span><span class="n">BST</span><span class="w">  </span><span class="mi">9</span><span class="nb">min</span><span class="w"> </span><span class="n">ago</span><span class="w">           </span><span class="n">imapsync</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">isp</span><span class="o">-</span><span class="n">fancyplace</span><span class="o">.</span><span class="n">timer</span><span class="w"> </span><span class="n">imapsync</span><span class="o">-</span><span class="n">user</span><span class="o">-</span><span class="n">isp</span><span class="o">-</span><span class="n">fancyplace</span><span class="o">.</span><span class="n">service</span>
+<span class="p">[</span><span class="n">snip</span><span class="w"> </span><span class="n">unrelated</span><span class="w"> </span><span class="n">timers</span><span class="p">]</span>
 
-<span class="mi">9</span> <span class="n">timers</span> <span class="n">listed</span><span class="o">.</span>
-<span class="n">Pass</span> <span class="o">--</span><span class="n">all</span> <span class="n">to</span> <span class="n">see</span> <span class="n">loaded</span> <span class="n">but</span> <span class="n">inactive</span> <span class="n">timers</span><span class="p">,</span> <span class="n">too</span><span class="o">.</span>
+<span class="mi">9</span><span class="w"> </span><span class="n">timers</span><span class="w"> </span><span class="n">listed</span><span class="o">.</span>
+<span class="n">Pass</span><span class="w"> </span><span class="o">--</span><span class="n">all</span><span class="w"> </span><span class="n">to</span><span class="w"> </span><span class="n">see</span><span class="w"> </span><span class="n">loaded</span><span class="w"> </span><span class="n">but</span><span class="w"> </span><span class="n">inactive</span><span class="w"> </span><span class="n">timers</span><span class="p">,</span><span class="w"> </span><span class="n">too</span><span class="o">.</span>
 </code></pre></div>
   </div>
 </article>
@@ -342,27 +440,27 @@ I also modified the build version strings in <code>Default_Version.h</code> so I
 <span class="c1">//</span>
 <span class="c1">// TODO:</span>
 <span class="c1">//  * Add a per-config flag that skips the archiving if there&#39;s only one matching thread (so the most recent matching email always stays in Inbox)</span>
-<span class="kd">var</span> <span class="nx">configs</span> <span class="o">=</span> <span class="p">[</span>
-  <span class="p">{</span> <span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;14d&quot;</span><span class="p">,</span> <span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;90d&quot;</span><span class="p">,</span> <span class="nx">query</span><span class="o">:</span><span class="s2">&quot;subject:(Benedict&#39;s Newsletter)&quot;</span> <span class="p">},</span>
-  <span class="p">{</span> <span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;7d&quot;</span><span class="p">,</span>  <span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;30d&quot;</span><span class="p">,</span> <span class="nx">query</span><span class="o">:</span><span class="s2">&quot;from:hello@visualping.io subject:gnubert&quot;</span> <span class="p">},</span>
-  <span class="p">{</span> <span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;1d&quot;</span><span class="p">,</span>  <span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;7d&quot;</span><span class="p">,</span>  <span class="nx">query</span><span class="o">:</span><span class="s2">&quot;subject:(Nightly clone to Thunderbay4 Successfully)&quot;</span> <span class="p">},</span>
-  <span class="p">{</span> <span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;1d&quot;</span><span class="p">,</span>  <span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;7d&quot;</span><span class="p">,</span>  <span class="nx">query</span><span class="o">:</span><span class="s2">&quot;from:Amazon subject:(Arriving today)&quot;</span> <span class="p">},</span>
-  <span class="p">];</span>
+<span class="kd">var</span><span class="w"> </span><span class="nx">configs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;14d&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;90d&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">query</span><span class="o">:</span><span class="s2">&quot;subject:(Benedict&#39;s Newsletter)&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;7d&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;30d&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">query</span><span class="o">:</span><span class="s2">&quot;from:hello@visualping.io subject:gnubert&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;1d&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;7d&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">query</span><span class="o">:</span><span class="s2">&quot;subject:(Nightly clone to Thunderbay4 Successfully)&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;1d&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;7d&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">query</span><span class="o">:</span><span class="s2">&quot;from:Amazon subject:(Arriving today)&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">];</span>
 
-<span class="kd">function</span> <span class="nx">processInbox</span><span class="p">()</span> <span class="p">{</span>
-  <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">config_key</span> <span class="k">in</span> <span class="nx">configs</span><span class="p">)</span> <span class="p">{</span>
-    <span class="kd">var</span> <span class="nx">config</span> <span class="o">=</span> <span class="nx">configs</span><span class="p">[</span><span class="nx">config_key</span><span class="p">];</span>
-    <span class="nx">Logger</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Processing query: &quot;</span> <span class="o">+</span> <span class="nx">config</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">]);</span>
+<span class="kd">function</span><span class="w"> </span><span class="nx">processInbox</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="nx">config_key</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">configs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">configs</span><span class="p">[</span><span class="nx">config_key</span><span class="p">];</span>
+<span class="w">    </span><span class="nx">Logger</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Processing query: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">]);</span>
 
-    <span class="kd">var</span> <span class="nx">threads</span> <span class="o">=</span> <span class="nx">GmailApp</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="s2">&quot;in:inbox &quot;</span> <span class="o">+</span> <span class="nx">config</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; newer_than:&quot;</span> <span class="o">+</span> <span class="nx">config</span><span class="p">[</span><span class="s2">&quot;age_max&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="s2">&quot; older_than:&quot;</span> <span class="o">+</span> <span class="nx">config</span><span class="p">[</span><span class="s2">&quot;age_min&quot;</span><span class="p">]);</span>
-    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">thread_key</span> <span class="k">in</span> <span class="nx">threads</span><span class="p">)</span> <span class="p">{</span>
-      <span class="kd">var</span> <span class="nx">thread</span> <span class="o">=</span> <span class="nx">threads</span><span class="p">[</span><span class="nx">thread_key</span><span class="p">];</span>
-      <span class="nx">Logger</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;  Archiving: &quot;</span> <span class="o">+</span> <span class="nx">thread</span><span class="p">.</span><span class="nx">getFirstMessageSubject</span><span class="p">());</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">GmailApp</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="s2">&quot;in:inbox &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; newer_than:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;age_max&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; older_than:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;age_min&quot;</span><span class="p">]);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="nx">thread_key</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">threads</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">var</span><span class="w"> </span><span class="nx">thread</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">threads</span><span class="p">[</span><span class="nx">thread_key</span><span class="p">];</span>
+<span class="w">      </span><span class="nx">Logger</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;  Archiving: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">thread</span><span class="p">.</span><span class="nx">getFirstMessageSubject</span><span class="p">());</span>
 
-      <span class="nx">thread</span><span class="p">.</span><span class="nx">markRead</span><span class="p">();</span>
-      <span class="nx">thread</span><span class="p">.</span><span class="nx">moveToArchive</span><span class="p">();</span>
-    <span class="p">}</span>
-  <span class="p">}</span>
+<span class="w">      </span><span class="nx">thread</span><span class="p">.</span><span class="nx">markRead</span><span class="p">();</span>
+<span class="w">      </span><span class="nx">thread</span><span class="p">.</span><span class="nx">moveToArchive</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -399,115 +497,6 @@ I also modified the build version strings in <code>Default_Version.h</code> so I
 <p>I'll probably write more about this later, but for now, here is a simple screenshot of the install CD having just booted.</p>
 <p><em>Update</em>: Zoltan has published a page with information about how to get it working, <a href="http://zero.eik.bme.hu/~balaton/qemu/amiga/">see here</a></p>
 <p><img alt="Screenshot" src="http://cmsj.net/images/2018-07-05-amigaos-qemu.png"></p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2018/07/04/home-pro-part1-update.html">Home networking like a pro - Part 1.1 - Network Storage Redux</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Wed 04 July 2018</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Back in <a href="/2017/06/22/home-pro-part-1-nas.html">this post</a> I described having switched from a Mac Mini + DAS setup, to a Synology and an Intel NUC setup, for my file storage and server needs.</p>
-<p>For a time it was good, but I found myself wanting to run more server daemons, and the NUC wasn't really able to keep up. The Synology was plodding along fine, but I made the decision to unify them all into a more beefy Linux machine.</p>
-<p>So, I bought an AMD Ryzen 5 1600 CPU and an A320M motherboard, 16GB of RAM and a micro ATX case with 8 drive bays, and set to work. That quickly proved to be a disaster because Linux wasn't stable on the AMD CPU - I hadn't even thought to check, because why wouldn't Linux be stable on an x86_64 CPU in 2018?! With that lesson learned, I swapped out the board/CPU for an Intel i7-8700 and a Z370 motherboard.</p>
-<p>I didn't go with FreeNAS as my previous post suggested I might, because ultimately I wanted complete control, so it's a plain Ubuntu Server machine that is fully managed by Ansible playbooks. In retrospect it was a mistake to try and delegate server tasks to an appliance like the Synology, and it was a further mistake to try and deal with that by getting the NUC - I should have just cut my losses and gone straight to a Linux server. Lesson learned!</p>
-<p>Instead of getting lost in the weeds of purchase choices and justifications, instead let's look at some of the things I'm doing to the server with Ansible.</p>
-<p>First up is root disk encryption - it's nice to know that your data is private when at rest, but a headless machine in a cupboard is not a fun place to be typing a password on boot. Fortunately I have two ways round this - firstly, a KVM (a Lantronix Spider) and secondly, one can add dropbear to an initramfs so you can ssh into the initramfs to enter the password.</p>
-<p>Here's the playbook tasks that put dropbear into the initramfs:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install dropbear-initramfs</span>
-  <span class="nt">apt</span><span class="p">:</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs</span>
-    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
-
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install busybox-static</span>
-  <span class="nt">apt</span><span class="p">:</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">busybox-static</span>
-    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
-
-<span class="c1"># This is necessary because of https://bugs.launchpad.net/ubuntu/+source/busybox/+bug/1651818</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Add initramfs hook to fix cryptroot-unlock</span>
-  <span class="nt">copy</span><span class="p">:</span>
-    <span class="nt">dest</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/initramfs-tools/hooks/zz-busybox-initramfs-fix</span>
-    <span class="nt">src</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/zz-busybox-initramfs-fix</span>
-    <span class="nt">mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0744</span>
-    <span class="nt">owner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-    <span class="nt">group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
-
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure dropbear-initramfs</span>
-  <span class="nt">lineinfile</span><span class="p">:</span>
-    <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/config</span>
-    <span class="nt">regexp</span><span class="p">:</span> <span class="s">&#39;DROPBEAR_OPTIONS&#39;</span>
-    <span class="nt">line</span><span class="p">:</span> <span class="s">&#39;DROPBEAR_OPTIONS=&quot;-p</span><span class="nv"> </span><span class="s">31337</span><span class="nv"> </span><span class="s">-s</span><span class="nv"> </span><span class="s">-j</span><span class="nv"> </span><span class="s">-k</span><span class="nv"> </span><span class="s">-I</span><span class="nv"> </span><span class="s">60&quot;&#39;</span>
-  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
-
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Add dropbear authorized_keys</span>
-  <span class="nt">copy</span><span class="p">:</span>
-    <span class="nt">dest</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/authorized_keys</span>
-    <span class="nt">src</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/dropbear-authorized_keys</span>
-    <span class="nt">mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0600</span>
-    <span class="nt">owner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-    <span class="nt">group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
-
-<span class="c1"># The format of the ip= kernel parameter is: &lt;client-ip&gt;:&lt;server-ip&gt;:&lt;gw-ip&gt;:&lt;netmask&gt;:&lt;hostname&gt;:&lt;device&gt;:&lt;autoconf&gt;</span>
-<span class="c1"># It comes from https://git.kernel.org/pub/scm/libs/klibc/klibc.git/tree/usr/kinit/ipconfig/README.ipconfig?id=HEAD</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure boot IP and consoleblanking</span>
-  <span class="nt">lineinfile</span><span class="p">:</span>
-    <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/default/grub</span>
-    <span class="nt">regexp</span><span class="p">:</span> <span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT&#39;</span>
-    <span class="nt">line</span><span class="p">:</span> <span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT=&quot;ip=10.0.88.11::10.0.88.1:255.255.255.0:gnubert:enp0s31f6:none</span><span class="nv"> </span><span class="s">loglevel=7</span><span class="nv"> </span><span class="s">consoleblank=0&quot;&#39;</span>
-  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update grub</span>
-</code></pre></div>
-
-<p>While this does rely on some external files, the important one is <code>zz-busybox-initramfs-fix</code> which works around <a href="https://bugs.launchpad.net/ubuntu/+source/busybox/+bug/1651818">a bug</a> in the busybox build that Ubuntu is currently using. Rather than paste the whole script here, you can see it <a href="https://gist.github.com/cmsj/515fbf602f983e796ea11f95ce32d537">here</a>.</p>
-<p>The last task in the playbook configures Linux to boot with a particular networking config on a particular NIC, so you can ssh in. Once you're in, just run <code>cryptsetup-unlock</code> and your encrypted root is unlocked!</p>
-<p>Another interesting thing I'm doing, is using <a href="https://github.com/borgbackup">Borg</a> for some backups. It's a pretty clever backup system, and it works over SSH, so I use the following Ansible task to allow a particular SSH key to log in to the server as root, in a way that forces it to use Borg:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Deploy ssh borg access</span>
-  <span class="nt">authorized_key</span><span class="p">:</span>
-    <span class="nt">user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
-    <span class="nt">key_options</span><span class="p">:</span> <span class="s">&#39;command=&quot;/usr/bin/borg</span><span class="nv"> </span><span class="s">serve</span><span class="nv"> </span><span class="s">--restrict-to-path</span><span class="nv"> </span><span class="s">/srv/tank/backups/borg&quot;,restrict&#39;</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="s">&quot;ssh-rsa</span><span class="nv"> </span><span class="s">BLAHBLAH</span><span class="nv"> </span><span class="s">cmsj@foo&quot;</span>
-</code></pre></div>
-
-<p>Now on client machines I can run <code>borg create --exclude-caches --compression=zlib -v -p -s ssh://gnuborg:22/srv/tank/backups/borg/foo/backups.borg::cmsj-{utcnow} $HOME</code> and because <code>gnuborg</code> is defined in <code>~/.ssh/config</code> it will use all the right ssh options (username, hostname and the SSH key created for this purpose):</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host gnuborg</span>
-<span class="err">  User root</span>
-<span class="err">  Hostname gnubert.local</span>
-<span class="err">  IdentityFile ~/.ssh/id_rsa_herborg</span>
-</code></pre></div>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2018/07/02/homebridge-server-monitoring.html">Homebridge server monitoring</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Mon 02 July 2018</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p><a href="https://github.com/nfarina/homebridge">Homebridge</a> is a great way to expose arbitrary devices to Apple's HomeKit platform. It has helped bridge the Google Nest and Netgear Arlo devices I have in my home, into my iOS devices, since neither of those manufacturers appear to be interested in becoming officially HomeKit compatible.</p>
-<p>London has been having a little bit of a heatwave recently and it got me thinking about the Linux server I have running in a closet under the stairs - it has pretty poor airflow available to it, and I didn't know how hot its CPU was getting.</p>
-<p>So, by the power of JavaScript, Homebridge and Linux's <code>/sys</code> filesystem, I was able to quickly whip up <a href="https://github.com/cmsj/homebridge-linux-temperature">a plugin</a> for Homebridge that will read an entry from Linux's temperature monitoring interface, and present it to HomeKit. In theory I could use it for sending notifications, but in practice I'm doing that via <a href="https://grafana.com/">Grafana</a> - the purpose of getting the information in HomeKit is so I can ask Siri what the server's temperature is.</p>
-<p>The configuration is very simple, allowing you to configure one temperature sensor per instance of the plugin (but you could define multiple instances in your Homebridge <code>config.json</code>):</p>
-<div class="highlight"><pre><span></span><code><span class="p">{</span>
-    <span class="nt">&quot;accessory&quot;</span><span class="p">:</span> <span class="s2">&quot;LinuxTemperature&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gnubert&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;sensor_path&quot;</span><span class="p">:</span> <span class="s2">&quot;/sys/bus/platform/devices/coretemp.0/hwmon/hwmon0/temp1_input&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;divisor&quot;</span><span class="p">:</span> <span class="mi">1000</span>
-<span class="p">}</span>
-</code></pre></div>
-
-<p>(<code>gnubert</code> is the hostname of my server).</p>
-<p>Below is a screenshot showing the server's CPU temperature mingling with all of the Nest and Arlo items :)</p>
-<p><img alt="Screenshot" src="http://cmsj.net/images/2018-07-02-server-temp-homekit.jpg"></p>
   </div>
 </article>
 

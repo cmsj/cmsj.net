@@ -51,6 +51,89 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2010/04/18/writing-terminator-plugins.html">Writing Terminator plugins</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Sun 18 April 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <h2>Terminator Plugin HOWTO</h2>
+<p>One of the features of the new 0.9x series of Terminator releases that hasn't had a huge amount of announcement/discussion yet is the plugin system. I've posted previously about the decisions that went into the design of the plugin framework, but I figured now would be a good time to look at how to actually take advantage of it.
+While the plugin system is really generic, so far there are only two points in the Terminator code that actually look for plugins - the Terminal context menu and the default URL opening code. If you find you'd like to write a plugin that interacts with a different part of Terminator, please let me know, I'd love to see some clever uses of plugins and I definitely want to expand the number of points that plugins can hook into.
+The basics of a plugin</p>
+<hr>
+<p>A plugin is a class in a .py file in terminatorlib/plugins or ~/.config/terminator/plugins, but not all classes are automatically treated as plugins. Terminator will examine each of the .py files it finds for a list called 'available' and it will load each of the classes mentioned therein.
+Additionally, it would be a good idea to import terminatorlib.plugin as that contains the base classes that other plugins should be derived from.
+A quick example:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="k">as</span> <span class="nn">plugin</span>
+<span class="n">available</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;myfirstplugin&#39;</span><span class="p">]</span>
+<span class="k">class</span> <span class="nc">myfirstplugin</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">SomeBasePluginClass</span><span class="p">):</span>
+  <span class="n">etc</span><span class="o">.</span>
+</code></pre></div>
+
+<p>So now let's move on to the simplest type of plugin currently available in Terminator, a URL handler.
+URL Handlers</p>
+<hr>
+<p>This type of plugin adds new regular expressions to match text in the terminal that should be handled as URLs. We ship an example of this with Terminator, it's a handler that adds support for the commonly used format for Launchpad. Ignoring the comments and the basics above, this is ultimately all it is:</p>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="n">LaunchpadBugURLHandler</span>(<span class="n">plugin</span>.<span class="n">URLHandler</span>):
+  <span class="n">capabilities</span> = [<span class="s">&#39;url_handler&#39;</span>]
+  <span class="n">handler_name</span> = <span class="s">&#39;launchpad_bug&#39;</span>
+  <span class="nb">match</span> = <span class="s">&#39;\\b(lp|LP):?\s?#?[0-9]+(,\s*#?[0-9]+)*\\b&#39;</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nv">def</span><span class="w"> </span><span class="nv">callback</span><span class="ss">(</span><span class="nv">self</span>,<span class="w"> </span><span class="nv">url</span><span class="ss">)</span>:
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nv">item</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">re</span>.<span class="nv">findall</span><span class="ss">(</span><span class="nv">r</span><span class="s1">&#39;[0-9]+&#39;</span>,<span class="w"> </span><span class="nv">url</span><span class="ss">)</span>:
+<span class="w">      </span><span class="k">return</span><span class="ss">(</span><span class="s1">&#39;https://bugs.launchpad.net/bugs/%s&#39;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="nv">item</span><span class="ss">)</span>
+</code></pre></div>
+
+<p>That's it! Let's break it down a little to see the important things here:
+-   inherit from plugin.URLHandler if you want to handle URLs.
+-   include 'url_handler' in your capabilities list
+-   URL handlers must specify a unique handler_name (no enforcement of uniqueness is performed by Terminator, so use some common sense with the namespace)
+-   Terminator will call a method in your class called callback() and pass it the text that was matched. You must return a valid URL which will probably be based on this text.</p>
+<p>and that's all there is to it really. Next time you start terminator you should find the pattern you added gets handled as a URL!
+Context menu items</p>
+<hr>
+<p>This type of plugin is a little more involved, but not a huge amount and as with URLHandler we ship an example in terminatorlib/plugins/custom_commands.py which is a plugin that allows users to add custom commands to be sent to the terminal when selected. This also brings a second aspect of making more complex plugins - storing configuration. Terminator's shiny new configuration system (based on the excellent ConfigObj) exposes some API for plugins to use for loading and storing their configuration. The nuts and bolts here are:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="k">as</span> <span class="nn">plugin</span>
+<span class="kn">from</span> <span class="nn">terminatorlib.config</span> <span class="kn">import</span> <span class="n">Config</span>
+<span class="n">available</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CustomCommandsMenu&#39;</span><span class="p">]</span>
+<span class="k">class</span> <span class="nc">CustomCommandsMenu</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">MenuItem</span><span class="p">):</span>
+  <span class="n">capabilities</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;terminal_menu&#39;</span><span class="p">]</span>
+  <span class="n">config</span> <span class="o">=</span> <span class="kc">None</span>
+  <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
+    <span class="n">myconfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">plugin_get_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+    <span class="c1"># Now extract valid data from sections{}</span>
+  <span class="k">def</span> <span class="nf">callback</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">menuitems</span><span class="p">,</span> <span class="n">menu</span><span class="p">,</span> <span class="n">terminal</span><span class="p">):</span>
+    <span class="n">menuitems</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gtk</span><span class="o">.</span><span class="n">MenuItem</span><span class="p">(</span><span class="s1">&#39;some jazz&#39;</span><span class="p">))</span>
+</code></pre></div>
+
+<p>This is a pretty simplified example, but it's sufficient to insert a menu item that says "some jazz". I'm not going to go into the detail of hooking up a handler to the 'activate' event of the MenuItem or other PyGTK mechanics, but this gives you the basic detail. The method that Terminator will call from your class is again "callback()" and you get passed a list you should add your menu structure to, along with references to the main menu object and the related Terminal. As the plugin system expands and matures I'd like to be more formal about the API that plugins should expect to be able to rely on, rather than having them poke around inside classes like Config and Terminal. Suggestions are welcome :)
+Regarding the configuration storage API - the value returned by Config.plugin_get_config() is just a dict, it's whatever is currently configured for your plugin's name in the Terminator config file. There's no validation of this data, so you should pay attention to it containing valid data. You can then set whatever you want in this dict and pass it to Config().plugin_set_config() with the name of your class and then call Config().save() to flush this out to disk (I recommend that you be quite liberal about calling save()).
+Wrap up</p>
+<hr>
+<p>Right now that's all there is to it. Please get in touch if you have any suggestions or questions - I'd love to ship more plugins with Terminator itself, and I can think of some great ideas. Probably the most useful thing would be something to help customise Terminator for heavy ssh users (see the earlier fork of Terminator called 'ssherminator')</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2010/04/15/terminator-093-released.html">Terminator 0.93 released!</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Thu 15 April 2010</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Another week, another release focused on squashing as many bugs as possible. There's also one feature in this release - a patch from Kees Cook to add a preferences UI for the alternate_screen_scroll setting.
+Please keep those bug reports coming, the response to the 0.9x series has been fantastic!</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2010/04/07/terminator-092-released.html">Terminator 0.92 released</a></h1>
   </div>
   <div class="article__meta">
@@ -179,59 +262,6 @@ Then I'm going to write a tool to convert old config files and we can think abou
 So there it is - trunk is now completely refactored and full of exciting new bugs. I noticed while I was working from it this afternoon that the transparency setting code wasn't working, but I expect I can get that cleared up tonight :)
 Now a bunch of bug fixing and a config converter and we can release!
 Thanks to everyone who has been testing so far.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2010/01/19/terminator-090-progress.html">Terminator 0.90 progress</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Tue 19 January 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Further to my previous post I thought I'd post a quick update about how things are progressing. I mentioned in my previous post that I knew of several things that were not yet working in the Epic Refactor branch:</p>
-<ul>
-<li>-e and -x command line options</li>
-<li>all forms of drag &amp; drop</li>
-<li>directional navigation</li>
-<li>some keyboard shortcuts</li>
-</ul>
-<p>I'm pleased to say that the first two of these are now taken care of, but the latter two are still to be done. I'm less pleased to say that I haven't had much external feedback about this branch yet, but I suspect that most people who might be interested probably don't read my blog ;)
-So if you know people who like Terminator and enjoy testing things out, all they need to do is:
-    bzr branch lp:~cmsj/terminator/epic-refactor
-    cd epic-refactor
-    ./terminator</p>
-<p>and give some feedback!</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2010/01/05/testing-terminator-090.html">Testing Terminator 0.90</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Tue 05 January 2010</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>You might have seen my recent posts about the epic refactoring that has been going on in the Terminator codebase for the last few months.
-I think it's finally time that we get some more eyeballs on it, mainly so I can check that I haven't massively screwed something up. I know there is lots of missing functionality right now, and probably a bunch of subtle bugs, but I could use your help quantifying exactly what these are!
-If you're inclined to help, please branch <em>lp:~cmsj/terminator/epic-refactor</em>, cd into it and run <em>./terminator</em>, then use it like you always would and file bugs, preferably indicating clearly in the bug that you're using this branch and not trunk (maybe tag the bug '<strong>epicrefactor</strong>').
-Things I know are broken right now:</p>
-<ul>
-<li>-e and -x command line options</li>
-<li>all forms of drag &amp; drop</li>
-<li>directional navigation</li>
-<li>some keyboard shortcuts</li>
-</ul>
-<p>Things I know are missing because they're not coming back:
--   Extreme tabs mode (sorry, it's just too insane to support)
--   GNOME Terminal profile reading (I'm trying to simplify our crazy config system and dropping GConf is a good way to achieve that)
--   Config file reading. At some point I'll write something that migrates old Terminator configs to the new format, but for now you'll have to live without your old config file. The new one isn't documented yet either, but it is a whole bunch better!</p>
-<p>Now would also be a great time to start writing plugins for Terminator and telling me about them. I'm happy to ship good plugins, but more importantly I want feedback about the weaknesses/strengths of our plugin system. Right now you can only hook into URL mangling and the terminal context menu, but the latter of those gives you pretty serious flexibility I think. Obviously one massive weakness is a lack of documentation about the plugin API, but I'll get to that, I promise!
-So there we have it, another step along the way to me being able to merge this branch into trunk and put out a real release of 0.90 and then eventually 1.0!</p>
   </div>
 </article>
 

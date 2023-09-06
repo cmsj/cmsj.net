@@ -61,66 +61,66 @@
   <div class="article__text">
     <p><a href="http://www.hammerspoon.org">Hammerspoon</a> is heavily dependent on <a href="http://www.lua.org">Lua</a> - it's the true core of the application, so it's unavoidable that we have to interact with Lua's C API in a lot of places. If you've never used it before, Lua's C API is designed to be very simple to integrate with other code, but it also places a fairly high burden on developers to integrate it properly.</p>
 <p>One of the ways that Lua remains simple is by being stack based - when you give Lua a C function and make it available to call from Lua code, you have to conform to a particular way of working. The function arguments supplied by the user will be presented to you on a stack, and when your C code has finished its work, the return values must have been pushed onto the stack. Here's an example:</p>
-<div class="highlight"><pre><span></span><code><span class="k">static</span> <span class="kt">int</span> <span class="n">someUsefulFunction</span><span class="p">(</span><span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// Fetch our first argument from the stack</span>
-    <span class="kt">int</span> <span class="n">someNumber</span> <span class="o">=</span> <span class="n">lua_tointeger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+<div class="highlight"><pre><span></span><code><span class="k">static</span><span class="w"> </span><span class="kt">int</span><span class="w"> </span><span class="nf">someUsefulFunction</span><span class="p">(</span><span class="n">lua_State</span><span class="w"> </span><span class="o">*</span><span class="n">L</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Fetch our first argument from the stack</span>
+<span class="w">    </span><span class="kt">int</span><span class="w"> </span><span class="n">someNumber</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lua_tointeger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">);</span>
 
-    <span class="c1">// Fetch our second argument from the stack</span>
-    <span class="kt">char</span> <span class="o">*</span><span class="n">someString</span> <span class="o">=</span> <span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Fetch our second argument from the stack</span>
+<span class="w">    </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">someString</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">);</span>
 
-    <span class="cm">/* Do some useful work here */</span>
+<span class="w">    </span><span class="cm">/* Do some useful work here */</span>
 
-    <span class="c1">// Push two return values onto the stack and return 2 so Lua knows how many return values we provided</span>
-    <span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="s">&quot;some result text&quot;</span><span class="p">);</span>
-    <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">42</span><span class="p">);</span>
-    <span class="k">return</span> <span class="mi">2</span><span class="p">;</span>
+<span class="w">    </span><span class="c1">// Push two return values onto the stack and return 2 so Lua knows how many return values we provided</span>
+<span class="w">    </span><span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="s">&quot;some result text&quot;</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">42</span><span class="p">);</span>
+<span class="w">    </span><span class="k">return</span><span class="w"> </span><span class="mi">2</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
 
 <p>All simple enough.</p>
 <p>In this scenario of calling from Lua→C, Lua creates a pseudo-stack for you, so while it's good practice to keep the stack neat and tidy (i.e. remove things from it that you don't need), it's not critical because apart from the return values, the rest of the stack is thrown away. That pseudo-stack only has 20 slots by default though, so if you're pushing a lot of return arguments, or using the stack for other things, you may need to use <code>lua_checkstack()</code> to grow it larger, up to the maximum (2048 slots).</p>
 <p>Where things get more interesting, is when you're interacting with the Lua stack without having crossed a Lua→C boundary. For example, maybe you're in a callback function that's been triggered by some event in your C program, and now you need to call a Lua function that the user gave you earlier. This might look something like this:</p>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">globalLuaFunction</span><span class="p">;</span>
-<span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// Fetch a pointer to the shared Lua state object</span>
-    <span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span> <span class="o">=</span> <span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">globalLuaFunction</span><span class="p">;</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">aValue</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">aString</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Fetch a pointer to the shared Lua state object</span>
+<span class="w">    </span><span class="n">lua_State</span><span class="w"> </span><span class="o">*</span><span class="n">L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
 
-    <span class="c1">// Push onto the stack, the Lua function previously supplied by the user, from Lua&#39;s global registry</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span> <span class="n">globalLuaFunction</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push onto the stack, the Lua function previously supplied by the user, from Lua&#39;s global registry</span>
+<span class="w">    </span><span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span><span class="w"> </span><span class="n">globalLuaFunction</span><span class="p">);</span>
 
-    <span class="c1">// Push the two arguments for the Lua function</span>
-    <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aValue</span><span class="p">);</span>
-    <span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aString</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push the two arguments for the Lua function</span>
+<span class="w">    </span><span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aValue</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aString</span><span class="p">);</span>
 
-    <span class="c1">// Call the Lua function, telling Lua to expect two arguments</span>
-    <span class="n">lua_call</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Call the Lua function, telling Lua to expect two arguments</span>
+<span class="w">    </span><span class="n">lua_call</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 
-    <span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
 
 <p>Slightly more complex than the last example, but still manageable. Unfortunately in practice this is a fairly suboptimal implementation of a C→Lua call - storing things in the <code>LUA_REGISTRYINDEX</code> table is fine, but it's often nicer to use multiple tables for different things. The big problem here though is that <code>lua_call()</code> doesn't trap errors. If the Lua code raises an exception, Lua will <code>longjmp</code> to a panic handler and <code>abort()</code> your app.</p>
 <p>So, writing this a bit more completely, we get:</p>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
-<span class="kt">int</span> <span class="n">globalLuaFunctionRef</span><span class="p">;</span>
-<span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// Fetch a pointer to the shared Lua state object</span>
-    <span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span> <span class="o">=</span> <span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">luaCallbackTable</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">globalLuaFunctionRef</span><span class="p">;</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">aValue</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">aString</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Fetch a pointer to the shared Lua state object</span>
+<span class="w">    </span><span class="n">lua_State</span><span class="w"> </span><span class="o">*</span><span class="n">L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
 
-    <span class="c1">// Push onto the stack, the table we keep callback references in, from Lua&#39;s global registry</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span> <span class="n">luaCallbackTable</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push onto the stack, the table we keep callback references in, from Lua&#39;s global registry</span>
+<span class="w">    </span><span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span><span class="w"> </span><span class="n">luaCallbackTable</span><span class="p">);</span>
 
-    <span class="c1">// Push onto the stack, from our callback reference table, the Lua function previously supplied by the user</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push onto the stack, from our callback reference table, the Lua function previously supplied by the user</span>
+<span class="w">    </span><span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="n">globalLuaFunctionRef</span><span class="p">);</span>
 
-    <span class="c1">// Push the two arguments for the Lua function</span>
-    <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aValue</span><span class="p">);</span>
-    <span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aString</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push the two arguments for the Lua function</span>
+<span class="w">    </span><span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aValue</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aString</span><span class="p">);</span>
 
-    <span class="c1">// Protected call to the Lua function, telling Lua to expect two arguments</span>
-    <span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Protected call to the Lua function, telling Lua to expect two arguments</span>
+<span class="w">    </span><span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">);</span>
 
-    <span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
 
@@ -128,35 +128,35 @@
 <p>However, we now have a problem, we're leaking at least one item onto Lua's stack and possibly two. Unlike in the Lua→C case, we are not operating within the safe confines of a pseudo-stack, so anything we leak here will stay permanently on the stack, and at some point that's likely to cause the stack to overflow.</p>
 <p>Now here is the kicker - stack overflows are really hard to find by default, you don't typically get a nice error, your program will simply leak stack slots until the stack overflows, far from the place where the leak is happening, then segfault, and your backtraces will have very normal looking Lua API calls in them.</p>
 <p>If we were to handle the stack properly, the above could would actually look like this (and note that we've gone from four Lua API calls in the first C→Lua example, to eight here):</p>
-<div class="highlight"><pre><span></span><code><span class="kt">int</span> <span class="n">luaCallbackTable</span><span class="p">;</span>
-<span class="kt">int</span> <span class="n">globalLuaFunctionRef</span><span class="p">;</span>
-<span class="kt">void</span> <span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span> <span class="n">aValue</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">aString</span><span class="p">)</span> <span class="p">{</span>
-    <span class="c1">// Fetch a pointer to the shared Lua state object</span>
-    <span class="n">lua_State</span> <span class="o">*</span><span class="n">L</span> <span class="o">=</span> <span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
+<div class="highlight"><pre><span></span><code><span class="kt">int</span><span class="w"> </span><span class="n">luaCallbackTable</span><span class="p">;</span>
+<span class="kt">int</span><span class="w"> </span><span class="n">globalLuaFunctionRef</span><span class="p">;</span>
+<span class="kt">void</span><span class="w"> </span><span class="nf">someCallback</span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">aValue</span><span class="p">,</span><span class="w"> </span><span class="kt">char</span><span class="o">*</span><span class="w"> </span><span class="n">aString</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="c1">// Fetch a pointer to the shared Lua state object</span>
+<span class="w">    </span><span class="n">lua_State</span><span class="w"> </span><span class="o">*</span><span class="n">L</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">some_shared_lua_state_provider</span><span class="p">();</span>
 
-    <span class="c1">// Find luaCallbackTable in the Lua registry, and push it onto the stack</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span> <span class="n">luaCallbackTable</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Find luaCallbackTable in the Lua registry, and push it onto the stack</span>
+<span class="w">    </span><span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">LUA_REGISTRYINDEX</span><span class="p">,</span><span class="w"> </span><span class="n">luaCallbackTable</span><span class="p">);</span>
 
-    <span class="c1">// Find globalLuaFunctionRef in luaCallbackTable, and push it onto the stack</span>
-    <span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">,</span> <span class="n">globalLuaFunctionRef</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Find globalLuaFunctionRef in luaCallbackTable, and push it onto the stack</span>
+<span class="w">    </span><span class="n">lua_rawgeti</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">,</span><span class="w"> </span><span class="n">globalLuaFunctionRef</span><span class="p">);</span>
 
-    <span class="c1">// Remove luaCallbackTable from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
-    <span class="n">lua_remove</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-2</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Remove luaCallbackTable from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
+<span class="w">    </span><span class="n">lua_remove</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">-2</span><span class="p">);</span>
 
-    <span class="c1">// Push the two arguments for the Lua function</span>
-    <span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aValue</span><span class="p">);</span>
-    <span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">aString</span><span class="p">);</span>
+<span class="w">    </span><span class="c1">// Push the two arguments for the Lua function</span>
+<span class="w">    </span><span class="n">lua_pushinteger</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aValue</span><span class="p">);</span>
+<span class="w">    </span><span class="n">lua_pushstring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="n">aString</span><span class="p">);</span>
 
-    <span class="k">if</span> <span class="p">(</span><span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">==</span> <span class="nb">false</span><span class="p">)</span> <span class="p">{</span>
-        <span class="c1">// Fetch the Lua error message from the stack</span>
-        <span class="kt">char</span> <span class="o">*</span><span class="n">someError</span> <span class="o">=</span> <span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">);</span>
-        <span class="n">printf</span><span class="p">(</span><span class="s">&quot;ERROR: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span> <span class="n">someError</span><span class="p">);</span>
+<span class="w">    </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">lua_pcall</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="nb">false</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="c1">// Fetch the Lua error message from the stack</span>
+<span class="w">        </span><span class="kt">char</span><span class="w"> </span><span class="o">*</span><span class="n">someError</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">lua_tostring</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+<span class="w">        </span><span class="n">printf</span><span class="p">(</span><span class="s">&quot;ERROR: %s</span><span class="se">\n</span><span class="s">&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">someError</span><span class="p">);</span>
 
-        <span class="c1">// Remove the Lua error message from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
-        <span class="n">lua_pop</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="mi">-1</span><span class="p">);</span>
-    <span class="p">}</span>
+<span class="w">        </span><span class="c1">// Remove the Lua error message from the stack *THIS WAS LEAKED IN THE ABOVE EXAMPLE*</span>
+<span class="w">        </span><span class="n">lua_pop</span><span class="p">(</span><span class="n">L</span><span class="p">,</span><span class="w"> </span><span class="mi">-1</span><span class="p">);</span>
+<span class="w">    </span><span class="p">}</span>
 
-    <span class="k">return</span><span class="p">;</span>
+<span class="w">    </span><span class="k">return</span><span class="p">;</span>
 <span class="p">}</span>
 </code></pre></div>
 

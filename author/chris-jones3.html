@@ -49,6 +49,98 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2017/06/13/karabiner-elements-sierra-hyper.html">Hyper Key in macOS Sierra with Karabiner Elements</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Tue 13 June 2017</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Over the last few years, <a href="http://brettterpstra.com/2012/12/08/a-useful-caps-lock-key/">various</a> <a href="https://www.nadeau.tv/configure-hyper-key-osx/">people</a> have used <a href="https://pqrs.org/osx/karabiner/">Karabiner</a> to remap Caps Lock to cmd+shift+opt+ctrl, which is such an unusual combination of modifier keys, that it effectively makes Caps behave as a completely new modifier (which we have collectively called "Hyper", in reference to old UNIX workstation keyboards).</p>
+<p>And for a time, it was good.</p>
+<p>Then came macOS Sierra, which changed enough of the input layers of its kernel, that Karabiner was unable to function. Thankfully, Karabiner's author, Fumihiko Takayama, began work on a complete rewrite of Karabiner, which is currently called <a href="https://github.com/tekezo/Karabiner-Elements">Karabiner Elements</a>.</p>
+<p>Initially, Elements only supported very simple keyboard modifications - you could swap one key for another, but that was it. Various folk quickly got to work offering <a href="https://github.com/tekezo/Karabiner-Elements/pull/170">quick hacks</a> to get a Hyper key to work, and others started to try to <a href="http://brettterpstra.com/2016/09/29/a-better-hyper-key-hack-for-sierra/">work around</a> the missing support, with other tools.</p>
+<p>I'm very glad to say that it is now possible to do a proper Hyper remap with Karabiner Elements (and to be clear, none of this is my work, all credit goes to Fumihiko).</p>
+<p>Here's how you can get it:</p>
+<ul>
+<li>Download and install <a href="https://pqrs.org/latest/karabiner-elements-latest.dmg">https://pqrs.org/latest/karabiner-elements-latest.dmg</a></li>
+<li>Launch the Karabiner Elements app, go to the Misc tab and check which version you have, if it's less than 0.91.1, click either <code>Check for updates</code> or <code>Check for beta updates</code> until you get offered 0.91.1 or higher, then install that update and re-launch the Karabiner Elements app.</li>
+<li>You probably want to remove the example entry in the Simple Modifications tab.</li>
+<li>Edit <code>~/.config/karabiner/karabiner.json</code></li>
+<li>Find the <code>simple_modifications</code> section, and right after it, paste in:</li>
+</ul>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;complex_modifications&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;rules&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">        </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;manipulators&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="p">{</span>
+<span class="w">                    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Change caps_lock to command+control+option+shift.&quot;</span><span class="p">,</span>
+<span class="w">                    </span><span class="nt">&quot;from&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                        </span><span class="nt">&quot;key_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;caps_lock&quot;</span><span class="p">,</span>
+<span class="w">                        </span><span class="nt">&quot;modifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;optional&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                                </span><span class="s2">&quot;any&quot;</span>
+<span class="w">                            </span><span class="p">]</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">},</span>
+<span class="w">                    </span><span class="nt">&quot;to&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                        </span><span class="p">{</span>
+<span class="w">                            </span><span class="nt">&quot;key_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;left_shift&quot;</span><span class="p">,</span>
+<span class="w">                            </span><span class="nt">&quot;modifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                                </span><span class="s2">&quot;left_command&quot;</span><span class="p">,</span>
+<span class="w">                                </span><span class="s2">&quot;left_control&quot;</span><span class="p">,</span>
+<span class="w">                                </span><span class="s2">&quot;left_option&quot;</span>
+<span class="w">                            </span><span class="p">]</span>
+<span class="w">                        </span><span class="p">}</span>
+<span class="w">                    </span><span class="p">],</span>
+<span class="w">                    </span><span class="nt">&quot;type&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;basic&quot;</span>
+<span class="w">                </span><span class="p">}</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">]</span>
+<span class="p">},</span>
+</code></pre></div>
+
+<ul>
+<li>As soon as you save the file, Elements will notice it has changed, and reload its config. You should immediately have a working Hyper key 😁</li>
+</ul>
+<p>If you're not confident at your ability to hand-merge JSON like this, and don't need anything from Elements other than the basic defaults, plus Hyper, feel free to grab <a href="https://gist.githubusercontent.com/cmsj/23ca8a570c060e8ccb2a36cee70ed28b/raw/60cb590411193f24a56fb8f52f96093c5191ba22/karabiner.json">my config</a> and drop it in <code>~/.config/karabiner/</code>.</p>
+<p><em>Supplemental note for High Sierra</em></p>
+<p>I've only tested this very briefly on High Sierra, but I had to disable SIP to get the Elements <code>.kext</code> to load. I'm not quite sure what's going on, but I reported it <a href="https://github.com/tekezo/Karabiner-Elements/issues/777">on GitHub</a>. (Note that you can re-enable SIP after the kext has been loaded successfully once)</p>
+<p><em>Update</em></p>
+<p>Many people like to turn Caps into Hyper, but also have it behave as Escape if it is tapped on its own. As of Karabiner Elements 0.91.3 <a href="https://twitter.com/ttscoff/status/875029764377108480">this appears</a> to be possible by adding this to the manipulator:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">&quot;to_if_alone&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">    </span><span class="p">{</span>
+<span class="w">        </span><span class="nt">&quot;key_code&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;escape&quot;</span><span class="p">,</span>
+<span class="w">        </span><span class="nt">&quot;modifiers&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">            </span><span class="nt">&quot;optional&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>
+<span class="w">                </span><span class="s2">&quot;any&quot;</span>
+<span class="w">            </span><span class="p">]</span>
+<span class="w">        </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">],</span>
+</code></pre></div>
+
+<p>(thanks to <a href="http://brettterpstra.com/">Brett Terpstra</a> for the sample of this</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2017/06/09/new-blog.html">New blog setup</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Fri 09 June 2017</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Bye bye Blogger, hello GitHub Pages. This means no more comments, and probably a bunch of posts have terrible formatting at the moment, but at least my blog is now just static Markdown files I can edit nicely 😁</p>
+<p>(Also the domain has changed, cmsj.net is the new tenshu.net :)</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2016/08/30/changing-gpg-key.html">Changing GPG key</a></h1>
   </div>
   <div class="article__meta">
@@ -58,51 +150,51 @@
   <div class="article__text">
     <p>It's been 15 years and my GPG key is now looking hilariously out of date - 1024bit DSA key. Yuck.
 So, time to start over. Below is a statement about the change, with details of my new and old keys, signed by both keys. Since it will almost certainly not paste properly out of a browser, I have also uploaded it to GitHub: <a href="https://gist.githubusercontent.com/cmsj/3093f03e085239de0e64ea33d1b2bfab/raw/82c2cb9110e83f0aae4a8155aec954c3aa9aab3b/gpg-migration.txt.asc.asc">here</a>.</p>
-<div class="highlight"><pre><span></span><code><span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNED</span> <span class="n">MESSAGE</span><span class="o">-----</span>
-<span class="n">Hash</span><span class="p">:</span> <span class="n">SHA256</span>
+<div class="highlight"><pre><span></span><code><span class="gh">-----BEGIN PGP SIGNED MESSAGE-----</span>
+<span class="na">Hash</span><span class="o">:</span><span class="w"> </span><span class="s">SHA256</span>
 
-<span class="o">-</span> <span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNED</span> <span class="n">MESSAGE</span><span class="o">-----</span>
-<span class="n">Hash</span><span class="p">:</span> <span class="n">SHA256</span>
+<span class="na">- -----BEGIN PGP SIGNED MESSAGE-----</span>
+<span class="na">Hash</span><span class="o">:</span><span class="w"> </span><span class="s">SHA256</span>
 
-<span class="n">Hello</span> <span class="n">world</span>
+<span class="na">Hello world</span>
 
-<span class="n">My</span> <span class="n">name</span> <span class="n">is</span> <span class="n">Chris</span> <span class="n">Jones</span> <span class="n">and</span> <span class="n">I</span> <span class="n">am</span> <span class="n">changing</span> <span class="n">my</span> <span class="n">GPG</span> <span class="n">key</span><span class="p">.</span>
-<span class="n">The</span> <span class="n">original</span> <span class="n">key</span> <span class="n">fingerprint</span> <span class="n">is</span><span class="p">:</span> <span class="mi">6</span><span class="n">C99</span> <span class="mi">9021</span> <span class="mi">9</span><span class="n">B3A</span> <span class="n">EC6D</span> <span class="mi">4</span><span class="n">A28</span>  <span class="mi">7</span><span class="n">EE7</span> <span class="n">C574</span> <span class="mi">7646</span> <span class="mi">7313</span> <span class="mi">2</span><span class="n">D75</span>
-<span class="n">The</span> <span class="n">new</span> <span class="n">key</span> <span class="n">fingerprint</span> <span class="n">is</span><span class="p">:</span> <span class="mi">79</span><span class="n">D2</span> <span class="mi">2</span><span class="n">E89</span> <span class="mi">6591</span> <span class="mi">210</span><span class="n">E</span> <span class="mi">45</span><span class="n">F3</span>  <span class="mi">75</span><span class="n">D3</span> <span class="n">BCA2</span> <span class="mi">36</span><span class="n">E2</span> <span class="n">E19F</span> <span class="mi">727</span><span class="n">D</span>
+<span class="na">My name is Chris Jones and I am changing my GPG key.</span>
+<span class="na">The original key fingerprint is</span><span class="o">:</span><span class="w"> </span><span class="s">6C99 9021 9B3A EC6D 4A28  7EE7 C574 7646 7313 2D75</span>
+<span class="na">The new key fingerprint is</span><span class="o">:</span><span class="w"> </span><span class="s">79D2 2E89 6591 210E 45F3  75D3 BCA2 36E2 E19F 727D</span>
 
-<span class="n">You</span> <span class="n">should</span> <span class="n">find</span> <span class="n">this</span> <span class="n">message</span> <span class="n">signed</span> <span class="n">by</span> <span class="n">the</span> <span class="n">new</span> <span class="n">key</span><span class="p">,</span> <span class="n">and</span> <span class="n">that</span> <span class="n">combined</span> <span class="n">message</span> <span class="n">signed</span> <span class="n">by</span> <span class="n">the</span> <span class="n">old</span> <span class="n">key</span><span class="p">,</span> <span class="n">as</span> <span class="n">proof</span> <span class="n">that</span> <span class="n">I</span> <span class="n">am</span> <span class="n">doing</span> <span class="n">this</span><span class="p">.</span> <span class="n">I</span> <span class="n">have</span> <span class="n">also</span> <span class="n">updated</span> <span class="n">my</span> <span class="n">keybase</span><span class="p">.</span><span class="n">io</span> <span class="n">account</span> <span class="n">and</span> <span class="n">secured</span> <span class="n">a</span> <span class="n">couple</span> <span class="n">of</span> <span class="n">signatures</span> <span class="n">on</span> <span class="n">the</span> <span class="n">new</span> <span class="n">key</span> <span class="n">to</span> <span class="n">start</span> <span class="n">rebuilding</span> <span class="n">my</span> <span class="n">place</span> <span class="n">in</span> <span class="n">the</span> <span class="n">web</span> <span class="n">of</span> <span class="n">trust</span><span class="p">.</span>
+<span class="na">You should find this message signed by the new key, and that combined message signed by the old key, as proof that I am doing this. I have also updated my keybase.io account and secured a couple of signatures on the new key to start rebuilding my place in the web of trust.</span>
 
-<span class="n">Thank</span> <span class="n">you</span> <span class="n">for</span> <span class="n">your</span> <span class="n">time</span><span class="p">,</span>
+<span class="na">Thank you for your time,</span>
 
-<span class="n">Chris</span>
-<span class="o">-</span> <span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
-<span class="n">Version</span><span class="p">:</span> <span class="n">GnuPG</span><span class="o">/</span><span class="n">MacGPG2</span> <span class="n">v2</span><span class="p">.</span><span class="mi">0</span>
+<span class="na">Chris</span>
+<span class="na">- -----BEGIN PGP SIGNATURE-----</span>
+<span class="na">Version</span><span class="o">:</span><span class="w"> </span><span class="s">GnuPG/MacGPG2 v2.0</span>
 
-<span class="n">iQIcBAEBCAAGBQJXxffoAAoJECwUb1eIgw1qUMEP</span><span class="o">+</span><span class="n">wfaB84vYC4tHdo9OS9szaQv</span>
-<span class="n">cmNW0sIuDx</span><span class="o">/</span><span class="n">RQr4iYrcs</span><span class="o">+</span><span class="mi">8</span><span class="n">QTQf2I3FPXUc6auhyF4J7Lntu67sTKI9zyfsDm0IW9</span>
-<span class="n">NbIzysTP1Y35lJPA12VM9O9IRaf5G7J57BKAmAuUbpnY7icIzA0MoD4SwCgcRXtA</span>
-<span class="n">QPZd8JVPDLaNpwb1O5rdQLBAdo</span><span class="o">+</span><span class="n">OUjF</span><span class="o">+</span><span class="n">bB8jZzzoORX0oVVdGhaGJFVhuq8aV1dY</span>
-<span class="mi">0</span><span class="n">YB</span><span class="o">/</span><span class="n">nZr71ZApUVnvSZBfj1FHsgXZ5Fai70iI</span><span class="o">+</span><span class="n">oAox</span><span class="o">/</span><span class="n">Gj6BJ0IJhBIk5hLAzAiXoR</span>
-<span class="mi">8</span><span class="n">EMmtqkWkKc8Jd3NonMzKRGF</span><span class="o">+</span><span class="n">qT</span><span class="o">+</span><span class="n">G3YuZIDmSptOZWjJ5volT25bYFknEBxPslwC</span>
-<span class="n">TiBGSs6rKz9RhfxGxCmM350zBIVFFCn</span><span class="o">+</span><span class="n">RNCWrgn</span><span class="o">/</span><span class="n">z4OJp4xSvZJ0IwqB</span><span class="o">/</span><span class="n">CwkrmUb</span>
-<span class="mi">0</span><span class="n">ZhG44O2W5lpuSCDh1dhCsiryq4JeSiUy1GENyHl8eIkXjzDOjKTt6OT8wYFFPL7</span>
-<span class="n">XheyIfvMbRNh86o79Skch6Qoyh7nvVALAwsLVHKSDtQRzHbVF6ED9h2ISxdABiZ2</span>
-<span class="n">CkiJ95bf8JQeNVoqLJ78uwSYN96AyGPXfMQKG45SavgkzNLyqeoI1iMJE2yYuVIy</span>
-<span class="n">Z9XUaKhoDI9ERLps</span><span class="o">+</span><span class="n">Fw6NY</span><span class="o">+</span><span class="n">v2BVSKTvl5MDEDHmfvjK0m3x6C4tF3</span><span class="o">/</span><span class="n">QdgwRsJmvE</span>
-<span class="mi">2</span><span class="n">XMWXLrBkcZx9tnYNFIG</span>
-<span class="o">=</span><span class="mi">9</span><span class="n">PwA</span>
-<span class="o">-</span> <span class="o">-----</span><span class="kr">END</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
-<span class="o">-----</span><span class="kr">BEGIN</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
-<span class="n">Version</span><span class="p">:</span> <span class="n">GnuPG</span><span class="o">/</span><span class="n">MacGPG2</span> <span class="n">v2</span><span class="p">.</span><span class="mi">0</span>
+<span class="na">iQIcBAEBCAAGBQJXxffoAAoJECwUb1eIgw1qUMEP+wfaB84vYC4tHdo9OS9szaQv</span>
+<span class="na">cmNW0sIuDx/RQr4iYrcs+8QTQf2I3FPXUc6auhyF4J7Lntu67sTKI9zyfsDm0IW9</span>
+<span class="na">NbIzysTP1Y35lJPA12VM9O9IRaf5G7J57BKAmAuUbpnY7icIzA0MoD4SwCgcRXtA</span>
+<span class="na">QPZd8JVPDLaNpwb1O5rdQLBAdo+OUjF+bB8jZzzoORX0oVVdGhaGJFVhuq8aV1dY</span>
+<span class="na">0YB/nZr71ZApUVnvSZBfj1FHsgXZ5Fai70iI+oAox/Gj6BJ0IJhBIk5hLAzAiXoR</span>
+<span class="na">8EMmtqkWkKc8Jd3NonMzKRGF+qT+G3YuZIDmSptOZWjJ5volT25bYFknEBxPslwC</span>
+<span class="na">TiBGSs6rKz9RhfxGxCmM350zBIVFFCn+RNCWrgn/z4OJp4xSvZJ0IwqB/CwkrmUb</span>
+<span class="na">0ZhG44O2W5lpuSCDh1dhCsiryq4JeSiUy1GENyHl8eIkXjzDOjKTt6OT8wYFFPL7</span>
+<span class="na">XheyIfvMbRNh86o79Skch6Qoyh7nvVALAwsLVHKSDtQRzHbVF6ED9h2ISxdABiZ2</span>
+<span class="na">CkiJ95bf8JQeNVoqLJ78uwSYN96AyGPXfMQKG45SavgkzNLyqeoI1iMJE2yYuVIy</span>
+<span class="na">Z9XUaKhoDI9ERLps+Fw6NY+v2BVSKTvl5MDEDHmfvjK0m3x6C4tF3/QdgwRsJmvE</span>
+<span class="na">2XMWXLrBkcZx9tnYNFIG</span>
+<span class="na">=9PwA</span>
+<span class="na">- -----END PGP SIGNATURE-----</span>
+<span class="na">-----BEGIN PGP SIGNATURE-----</span>
+<span class="na">Version</span><span class="o">:</span><span class="w"> </span><span class="s">GnuPG/MacGPG2 v2.0</span>
 
-<span class="n">iQEcBAEBCAAGBQJXxff1AAoJEPH</span><span class="o">//</span><span class="mi">8</span><span class="n">xn2jUBNOcIAL4fqY</span><span class="o">/</span><span class="n">DViwNj2</span><span class="o">/</span><span class="n">Va4ePEg1w</span>
-<span class="mi">9</span><span class="n">uUWhGnMUcG4CsQGkhtODU6Qg45inrWnG0VE8jwhGilP4w5tQoIe</span><span class="o">+</span><span class="n">m53cUp5m</span><span class="o">/</span><span class="n">Rv</span>
-<span class="n">ueRBvfDxBw</span><span class="o">/</span><span class="n">SrF6eFZ1SGkXv6kcUkOYjueKsDtxObaX9dN7PrDUljtZWpGTzE77k</span>
-<span class="mi">5</span><span class="n">EWPGfUT89oXa2eGwYnr6t7t9f76cO9eKFck7rIWT</span><span class="o">+</span><span class="n">p1tzmF6amm7IjoS8gsjfSb</span>
-<span class="n">lPk3PoC0G71wSseh7iesIgw</span><span class="o">+</span><span class="n">vZRZ7tYg59RdpwWLmZjQJVhMzW</span><span class="o">/</span><span class="n">QpX87CPAM2m0A</span>
-<span class="n">OcyivXLlbaSZ58AsHZSIA4ZjeoDnlWNsFHemBUSAOMa03b4JtgnGbTaHTZhiLc8</span><span class="o">=</span>
-<span class="o">=/</span><span class="n">lkZ</span>
-<span class="o">-----</span><span class="kr">END</span> <span class="n">PGP</span> <span class="n">SIGNATURE</span><span class="o">-----</span>
+<span class="s">iQEcBAEBCAAGBQJXxff1AAoJEPH//8xn2jUBNOcIAL4fqY/DViwNj2/Va4ePEg1w</span>
+<span class="s">9uUWhGnMUcG4CsQGkhtODU6Qg45inrWnG0VE8jwhGilP4w5tQoIe+m53cUp5m/Rv</span>
+<span class="s">ueRBvfDxBw/SrF6eFZ1SGkXv6kcUkOYjueKsDtxObaX9dN7PrDUljtZWpGTzE77k</span>
+<span class="s">5EWPGfUT89oXa2eGwYnr6t7t9f76cO9eKFck7rIWT+p1tzmF6amm7IjoS8gsjfSb</span>
+<span class="s">lPk3PoC0G71wSseh7iesIgw+vZRZ7tYg59RdpwWLmZjQJVhMzW/QpX87CPAM2m0A</span>
+<span class="s">OcyivXLlbaSZ58AsHZSIA4ZjeoDnlWNsFHemBUSAOMa03b4JtgnGbTaHTZhiLc8=</span>
+<span class="s">=/lkZ</span>
+<span class="gh">-----END PGP SIGNATURE-----</span>
 </code></pre></div>
   </div>
 </article>
@@ -288,39 +380,6 @@ As a prospective owner of the new Mac Pro, my two reasonable fears from this are
 </ul>
 <p>(While I'm throwing around random predictions, I might as well shoot for a name for the radical modularity model. I would stick with the Lightning/Thunderbolt IO names and call it Super Cell)
 Edit: I'd like to credit Thomas Hurst for helping to shape some of my thinking about QPI.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2013/05/01/my-attempt-at-ipad-repair.html">My attempt at iPad repair.</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Wed 01 May 2013</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>[<a href="//storify.com/cmsj/my-attempt-at-ipad-repair">View the story "My attempt at iPad repair" on Storify</a>]</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2013/04/30/alfred-2-clipboard-history.html">Alfred 2 clipboard history</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Tue 30 April 2013</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>The toweringly awesome Alfred 2 app for OS X has a great clipboard history browser. This is how I suggest you configure and use it:</p>
-<ul>
-<li>Map a hotkey to the viewer (I suggest making it something involving the letter V, since Cmd-V is a normal Paste. I use Cmd-Shift-Option-Ctrl V because I have my Caps Lock key mapped to Cmd-Shift-Option-Ctrl)</li>
-<li>Turn off the option to show snippets at the top of the Clipboard History, because snippets are a whole different thing and not relevant to pasting history</li>
-<li>Turn on the option to auto-paste when you hit Enter on a given item</li>
-</ul>
-<p>With these options all configured, all you have to do is hit the hotkey, select the old clipboard item you want and hit Enter. It will then be pasted into the active window.</p>
-<p>This is also useful to preview the current contents of the clipboard before pasting (which is always a good idea if you're pasting into a sensitive terminal or a work IRC channel and want to avoid spamming some random/harmful nonsense in).</p>
   </div>
 </article>
 

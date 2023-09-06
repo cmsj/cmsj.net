@@ -67,43 +67,43 @@ This is what I did:</p>
 <li>Move the resulting git branch to /etc/puppet/modules/concat and add it to my top-level site manifest that includes modules</li>
 <li>Create a class to manage /etc/motd.tail. In my setup this ends up being /etc/puppet/manifests/classes/motd.pp, which is included by my default node, but your setup is probably different. This is what my class looks like:</li>
 </ul>
-<div class="highlight"><pre><span></span><code>    <span class="k">class</span> <span class="na">motd</span> <span class="p">{</span>
-           <span class="k">include</span> <span class="na">concat</span><span class="p">::</span><span class="na">setup</span>
-           <span class="nv">$motdfile</span> <span class="o">=</span> <span class="s">&quot;/etc/motd.tail&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="w">    </span><span class="k">class</span><span class="w"> </span><span class="na">motd</span><span class="w"> </span><span class="p">{</span>
+<span class="w">           </span><span class="k">include</span><span class="w"> </span><span class="na">concat</span><span class="p">::</span><span class="na">setup</span>
+<span class="w">           </span><span class="nv">$motdfile</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s">&quot;/etc/motd.tail&quot;</span>
 
-           <span class="na">concat</span><span class="p">{</span><span class="nv">$motdfile:</span>
-                   <span class="na">owner</span> <span class="o">=&gt;</span> <span class="na">root</span><span class="p">,</span>
-                   <span class="na">group</span> <span class="o">=&gt;</span> <span class="na">root</span><span class="p">,</span>
-                   <span class="na">mode</span> <span class="o">=&gt;</span> <span class="mi">644</span>
-           <span class="p">}</span>
+<span class="w">           </span><span class="na">concat</span><span class="p">{</span><span class="nv">$motdfile:</span>
+<span class="w">                   </span><span class="na">owner</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="na">root</span><span class="p">,</span>
+<span class="w">                   </span><span class="na">group</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="na">root</span><span class="p">,</span>
+<span class="w">                   </span><span class="na">mode</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">644</span>
+<span class="w">           </span><span class="p">}</span>
 
-           <span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_header&quot;</span><span class="p">:</span>
-                   <span class="na">target</span> <span class="o">=&gt;</span> <span class="nv">$motdfile,</span>
-                   <span class="na">content</span> <span class="o">=&gt;</span> <span class="s">&quot;\nPuppet modules: &quot;</span><span class="p">,</span>
-                   <span class="na">order</span> <span class="o">=&gt;</span> <span class="mi">10</span><span class="p">,</span>
-           <span class="p">}</span>
+<span class="w">           </span><span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_header&quot;</span><span class="p">:</span>
+<span class="w">                   </span><span class="na">target</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nv">$motdfile,</span>
+<span class="w">                   </span><span class="na">content</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;\nPuppet modules: &quot;</span><span class="p">,</span>
+<span class="w">                   </span><span class="na">order</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span>
+<span class="w">           </span><span class="p">}</span>
 
-           <span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_footer&quot;</span><span class="p">:</span>
-                   <span class="na">target</span> <span class="o">=&gt;</span> <span class="nv">$motdfile,</span>
-                   <span class="na">content</span> <span class="o">=&gt;</span> <span class="s">&quot;\n\n&quot;</span><span class="p">,</span>
-                   <span class="na">order</span> <span class="o">=&gt;</span> <span class="mi">90</span><span class="p">,</span>
-           <span class="p">}</span>
-    <span class="p">}</span><span class="c"></span>
+<span class="w">           </span><span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_footer&quot;</span><span class="p">:</span>
+<span class="w">                   </span><span class="na">target</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nv">$motdfile,</span>
+<span class="w">                   </span><span class="na">content</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;\n\n&quot;</span><span class="p">,</span>
+<span class="w">                   </span><span class="na">order</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="mi">90</span><span class="p">,</span>
+<span class="w">           </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 
-<span class="c">    # used by other modules to register themselves in the motd</span>
-    <span class="k">define</span> <span class="na">motd</span><span class="p">::</span><span class="na">register</span><span class="p">(</span><span class="nv">$content=&quot;&quot;,</span> <span class="nv">$order=20)</span> <span class="p">{</span>
-       <span class="k">if</span> <span class="nv">$content</span> <span class="o">==</span> <span class="s">&quot;&quot;</span> <span class="p">{</span>
-          <span class="nv">$body</span> <span class="o">=</span> <span class="nv">$name</span>
-       <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
-          <span class="nv">$body</span> <span class="o">=</span> <span class="nv">$content</span>
-       <span class="p">}</span>
+<span class="w">    </span><span class="c"># used by other modules to register themselves in the motd</span>
+<span class="w">    </span><span class="k">define</span><span class="w"> </span><span class="na">motd</span><span class="p">::</span><span class="na">register</span><span class="p">(</span><span class="nv">$content=&quot;&quot;,</span><span class="w"> </span><span class="nv">$order=20)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">       </span><span class="k">if</span><span class="w"> </span><span class="nv">$content</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="s">&quot;&quot;</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nv">$body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$name</span>
+<span class="w">       </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span>
+<span class="w">          </span><span class="nv">$body</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nv">$content</span>
+<span class="w">       </span><span class="p">}</span>
 
-       <span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_fragment_$name&quot;</span><span class="p">:</span>
-          <span class="na">target</span>  <span class="o">=&gt;</span> <span class="s">&quot;/etc/motd.tail&quot;</span><span class="p">,</span>
-          <span class="na">content</span> <span class="o">=&gt;</span> <span class="s">&quot;$body &quot;</span><span class="p">,</span>
-          <span class="na">order</span> <span class="o">=&gt;</span> <span class="nv">$order</span>
-       <span class="p">}</span>
-    <span class="p">}</span>
+<span class="w">       </span><span class="na">concat</span><span class="p">::</span><span class="na">fragment</span><span class="p">{</span><span class="s">&quot;motd_fragment_$name&quot;</span><span class="p">:</span>
+<span class="w">          </span><span class="na">target</span><span class="w">  </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;/etc/motd.tail&quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="na">content</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="s">&quot;$body &quot;</span><span class="p">,</span>
+<span class="w">          </span><span class="na">order</span><span class="w"> </span><span class="o">=&gt;</span><span class="w"> </span><span class="nv">$order</span>
+<span class="w">       </span><span class="p">}</span>
+<span class="w">    </span><span class="p">}</span>
 </code></pre></div>
 
 <p>So that's quite a mouthful. Let's break it down:

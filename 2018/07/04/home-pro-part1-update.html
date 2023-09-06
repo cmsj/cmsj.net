@@ -66,68 +66,68 @@
 <p>Instead of getting lost in the weeds of purchase choices and justifications, instead let's look at some of the things I'm doing to the server with Ansible.</p>
 <p>First up is root disk encryption - it's nice to know that your data is private when at rest, but a headless machine in a cupboard is not a fun place to be typing a password on boot. Fortunately I have two ways round this - firstly, a KVM (a Lantronix Spider) and secondly, one can add dropbear to an initramfs so you can ssh into the initramfs to enter the password.</p>
 <p>Here's the playbook tasks that put dropbear into the initramfs:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install dropbear-initramfs</span>
-  <span class="nt">apt</span><span class="p">:</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs</span>
-    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install dropbear-initramfs</span>
+<span class="w">  </span><span class="nt">apt</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Install busybox-static</span>
-  <span class="nt">apt</span><span class="p">:</span>
-    <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">busybox-static</span>
-    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install busybox-static</span>
+<span class="w">  </span><span class="nt">apt</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">busybox-static</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
 
 <span class="c1"># This is necessary because of https://bugs.launchpad.net/ubuntu/+source/busybox/+bug/1651818</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Add initramfs hook to fix cryptroot-unlock</span>
-  <span class="nt">copy</span><span class="p">:</span>
-    <span class="nt">dest</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/initramfs-tools/hooks/zz-busybox-initramfs-fix</span>
-    <span class="nt">src</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/zz-busybox-initramfs-fix</span>
-    <span class="nt">mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0744</span>
-    <span class="nt">owner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-    <span class="nt">group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Add initramfs hook to fix cryptroot-unlock</span>
+<span class="w">  </span><span class="nt">copy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/initramfs-tools/hooks/zz-busybox-initramfs-fix</span>
+<span class="w">    </span><span class="nt">src</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/zz-busybox-initramfs-fix</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0744</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">  </span><span class="nt">notify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
 
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure dropbear-initramfs</span>
-  <span class="nt">lineinfile</span><span class="p">:</span>
-    <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/config</span>
-    <span class="nt">regexp</span><span class="p">:</span> <span class="s">&#39;DROPBEAR_OPTIONS&#39;</span>
-    <span class="nt">line</span><span class="p">:</span> <span class="s">&#39;DROPBEAR_OPTIONS=&quot;-p</span><span class="nv"> </span><span class="s">31337</span><span class="nv"> </span><span class="s">-s</span><span class="nv"> </span><span class="s">-j</span><span class="nv"> </span><span class="s">-k</span><span class="nv"> </span><span class="s">-I</span><span class="nv"> </span><span class="s">60&quot;&#39;</span>
-  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure dropbear-initramfs</span>
+<span class="w">  </span><span class="nt">lineinfile</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/config</span>
+<span class="w">    </span><span class="nt">regexp</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;DROPBEAR_OPTIONS&#39;</span>
+<span class="w">    </span><span class="nt">line</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;DROPBEAR_OPTIONS=&quot;-p</span><span class="nv"> </span><span class="s">31337</span><span class="nv"> </span><span class="s">-s</span><span class="nv"> </span><span class="s">-j</span><span class="nv"> </span><span class="s">-k</span><span class="nv"> </span><span class="s">-I</span><span class="nv"> </span><span class="s">60&quot;&#39;</span>
+<span class="w">  </span><span class="nt">notify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
 
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Add dropbear authorized_keys</span>
-  <span class="nt">copy</span><span class="p">:</span>
-    <span class="nt">dest</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/authorized_keys</span>
-    <span class="nt">src</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/dropbear-authorized_keys</span>
-    <span class="nt">mode</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">0600</span>
-    <span class="nt">owner</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-    <span class="nt">group</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Add dropbear authorized_keys</span>
+<span class="w">  </span><span class="nt">copy</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">dest</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/dropbear-initramfs/authorized_keys</span>
+<span class="w">    </span><span class="nt">src</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">dropbear-initramfs/dropbear-authorized_keys</span>
+<span class="w">    </span><span class="nt">mode</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0600</span>
+<span class="w">    </span><span class="nt">owner</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">    </span><span class="nt">group</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">  </span><span class="nt">notify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update initramfs</span>
 
 <span class="c1"># The format of the ip= kernel parameter is: &lt;client-ip&gt;:&lt;server-ip&gt;:&lt;gw-ip&gt;:&lt;netmask&gt;:&lt;hostname&gt;:&lt;device&gt;:&lt;autoconf&gt;</span>
 <span class="c1"># It comes from https://git.kernel.org/pub/scm/libs/klibc/klibc.git/tree/usr/kinit/ipconfig/README.ipconfig?id=HEAD</span>
-<span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Configure boot IP and consoleblanking</span>
-  <span class="nt">lineinfile</span><span class="p">:</span>
-    <span class="nt">path</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">/etc/default/grub</span>
-    <span class="nt">regexp</span><span class="p">:</span> <span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT&#39;</span>
-    <span class="nt">line</span><span class="p">:</span> <span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT=&quot;ip=10.0.88.11::10.0.88.1:255.255.255.0:gnubert:enp0s31f6:none</span><span class="nv"> </span><span class="s">loglevel=7</span><span class="nv"> </span><span class="s">consoleblank=0&quot;&#39;</span>
-  <span class="nt">notify</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">update grub</span>
+<span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure boot IP and consoleblanking</span>
+<span class="w">  </span><span class="nt">lineinfile</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">/etc/default/grub</span>
+<span class="w">    </span><span class="nt">regexp</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT&#39;</span>
+<span class="w">    </span><span class="nt">line</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;GRUB_CMDLINE_LINUX_DEFAULT=&quot;ip=10.0.88.11::10.0.88.1:255.255.255.0:gnubert:enp0s31f6:none</span><span class="nv"> </span><span class="s">loglevel=7</span><span class="nv"> </span><span class="s">consoleblank=0&quot;&#39;</span>
+<span class="w">  </span><span class="nt">notify</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">update grub</span>
 </code></pre></div>
 
 <p>While this does rely on some external files, the important one is <code>zz-busybox-initramfs-fix</code> which works around <a href="https://bugs.launchpad.net/ubuntu/+source/busybox/+bug/1651818">a bug</a> in the busybox build that Ubuntu is currently using. Rather than paste the whole script here, you can see it <a href="https://gist.github.com/cmsj/515fbf602f983e796ea11f95ce32d537">here</a>.</p>
 <p>The last task in the playbook configures Linux to boot with a particular networking config on a particular NIC, so you can ssh in. Once you're in, just run <code>cryptsetup-unlock</code> and your encrypted root is unlocked!</p>
 <p>Another interesting thing I'm doing, is using <a href="https://github.com/borgbackup">Borg</a> for some backups. It's a pretty clever backup system, and it works over SSH, so I use the following Ansible task to allow a particular SSH key to log in to the server as root, in a way that forces it to use Borg:</p>
-<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span> <span class="nt">name</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">Deploy ssh borg access</span>
-  <span class="nt">authorized_key</span><span class="p">:</span>
-    <span class="nt">user</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">root</span>
-    <span class="nt">state</span><span class="p">:</span> <span class="l l-Scalar l-Scalar-Plain">present</span>
-    <span class="nt">key_options</span><span class="p">:</span> <span class="s">&#39;command=&quot;/usr/bin/borg</span><span class="nv"> </span><span class="s">serve</span><span class="nv"> </span><span class="s">--restrict-to-path</span><span class="nv"> </span><span class="s">/srv/tank/backups/borg&quot;,restrict&#39;</span>
-    <span class="nt">key</span><span class="p">:</span> <span class="s">&quot;ssh-rsa</span><span class="nv"> </span><span class="s">BLAHBLAH</span><span class="nv"> </span><span class="s">cmsj@foo&quot;</span>
+<div class="highlight"><pre><span></span><code><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Deploy ssh borg access</span>
+<span class="w">  </span><span class="nt">authorized_key</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">user</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">root</span>
+<span class="w">    </span><span class="nt">state</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">present</span>
+<span class="w">    </span><span class="nt">key_options</span><span class="p">:</span><span class="w"> </span><span class="s">&#39;command=&quot;/usr/bin/borg</span><span class="nv"> </span><span class="s">serve</span><span class="nv"> </span><span class="s">--restrict-to-path</span><span class="nv"> </span><span class="s">/srv/tank/backups/borg&quot;,restrict&#39;</span>
+<span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="s">&quot;ssh-rsa</span><span class="nv"> </span><span class="s">BLAHBLAH</span><span class="nv"> </span><span class="s">cmsj@foo&quot;</span>
 </code></pre></div>
 
 <p>Now on client machines I can run <code>borg create --exclude-caches --compression=zlib -v -p -s ssh://gnuborg:22/srv/tank/backups/borg/foo/backups.borg::cmsj-{utcnow} $HOME</code> and because <code>gnuborg</code> is defined in <code>~/.ssh/config</code> it will use all the right ssh options (username, hostname and the SSH key created for this purpose):</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host gnuborg</span>
-<span class="err">  User root</span>
-<span class="err">  Hostname gnubert.local</span>
-<span class="err">  IdentityFile ~/.ssh/id_rsa_herborg</span>
+<div class="highlight"><pre><span></span><code>Host gnuborg
+  User root
+  Hostname gnubert.local
+  IdentityFile ~/.ssh/id_rsa_herborg
 </code></pre></div>
   </div>
 

@@ -68,9 +68,9 @@
 <p>This follows on from the previous item. If you have some kind of database of servers, teach it the SSH host key of each (usually something like <code>/etc/ssh/ssh_host_rsa_key.pub</code>) then you can export a file with the keys and hostnames in the correct format to use as a <code>known_hosts</code> file, e.g.:</p>
 <p><code>server1.company.com 10.0.0.101 ssh-rsa BLAHBLAHCRYPTOMUMBO</code></p>
 <p>You can then associate this with all the relevant hosts by including something like this in your <code>~/.ssh/config</code>:</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host *.mycompany.com</span>
-<span class="err">    UserKnownHostsFile ~/.ssh/generated_known_hosts</span>
-<span class="err">    StrictHostKeyChecking yes</span>
+<div class="highlight"><pre><span></span><code>Host *.mycompany.com
+    UserKnownHostsFile ~/.ssh/generated_known_hosts
+    StrictHostKeyChecking yes
 </code></pre></div>
 
 <p>This brings some serious advantages:</p>
@@ -83,10 +83,10 @@
 <h2>Know your limits</h2>
 <p>If you're going to write a config snippet that applies to a lot of hosts you can't match with a wildcard, you may end up with a very long <code>Host</code> line in your ssh config. It's worth remembering that there is a limit to the length of lines: 1024 characters. If you're going to need to exceed that, you will have to just have multiple <code>Host</code> sections with the same options.</p>
 <h2>Set sane global defaults</h2>
-<div class="highlight"><pre><span></span><code><span class="err">HashKnownHosts no</span>
-<span class="err">Host *</span>
-<span class="err">    GSSAPIAuthentication no</span>
-<span class="err">    ForwardAgent no</span>
+<div class="highlight"><pre><span></span><code>HashKnownHosts no
+Host *
+    GSSAPIAuthentication no
+    ForwardAgent no
 </code></pre></div>
 
 <p>These are very sane global defaults:</p>
@@ -97,40 +97,40 @@
 </ul>
 <h2>Notify useful metadata</h2>
 <p>If you're using a Linux or OSX desktop, you either have something like <code>notify-send(1)</code> or Growl for desktop notifications. You can hook this into your SSH config to display useful metadata to yourself. The easiest way to do this is via the <code>LocalCommand</code> option:</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host *</span>
-<span class="err">    PermitLocalCommand yes</span>
-<span class="err">    LocalCommand /home/user/bin/ssh-notify.sh %h</span>
+<div class="highlight"><pre><span></span><code>Host *
+    PermitLocalCommand yes
+    LocalCommand /home/user/bin/ssh-notify.sh %h
 </code></pre></div>
 
 <p>This will call the <code>ssh-notify.sh</code> script every time you SSH to a host, passing the hostname you gave, as an argument.  In the script you probably want to ensure you're actually in an interactive terminal and not some kind of backgrounded batch session - this can be done trivially by ensuring that <code>tty -s</code> returns zero. Now the script just needs to go and fetch some metadata about the server you're connecting to (e.g. its physical location, the services that run on it, its hardware specs, etc.) and format them into a command that will display a notification.</p>
 <h2>Sidestep overzealous key agents</h2>
 <p>If you have a lot of SSH keys in your ssh-agent (e.g. more than about 5) you may have noticed that SSHing to machines which want a password, or those which you wish to use a specific key that isn't in your agent, can be quite tricky. The reason for this is that OpenSSH currently seems to talk to the agent in preference to obeying command line options (i.e. <code>-i</code>) or config file directives (i.e. <code>IdentityFile</code> or PreferredAuthentications). You can force the behaviour you are asking for with the <code>IdentitiesOnly</code> option, e.g.:</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host server1.company.com</span>
-<span class="err">    IdentityFile /some/rarely/used/ssh.key</span>
-<span class="err">    IdentitiesOnly yes</span>
+<div class="highlight"><pre><span></span><code>Host server1.company.com
+    IdentityFile /some/rarely/used/ssh.key
+    IdentitiesOnly yes
 </code></pre></div>
 
 <p>(on a command line you would add this with <code>-o IdentitiesOnly=yes</code>)</p>
 <h2>Match hosts with wildcards</h2>
 <p>Sometimes you need to talk to a lot of almost identically-named servers. Obviously SSH has a way to make this easier or I wouldn't be mentioning this. For example, if you needed to ssh to a cluster of remote management devices:</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host *.company.com management-rack-??.company.com</span>
-<span class="err">    User root</span>
-<span class="err">    PreferredAuthentications password</span>
+<div class="highlight"><pre><span></span><code>Host *.company.com management-rack-??.company.com
+    User root
+    PreferredAuthentications password
 </code></pre></div>
 
 <p>This will match anything ending in <code>.company.com</code> and also anything that starts with <code>management-rack-</code> and then has two characters, followed by <code>.company.com</code>.</p>
 <h2>Per-host SSH keys</h2>
 <p>You may have some machines where you have a different key for each machine. By naming them after the fully qualified domain names of the hosts they relate to, you can skip over a more tedious SSH config with something like the following:</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host server-??.company.com</span>
-<span class="err">    IdentityFile /some/path/id_rsa-%h</span>
+<div class="highlight"><pre><span></span><code>Host server-??.company.com
+    IdentityFile /some/path/id_rsa-%h
 </code></pre></div>
 
 <p>(the <code>%h</code> will be substituted with the FQDN you're SSHing to. The <code>ssh_config</code> man page lists a few other available substitutions.)</p>
 <h2>Use fake, per-network port forwarding hosts</h2>
 <p>If you have network management devices which require web access that you normally forward ports for with the <code>-L</code> option, consider constructing a fake host in your SSH config which establishes all of the port forwards you need for that network/datacentre/etc:</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host port-forwards-site1.company.com</span>
-<span class="err">    Hostname server1.company.com</span>
-<span class="err">    LocalForward 1234 10.0.0.101:1234</span>
+<div class="highlight"><pre><span></span><code>Host port-forwards-site1.company.com
+    Hostname server1.company.com
+    LocalForward 1234 10.0.0.101:1234
 </code></pre></div>
 
 <p>This also means that your forwards will be on the same port each time, which makes saving certificates in your browser a reasonable undertaking. All you need to do is <code>ssh port-forwards-site1.company.com</code> (using nifty Tab completion of course!) and you're done. If you don't want it tying up a terminal you can add the options <code>-f</code> and <code>-N</code> to your command line, which will establish the ssh connection in the background.</p>
@@ -139,10 +139,10 @@
 <p>Rather than have tens/dozens/hundreds/etc of servers holding their SSH port open to the Internet and being battered with brute force password cracking attempts, you might consider having a single host listening (or a single host per network perhaps), which you can proxy your SSH connections through.</p>
 <p>If you do consider something like this, you must resist the temptation to place private keys on the jump host - to do so would utterly defeat the point.</p>
 <p>Instead, you can use an old, but very nifty trick that completely hides the jump host from your day-to-day usage:</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host jumphost.company.com</span>
-<span class="err">    ProxyCommand none</span>
-<span class="err">Host *.company.com</span>
-<span class="err">    ProxyCommand ssh jumphost.company.com nc -q0 %h %p</span>
+<div class="highlight"><pre><span></span><code>Host jumphost.company.com
+    ProxyCommand none
+Host *.company.com
+    ProxyCommand ssh jumphost.company.com nc -q0 %h %p
 </code></pre></div>
 
 <p>You might wonder what on earth that is doing, but it's really quite simple. The first <code>Host</code> stanza just means we won't use any special commands to connect to the jump host itself. The second <code>Host</code> stanza says that in order to connect to anything ending in <code>.company.com</code> (but excluding <code>jumphost.company.com</code> because it just matched the previous stanza) we will first SSH to the jump host and then use <code>nc(1)</code> (i.e. netcat) to connect to the relevant port (<code>%p</code>) on the host we originally asked for (<code>%h</code>). Your local SSH client now has a session open to the jump host which is acting like it's a socket to the SSH port on the host you wanted to talk to, so it just uses that connection to establish an SSH session with the machine you wanted. Simple!</p>
@@ -151,10 +151,10 @@
 <h2>Re-use existing SSH connections</h2>
 <p>Some people swear by this trick, but because I'm very close to my servers and have a decent CPU, the setup time for connections doesn't bother me. Folks who are many milliseconds from their servers, or who don't have unquenchable techno-lust for new workstations, may appreciate saving some time when establishing SSH connections.</p>
 <p>The idea is that OpenSSH can place connections into the background automatically, and re-use those existing secure channels when you ask for a new <code>ssh(1)</code>, <code>scp(1)</code> or <code>sftp(1)</code> connections to hosts you have already spoken to. The configuration I would recommend for this, would be:</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host *</span>
-<span class="err">    ControlMaster auto</span>
-<span class="err">    ControlPath ~/.ssh/control/%h-%l-%p</span>
-<span class="err">    ControlPersist 600</span>
+<div class="highlight"><pre><span></span><code>Host *
+    ControlMaster auto
+    ControlPath ~/.ssh/control/%h-%l-%p
+    ControlPersist 600
 </code></pre></div>
 
 <p>This will do several things:</p>
@@ -166,8 +166,8 @@
 <p><em>Note:</em> You should make the <code>~/.ssh/control</code> directory ahead of time and ensure that only your user can access it.</p>
 <h2>Cope with old/buggy SSH devices</h2>
 <p>Perhaps you have a bunch of management devices in your infrastructure and some of them are a few years old already. Should you find yourself trying to SSH to them, you might find that your connections don't work very well. Perhaps your SSH client is too new and is offering algorithms their creaky old SSH servers can't abide. You can strip down the long default list of algorithms to this to ones that a particular device supports, e.g.:</p>
-<div class="highlight"><pre><span></span><code><span class="err">Host power-device-1.company.com</span>
-<span class="err">    HostkeyAlgorithms ssh-rsa,ssh-dss</span>
+<div class="highlight"><pre><span></span><code>Host power-device-1.company.com
+    HostkeyAlgorithms ssh-rsa,ssh-dss
 </code></pre></div>
 
 <h2>That's all folks</h2>

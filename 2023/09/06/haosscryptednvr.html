@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
+
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+  <meta name="og:url" content="http://cmsj.net/2023/09/06/haosscryptednvr.html" />
+  <meta name="og:title" content="Mounting a separate partition for Scrypted NVR storage in Home Assistant OS" />
+  <meta name="og:description" content="All of my smart home stuff is running in Home Assistant, and I'm using their OS on a Mini PC. One of the things I'm running on that OS is the Scrypted Add-On to bridge my generic RTSP cameras into HomeKit, and to use Scrypted's NVR. By default, Scrypted will …" />
+  <meta name="keywords" content="">
+
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Mounting a separate partition for Scrypted NVR storage in Home Assistant OS  </title></head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="http://cmsj.net">cmsj.net</a>
+      </div>
+      <p>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2023/09/06/haosscryptednvr.html">Mounting a separate partition for Scrypted NVR storage in Home Assistant OS</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Wed 06 September 2023</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>All of my smart home stuff is running in Home Assistant, and I'm using their OS on a Mini PC.</p>
+<p>One of the things I'm running on that OS is the Scrypted Add-On to bridge my generic RTSP cameras into HomeKit, and to use Scrypted's NVR.</p>
+<p>By default, Scrypted will be storing NVR recordings in HassOS' <code>data</code> partition. I wanted to make sure that even if the NVR goes wild and fills the disk, the rest of my Home Assistant system wouldn't have to deal with running out of disk space, so I started looking for a way to configure HassOS and/or Scrypted to store the NVR recordings elsewhere. Turns out that isn't directly possible, but there is a very useful feature of HassOS that makes it possible.</p>
+<p>Specifically, that feature is that you can import <code>udev</code> rules. With that I can ensure that a dedicated partition can be mounted in the location that the NVR recordings will be written, and now even if Scrypted goes haywire and runs that partition out of space, the rest of the system will function normally.</p>
+<p>The official documentation for how to import <code>udev</code> rules (amongst many other useful things) is <a href="https://github.com/home-assistant/operating-system/blob/dev/Documentation/configuration.md">here</a>, but the approximate set of steps is:</p>
+<ul>
+<li>Arrange for there to be a partition available on your Home Assistant OS machine, formatted as <code>ext4</code>, with the label <code>NVR</code>. I put a second disk in, so it's completely separate from the boot disk which Home Assistant OS may choose to modify later.</li>
+<li>Format a USB stick as FAT32, named <code>CONFIG</code></li>
+<li>Create a directory on that stick with the name <code>udev</code></li>
+<li>In that <code>udev</code> folder create a plain text file called <code>80-mount-scrypted-nvr-volume.rules</code></li>
+</ul>
+<p>The contents of that rules file should be:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># This will mount a partition with the label &quot;NVR&quot; to: /mnt/data/supervisor/addons/data/09e60fb6_scrypted/scrypted_nvr/</span>
+
+<span class="c1"># Import partition info into environment variables</span>
+<span class="n">IMPORT</span><span class="p">{</span><span class="n">program</span><span class="p">}</span><span class="o">=</span><span class="s2">&quot;/usr/sbin/blkid -o udev -p %N&quot;</span>
+
+<span class="c1"># Exit if the partition is not a filesystem</span>
+<span class="n">ENV</span><span class="p">{</span><span class="n">ID_FS_USAGE</span><span class="p">}</span><span class="o">!=</span><span class="s2">&quot;filesystem&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">GOTO</span><span class="o">=</span><span class="s2">&quot;abort_rule&quot;</span>
+
+<span class="c1"># Exit if the partition isn&#39;t for NVR data</span>
+<span class="n">ENV</span><span class="p">{</span><span class="n">ID_FS_LABEL</span><span class="p">}</span><span class="o">!=</span><span class="s2">&quot;NVR&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">GOTO</span><span class="o">=</span><span class="s2">&quot;abort_rule&quot;</span>
+
+<span class="c1"># Store the mountpoint</span>
+<span class="n">ENV</span><span class="p">{</span><span class="n">mount_point</span><span class="p">}</span><span class="o">=</span><span class="s2">&quot;/mnt/data/supervisor/addons/data/09e60fb6_scrypted/scrypted_nvr/&quot;</span>
+
+<span class="c1"># Mount the device on &#39;add&#39; action (e.g. it was just connected to USB)</span>
+<span class="n">ACTION</span><span class="o">==</span><span class="s2">&quot;add&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">RUN</span><span class="p">{</span><span class="n">program</span><span class="p">}</span><span class="o">+=</span><span class="s2">&quot;/usr/bin/mkdir -p </span><span class="si">%E</span><span class="s2">{mount_point}&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">RUN</span><span class="p">{</span><span class="n">program</span><span class="p">}</span><span class="o">+=</span><span class="s2">&quot;/usr/bin/systemd-mount --no-block --automount=no --collect $devnode </span><span class="si">%E</span><span class="s2">{mount_point}&quot;</span>
+
+<span class="c1"># Umount the device on &#39;remove&#39; action (a.k.a unplug or eject the USB drive)</span>
+<span class="n">ACTION</span><span class="o">==</span><span class="s2">&quot;remove&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">ENV</span><span class="p">{</span><span class="n">dir_name</span><span class="p">}</span><span class="o">!=</span><span class="s2">&quot;&quot;</span><span class="p">,</span><span class="w"> </span><span class="n">RUN</span><span class="p">{</span><span class="n">program</span><span class="p">}</span><span class="o">+=</span><span class="s2">&quot;/usr/bin/systemd-umount </span><span class="si">%E</span><span class="s2">{mount_point}&quot;</span>
+
+<span class="c1"># Exit</span>
+<span class="n">LABEL</span><span class="o">=</span><span class="s2">&quot;abort_rule&quot;</span>
+</code></pre></div>
+
+<p>Notes:
+ * As far as I know, the mountpoint for the Scrypted add-on should be stable, but I can't promise this.
+ * This should be very safe as it will ignore any partition that isn't labelled <code>NVR</code>.
+ * This should work with removable disks (e.g. USB), however, the Scrypted addon will not be stopped if you unplug the disk, so I would strongly recommend not doing that without stopping Scrypted first.</p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
+      <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
+      </div>
+    </footer>
+</body>
+</html>

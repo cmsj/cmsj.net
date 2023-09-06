@@ -64,10 +64,10 @@
 <p>So, by the power of JavaScript, Homebridge and Linux's <code>/sys</code> filesystem, I was able to quickly whip up <a href="https://github.com/cmsj/homebridge-linux-temperature">a plugin</a> for Homebridge that will read an entry from Linux's temperature monitoring interface, and present it to HomeKit. In theory I could use it for sending notifications, but in practice I'm doing that via <a href="https://grafana.com/">Grafana</a> - the purpose of getting the information in HomeKit is so I can ask Siri what the server's temperature is.</p>
 <p>The configuration is very simple, allowing you to configure one temperature sensor per instance of the plugin (but you could define multiple instances in your Homebridge <code>config.json</code>):</p>
 <div class="highlight"><pre><span></span><code><span class="p">{</span>
-    <span class="nt">&quot;accessory&quot;</span><span class="p">:</span> <span class="s2">&quot;LinuxTemperature&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;gnubert&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;sensor_path&quot;</span><span class="p">:</span> <span class="s2">&quot;/sys/bus/platform/devices/coretemp.0/hwmon/hwmon0/temp1_input&quot;</span><span class="p">,</span>
-    <span class="nt">&quot;divisor&quot;</span><span class="p">:</span> <span class="mi">1000</span>
+<span class="w">    </span><span class="nt">&quot;accessory&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;LinuxTemperature&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;gnubert&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;sensor_path&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;/sys/bus/platform/devices/coretemp.0/hwmon/hwmon0/temp1_input&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;divisor&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1000</span>
 <span class="p">}</span>
 </code></pre></div>
 

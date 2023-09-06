@@ -49,6 +49,40 @@
 
 <article>
   <div class="article__title">
+    <h1><a href="http://cmsj.net/2007/08/18/skype.html">Skype</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Sat 18 August 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Skype has been having network issues in the last few days. I don't like the fact that I've been using Skype, but I have. Why? Because it's the easiest way to talk to my girlfriend while she's away.
+That is, it's easy while it works. It has many downsides, but to be fair to it, it's very good at dealing with firewalls and NAT, something that Ekiga really (really really) isn't.
+With Skype broken, and wanting to talk to Ulrike, I suggested we try WengoPhone. She grabbed the windows binary, I grabbed the Linux binary. After a few false starts we got connected and for bonus points, it supports webcams in Windows and Linux, which dramatically improves the value of talking to her (and it's very cool that Ubuntu supports my tiny little Creative laptop webcam out of the box).
+To my utter surprise, not only is Wengo GPL'd, it's also really just a SIP client. This is fantastic and it's just a bit of a shame that the interface uses Qt (the Wengo guys say they would love to see a Gtk port. So would I!). I was able to call her Wengo address (translated into the underlying SIP address) from Ekiga, but it took ages to arrange the call, even longer to connect the audio/video to it and even then it got the video wrong.
+I know Ekiga has been making great strides in their development version and I very much look forward to being able to use it as a swiss army knife of VoIP. Having said that, I kind of suspect that I will be more tempted by some kind of Telepathy VoIP interface which hides all the tediousness of different forms of instant communication and just lets me type to, talk with, and look at people.
+As a result of the Wengo transition, I have just been able to do this:
+<code>-(cmsj@waishou)-(~)- sudo dpkg -P skype(Reading database ... 144578 files and directories currently installed.)Removing skype ...Purging configuration files for skype ...-(cmsj@waishou)-(~)-</code></p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2007/08/01/terminator-03-released.html">Terminator 0.3 released</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Wed 01 August 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>Terminator 0.3 is out, with the expected Terminal closing feature. This really makes the Splitting from 0.2 much more useful.
+As usual, please head over <a href="http://www.tenshu.net/terminator/">here</a> for the goodness.
+<strong>NOTE:</strong> There is a bug preventing zsh users from using terminator. See <a href="https://bugs.launchpad.net/terminator/+bug/129104">the bug on Launchpad</a> for full details.</p>
+  </div>
+</article>
+<hr />
+<article>
+  <div class="article__title">
     <h1><a href="http://cmsj.net/2007/07/29/terminator-02-released.html">Terminator 0.2 released</a></h1>
   </div>
   <div class="article__meta">
@@ -198,45 +232,6 @@ Specifically, I was doing the partitioning manually, but the two visible disks h
 After consulting with the very helpful Colin Watson, it turns out that the disk Ubuntu sees as sda is not the whole PS3 disk, it's the Other OS partition virtualised to look like a whole disk. It is therefore fine to create a partition table and proceed with the install, which I will do tonight.
 (I'm not sure yet what sdb is, it smells like the PS3s internal flash and again I'm not sure if it's wise to mess with it)
 <em>UPDATE:</em> The disks that Linux sees are virtualised by the PS3 (they're actually just partitions made to look like whole disks), so it is fine to make the partition tables (or indeed let the installer do automatic partitioning). <a href="https://bugs.launchpad.net/ubuntu/+source/ubiquity/+bug/106683">The bug</a> where the installer hangs at 15% is due to the low RAM in the PS3. Stop some services (cupsys and hplip are good candidates) and remove some things from your session (update-manager and gnome-cups-icon, for example). Removing applets from the panel is not a bad idea either, and don't run anything else while you are installing. Of course you could plug in a disk of some kind and set up swap, but <a href="https://bugs.launchpad.net/ubuntu/+source/linux-source-2.6.20/+bug/102044">this bug</a> makes that quite hard at the moment.</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2007/06/05/ps3-movie-icons.html">PS3 movie icons</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Tue 05 June 2007</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>Games on the PS3 are displayed as a little icon, but it can be animated and some games take advantage of that. Strangely, the PS3 does not even attempt to automatically thumbnail or live-preview the movies stored on it (another thing Sony could easily fix if they choose to. The Cell can decode literally dozens of movies simultaneously).
-However, the lazyweb rides to the rescue with the news that the PS3 can generate animated thumbnails, but you have to do it yourself. I like that I can do this, but I think it should do it by default and I can choose to override it if I don't like what it auto-captured.
-Basically the trick is to pause the video at the point you want the thumbnail animation to start, then hit Triangle and choose "Change Icon". The next 15 seconds of video are rendered to a little thumbnail in not very much time.
-This is it running on my ps3:
-Full instructions and the author's video are <a href="http://www.tech-recipes.com/rx/2256/ps3_create_video_thumbnails">here</a>.
-Bonus points to anyone who figures out how to replace the thumbnail of one movie with another. The reason? Movie Trailers make great thumbnails because these days they usually flash the locations and characters at you rapidly</p>
-  </div>
-</article>
-<hr />
-<article>
-  <div class="article__title">
-    <h1><a href="http://cmsj.net/2007/06/04/watching-ps3.html">Watching the PS3</a></h1>
-  </div>
-  <div class="article__meta">
-    <p class="article__meta__post-date">Posted on: Mon 04 June 2007</p>
-    </p>
-  </div>
-  <div class="article__text">
-    <p>I don't even remotely have space at the moment for a large TV (even a flatscreen one), also they are still a little expensive (I figure if it's worth doing, it's worth getting a 40" Sony which does 1080p, but that's 1200 quid at the moment).
-I really really didn't want to buy a small TV because they are overpriced (compared to higher resolution monitors) and the thing wouldn't be useful to me when I eventually get a proper TV.
-Instead I went with the dirt cheap Dell SE198WFP 19" widescreen monitor. It's an inch smaller than the E207WFP I use for my PC, and consequently only supports slightly smaller resolutions (1440x900 being its maximum). However, it does have some features which make it particularly well suited to the PS3.
-<img alt="Dell SE198WFP" src="http://www.tenshu.net/wp-content/uploads/2007/06/littledell.png">
-First off, it supports HDCP (the DRM system being used in the HDtv world), so I should be able to play back protected content without the PS3 refusing to trust me or downscaling it to an annoyingly low resolution.
-900 rows of pixels means the maximum resolution falls somewhere between 720p and 1080i/1080p, however, the monitor supports both. This was especially surprising to me as I had expected to be "limited" to 720p (many/most PS3 games at the moment don't go higher than 720p anyway, and it's still a massive leap over standard definition TV). I need to do some more exhaustive comparisons, but I think I will be going with 720p rather than 1080i (it doesn't seem to support 1080p) because it's an uninterlaced mode, so there is absolutely no flickering. Either way the monitor is scaling the image - the question is, which direction is better? scaling 720 rows up to 900, or scaling 1080 rows down to 900. Time will tell (as will this blog!)
-For anyone wondering how I managed to connect a monitor which only has DVI and VGA inputs to the PS3 which only has HDMI, component and composite outputs - fear not, HDMI is actually a combination of DVI signals, audio and probably some other gumpf), so it is entirely possible to convert the HDMI output of the PS3 to DVI. That means no analogue signal/conversion at all, so the picture quality is superb and the cables to do it can be obtained easily and cheaply online (don't splash out on a stupidly expensive gold cable, it's a digital signal so cable quality matters a lot less. Just avoid the inexplicably cheap ones on ebay from the far east, they look very dodgy!).
-If you're looking to put a PS3 in a bedroom and don't really care for a TV, I would thoroughly recommend this monitor, especially since you'll still have the VGA port free for other things.
-I'm sure you won't care, but it also just happens to fit exactly into the only appropriate place for it on my desk!</p>
   </div>
 </article>
 

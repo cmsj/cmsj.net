@@ -67,7 +67,7 @@ The basics of a plugin</p>
 <p>A plugin is a class in a .py file in terminatorlib/plugins or ~/.config/terminator/plugins, but not all classes are automatically treated as plugins. Terminator will examine each of the .py files it finds for a list called 'available' and it will load each of the classes mentioned therein.
 Additionally, it would be a good idea to import terminatorlib.plugin as that contains the base classes that other plugins should be derived from.
 A quick example:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="kn">as</span> <span class="nn">plugin</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="k">as</span> <span class="nn">plugin</span>
 <span class="n">available</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;myfirstplugin&#39;</span><span class="p">]</span>
 <span class="k">class</span> <span class="nc">myfirstplugin</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">SomeBasePluginClass</span><span class="p">):</span>
   <span class="n">etc</span><span class="o">.</span>
@@ -77,15 +77,15 @@ A quick example:</p>
 URL Handlers</p>
 <hr>
 <p>This type of plugin adds new regular expressions to match text in the terminal that should be handled as URLs. We ship an example of this with Terminator, it's a handler that adds support for the commonly used format for Launchpad. Ignoring the comments and the basics above, this is ultimately all it is:</p>
-<div class="highlight"><pre><span></span><code><span class="err">class LaunchpadBugURLHandler(plugin.URLHandler):</span>
-<span class="err">  capabilities = [&#39;url_handler&#39;]</span>
-<span class="err">  handler_name = &#39;launchpad_bug&#39;</span>
-<span class="err">  match = &#39;\\b(lp|LP):?\s?#?[0-9]+(,\s*#?[0-9]+)*\\b&#39;</span>
+<div class="highlight"><pre><span></span><code><span class="k">class</span> <span class="n">LaunchpadBugURLHandler</span>(<span class="n">plugin</span>.<span class="n">URLHandler</span>):
+  <span class="n">capabilities</span> = [<span class="s">&#39;url_handler&#39;</span>]
+  <span class="n">handler_name</span> = <span class="s">&#39;launchpad_bug&#39;</span>
+  <span class="nb">match</span> = <span class="s">&#39;\\b(lp|LP):?\s?#?[0-9]+(,\s*#?[0-9]+)*\\b&#39;</span>
 </code></pre></div>
 
-<div class="highlight"><pre><span></span><code><span class="err">  def callback(self, url):</span>
-<span class="err">    for item in re.findall(r&#39;[0-9]+&#39;, url):</span>
-<span class="err">      return(&#39;https://bugs.launchpad.net/bugs/%s&#39; % item)</span>
+<div class="highlight"><pre><span></span><code><span class="w">  </span><span class="nv">def</span><span class="w"> </span><span class="nv">callback</span><span class="ss">(</span><span class="nv">self</span>,<span class="w"> </span><span class="nv">url</span><span class="ss">)</span>:
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="nv">item</span><span class="w"> </span><span class="nv">in</span><span class="w"> </span><span class="nv">re</span>.<span class="nv">findall</span><span class="ss">(</span><span class="nv">r</span><span class="s1">&#39;[0-9]+&#39;</span>,<span class="w"> </span><span class="nv">url</span><span class="ss">)</span>:
+<span class="w">      </span><span class="k">return</span><span class="ss">(</span><span class="s1">&#39;https://bugs.launchpad.net/bugs/%s&#39;</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="nv">item</span><span class="ss">)</span>
 </code></pre></div>
 
 <p>That's it! Let's break it down a little to see the important things here:
@@ -97,12 +97,12 @@ URL Handlers</p>
 Context menu items</p>
 <hr>
 <p>This type of plugin is a little more involved, but not a huge amount and as with URLHandler we ship an example in terminatorlib/plugins/custom_commands.py which is a plugin that allows users to add custom commands to be sent to the terminal when selected. This also brings a second aspect of making more complex plugins - storing configuration. Terminator's shiny new configuration system (based on the excellent ConfigObj) exposes some API for plugins to use for loading and storing their configuration. The nuts and bolts here are:</p>
-<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="kn">as</span> <span class="nn">plugin</span>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span> <span class="nn">terminatorlib.plugin</span> <span class="k">as</span> <span class="nn">plugin</span>
 <span class="kn">from</span> <span class="nn">terminatorlib.config</span> <span class="kn">import</span> <span class="n">Config</span>
 <span class="n">available</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;CustomCommandsMenu&#39;</span><span class="p">]</span>
 <span class="k">class</span> <span class="nc">CustomCommandsMenu</span><span class="p">(</span><span class="n">plugin</span><span class="o">.</span><span class="n">MenuItem</span><span class="p">):</span>
   <span class="n">capabilities</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;terminal_menu&#39;</span><span class="p">]</span>
-  <span class="n">config</span> <span class="o">=</span> <span class="bp">None</span>
+  <span class="n">config</span> <span class="o">=</span> <span class="kc">None</span>
   <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
     <span class="bp">self</span><span class="o">.</span><span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="p">()</span>
     <span class="n">myconfig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">config</span><span class="o">.</span><span class="n">plugin_get_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>

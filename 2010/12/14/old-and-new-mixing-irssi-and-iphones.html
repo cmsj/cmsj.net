@@ -74,19 +74,19 @@
 <p>Instead, we are going to install a patched irssi from one of my PPAs, but if you do not care for this idea, the above URL will let you build your own patched irssi and contains the colloquy_push.pl script.</p>
 <h1>Installation</h1>
 <p>These commands will install the patched irssi and the colloquy_push.pl script:</p>
-<div class="highlight"><pre><span></span><code><span class="err">sudo add-apt-repository ppa:cmsj/irssi-colloquy-push</span>
-<span class="err">sudo apt-get update</span>
-<span class="err">sudo apt-get install irssi</span>
+<div class="highlight"><pre><span></span><code>sudo add-apt-repository ppa:cmsj/irssi-colloquy-push
+sudo apt-get update
+sudo apt-get install irssi
 </code></pre></div>
 
 <p>(If you don't have <code>add-apt-repository</code> available, it's in the <code>python-software-properties</code> package).</p>
 <h1>Configuration</h1>
 <h2>irssi-proxy</h2>
 <p>The first step is to load irssi-proxy. This is distributed as a plugin library in the irssi package, you can load it with:</p>
-<div class="highlight"><pre><span></span><code><span class="o">/</span><span class="nb">load</span> <span class="n">proxy</span>
-<span class="o">/</span><span class="n">set</span> <span class="n">irssiproxy_bind</span> <span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span>
-<span class="o">/</span><span class="n">set</span> <span class="n">irssiproxy_password</span> <span class="n">PICKAGOODPASSWORD</span>
-<span class="o">/</span><span class="n">set</span> <span class="n">irssiproxy_ports</span> <span class="n">network1</span><span class="o">=</span><span class="mi">31337</span> <span class="n">network2</span><span class="o">=</span><span class="mi">31338</span> <span class="n">network3</span><span class="o">=</span><span class="mi">31339</span>
+<div class="highlight"><pre><span></span><code><span class="o">/</span><span class="nb">load</span><span class="w"> </span><span class="n">proxy</span>
+<span class="o">/</span><span class="n">set</span><span class="w"> </span><span class="n">irssiproxy_bind</span><span class="w"> </span><span class="mf">127.0</span><span class="o">.</span><span class="mf">0.1</span>
+<span class="o">/</span><span class="n">set</span><span class="w"> </span><span class="n">irssiproxy_password</span><span class="w"> </span><span class="n">PICKAGOODPASSWORD</span>
+<span class="o">/</span><span class="n">set</span><span class="w"> </span><span class="n">irssiproxy_ports</span><span class="w"> </span><span class="n">network1</span><span class="o">=</span><span class="mi">31337</span><span class="w"> </span><span class="n">network2</span><span class="o">=</span><span class="mi">31338</span><span class="w"> </span><span class="n">network3</span><span class="o">=</span><span class="mi">31339</span>
 </code></pre></div>
 
 <p>Obviously you'll need to replace <code>PICKAGOODPASSWORD</code> with a password, preferably a good one. Also you'll need to replace <code>network1</code>/<code>network2</code>/<code>network3</code> with the names of the networks you've configured in irssi (which you can see with the command <code>/network list</code>) and switch them to different ports if you want.</p>
