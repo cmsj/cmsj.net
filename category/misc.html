@@ -68,6 +68,8 @@
 <li>Format a USB stick as FAT32, named <code>CONFIG</code></li>
 <li>Create a directory on that stick with the name <code>udev</code></li>
 <li>In that <code>udev</code> folder create a plain text file called <code>80-mount-scrypted-nvr-volume.rules</code></li>
+<li>Place the udev rules below in that file</li>
+<li>Put the USB stick in your Home Assistant OS machine and, from a terminal, run <code>ha os import</code></li>
 </ul>
 <p>The contents of that rules file should be:</p>
 <div class="highlight"><pre><span></span><code><span class="c1"># This will mount a partition with the label &quot;NVR&quot; to: /mnt/data/supervisor/addons/data/09e60fb6_scrypted/scrypted_nvr/</span>

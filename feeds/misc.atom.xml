@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom"><title>cmsj.net - misc</title><link href="http://cmsj.net/" rel="alternate"></link><link href="http://cmsj.net/feeds/misc.atom.xml" rel="self"></link><id>http://cmsj.net/</id><updated>2023-09-06T23:11:09+01:00</updated><entry><title>Mounting a separate partition for Scrypted NVR storage in Home Assistant OS</title><link href="http://cmsj.net/2023/09/06/haosscryptednvr.html" rel="alternate"></link><published>2023-09-06T00:00:00+01:00</published><updated>2023-09-06T23:11:09+01:00</updated><author><name>Chris Jones</name></author><id>tag:cmsj.net,2023-09-06:/2023/09/06/haosscryptednvr.html</id><summary type="html">&lt;p&gt;All of my smart home stuff is running in Home Assistant, and I'm using their OS on a Mini PC.&lt;/p&gt;
+<feed xmlns="http://www.w3.org/2005/Atom"><title>cmsj.net - misc</title><link href="http://cmsj.net/" rel="alternate"></link><link href="http://cmsj.net/feeds/misc.atom.xml" rel="self"></link><id>http://cmsj.net/</id><updated>2023-09-06T23:27:57+01:00</updated><entry><title>Mounting a separate partition for Scrypted NVR storage in Home Assistant OS</title><link href="http://cmsj.net/2023/09/06/haosscryptednvr.html" rel="alternate"></link><published>2023-09-06T00:00:00+01:00</published><updated>2023-09-06T23:27:57+01:00</updated><author><name>Chris Jones</name></author><id>tag:cmsj.net,2023-09-06:/2023/09/06/haosscryptednvr.html</id><summary type="html">&lt;p&gt;All of my smart home stuff is running in Home Assistant, and I'm using their OS on a Mini PC.&lt;/p&gt;
 &lt;p&gt;One of the things I'm running on that OS is the Scrypted Add-On to bridge my generic RTSP cameras into HomeKit, and to use Scrypted's NVR.&lt;/p&gt;
 &lt;p&gt;By default, Scrypted will …&lt;/p&gt;</summary><content type="html">&lt;p&gt;All of my smart home stuff is running in Home Assistant, and I'm using their OS on a Mini PC.&lt;/p&gt;
 &lt;p&gt;One of the things I'm running on that OS is the Scrypted Add-On to bridge my generic RTSP cameras into HomeKit, and to use Scrypted's NVR.&lt;/p&gt;
@@ -11,6 +11,8 @@
 &lt;li&gt;Format a USB stick as FAT32, named &lt;code&gt;CONFIG&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;Create a directory on that stick with the name &lt;code&gt;udev&lt;/code&gt;&lt;/li&gt;
 &lt;li&gt;In that &lt;code&gt;udev&lt;/code&gt; folder create a plain text file called &lt;code&gt;80-mount-scrypted-nvr-volume.rules&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Place the udev rules below in that file&lt;/li&gt;
+&lt;li&gt;Put the USB stick in your Home Assistant OS machine and, from a terminal, run &lt;code&gt;ha os import&lt;/code&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;The contents of that rules file should be:&lt;/p&gt;
 &lt;div class="highlight"&gt;&lt;pre&gt;&lt;span&gt;&lt;/span&gt;&lt;code&gt;&lt;span class="c1"&gt;# This will mount a partition with the label &amp;quot;NVR&amp;quot; to: /mnt/data/supervisor/addons/data/09e60fb6_scrypted/scrypted_nvr/&lt;/span&gt;
