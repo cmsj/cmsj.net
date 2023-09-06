@@ -17,6 +17,8 @@ The official documentation for how to import `udev` rules (amongst many other us
  * Format a USB stick as FAT32, named `CONFIG`
  * Create a directory on that stick with the name `udev`
  * In that `udev` folder create a plain text file called `80-mount-scrypted-nvr-volume.rules`
+ * Place the udev rules below in that file
+ * Put the USB stick in your Home Assistant OS machine and, from a terminal, run `ha os import`
 
 The contents of that rules file should be:
 
