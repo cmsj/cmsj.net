@@ -253,9 +253,9 @@
 <p>Something that became obvious fairly quickly though, was that the printer would be more reliable with a heated bed. I've been able to get reliable prints via the use of rafts, but that adds time to prints and wastes filament, so I decided to see if I could mod the printer to have a heated bed.</p>
 <p>I started Googling and quickly discovered that my printer is actually a rebadged <a href="https://www.easythreed.com/h-col-1223.html">EasyThreed X1</a> and that EasyThreed sell a <a href="https://www.aliexpress.com/i/4000911088465.html">hotbed accessory</a> for the X1, but it's an externally powered/controlled device. That's fine in theory, but I have quickly gotten very attached to being able to completely remotely control the printer via <a href="https://octoprint.org/">Octoprint</a>. So, the obvious next step was to try and mod the printer to be able to drive the heater directly.</p>
 <p>Looking inside the controller box showed a pretty capable circuit board:</p>
-<p><img alt="EasyThreed X1 controller board" src="http://cmsj.net/images/easythreed_x1_controller.jpg"></p>
+<p><img alt="EasyThreed X1 controller board" src="http://cmsj.net/easythreed_x1_controller.jpg"></p>
 <p>but it was instantly obvious that next to the power terminal for the extruder heater, was a terminal labelled <code>HOT-BED</code>:</p>
-<p><img alt="Hot bed power terminal" src="http://cmsj.net/images/easythreed_x1_terminals.jpg"></p>
+<p><img alt="Hot bed power terminal" src="http://cmsj.net/easythreed_x1_terminals.jpg"></p>
 <p>Next on my journey of discovery was the communication info that Octoprint was sending/receiving, among which I saw:</p>
 <p><code>Recv: echo:Marlin 1.1.0-RC3</code></p>
 <p>which quickly led me to the <a href="https://github.com/MarlinFirmware/Marlin">Marlin</a> open source project which, crucially, is licensed as GPL. For those who don't know, GPL means that since Labists have given me a binary of Marlin in the printer, they have to give me the source code if I ask for it.</p>
@@ -269,11 +269,9 @@
 <p>The specific diffs aren't particularly important (although the Labists firmware does have some curious changes, like disabling thermal runaway protection), but by reading up a bit on configuring Marlin, and comparing the differences between the X3 and the X1, it seemed like very little would need to change to enable the bed heater and its temperature sensor (a header for which is also conveniently present on the controller board).</p>
 <p>At this point in the investigation I had:</p>
 <ul>
-<li>A controller board with:<ul>
+<li>A controller board with:</li>
 <li>A power terminal for a bed heater</li>
 <li>A header for a bed temperature sensor</li>
-</ul>
-</li>
 <li>Source for the controller firmware</li>
 <li>Source for an extremely similar printer that has a bed heater</li>
 <li>An external bed heater with power and sensor cables</li>
@@ -293,7 +291,7 @@ I also modified the build version strings in <code>Default_Version.h</code> so I
 <p><code>Recv: ok T:28.1 /0.0 B:49.9 /50.0 T0:28.1 /0.0 @:0 B@:127</code></p>
 <p>Perfect!</p>
 <p>And here is the first test print I did, to make sure everything else was still working:</p>
-<p><img alt="Calibration cubes" src="http://cmsj.net/images/easythreed_x1_cubes.jpg"></p>
+<p><img alt="Calibration cubes" src="http://cmsj.net/easythreed_x1_cubes.jpg"></p>
 <p>The cubes on the left are from before the heated bed, where I was having to level the bed closer to the nozzle to get enough adhesion and the cube on the right is the first print with the heated bed. I think the results speak for themselves - much better detail retention. It's not visible, but the "elephant's foot" is gone too!</p>
 <p>This has been a super rewarding journey, and I'm incredibly grateful to all the people in the 3D printing community upon whose shoulders I am standing. It's a rare and beautiful thing to find a varied community of products, projects and people, all working on the same goals and producing such high quality hardware and software along the way.</p>
 <h1>And now the tl;dr version</h1>
@@ -302,11 +300,9 @@ I also modified the build version strings in <code>Default_Version.h</code> so I
 <li>I am not responsible for your printer. This is a physical and firmware mod, please be careful and think about what you're doing.</li>
 <li>Buy the official <a href="https://www.aliexpress.com/i/4000911088465.html">hotbed accessory</a>, open its control box and unplug the temperature sensor cable. If for some reason you use a different hotbed, it needs to be 12V, draw no more than 30W, and your temp sensor will need to be something that Marlin can understand via the <code>TEMP_SENSOR_BED</code> define.</li>
 <li>Buy a 12V 5A barrel plug power supply (I used <a href="https://amzn.to/3oM2VN3">this one</a> but there are a million options). Use this from now on to power your X1.</li>
-<li>Grab the modified Marlin source from my GitHub repo:<ul>
+<li>Grab the modified Marlin source from my GitHub repo:</li>
 <li>Either <a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X1-cmsj">EasyThreed X1</a> - see the precise changes from EasyThreed's firmware <a href="https://github.com/cmsj/Marlin/compare/1.1.0-RC3-EasyThreeD-X1...cmsj:1.1.0-RC3-EasyThreeD-X1-cmsj">here</a></li>
 <li>Or <a href="https://github.com/cmsj/Marlin/tree/1.1.0-RC3-Labists-X1-cmsj">Labists X1</a> - this has <a href="https://github.com/cmsj/Marlin/compare/1.1.0-RC3-Labists-X1...cmsj:1.1.0-RC3-Labists-X1-cmsj">more changes</a> than the EasyThreed version, since I pulled back in some of Labists changes, but left thermal runaway protection enabled.</li>
-</ul>
-</li>
 <li>Install the CH340 USB Serial drivers. There seem to be lots of places to get these from, I used <a href="http://www.wch.cn/download/ch341ser_exe.html">these</a></li>
 <li>Install Arduino IDE 1.0.5 - still available from the bottom of <a href="https://www.arduino.cc/en/main/OldSoftwareReleases">this page</a></li>
 <li>In Arduino IDE, open the <code>Marlin.ino</code> file from the <code>Marlin</code> directory and click the ✔ button on the toolbar, this will compile the source so you can check everything is installed correctly.</li>
@@ -487,7 +483,7 @@ I also modified the build version strings in <code>Default_Version.h</code> so I
   </div>
   <div class="article__text">
     <p>As part of our general effort to try and raise the quality of Hammerspoon, I've been working with <a href="https://twitter.com/latenitefilms">@latenitefilms</a> to track down some memory leaks, which can be very easy if you use the Leaks profile in Xcode's "Instruments" tool. I tried this various ways, but I kept running into this error:</p>
-<p><img alt="Screenshot" src="http://cmsj.net/images/2018-07-12-xcode-leaks-error.png"></p>
+<p><img alt="Screenshot" src="http://cmsj.net/2018-07-12-xcode-leaks-error.png"></p>
 <p>After asking on the <a href="https://forums.developer.apple.com/thread/104011">Apple Developer Forums</a> we got an interesting response from an Apple employee that code signing might be involved. One change later to not do codesigning on Profile builds and Leaks is working again!</p>
 <p>So there we go, if you see "An error occurred trying to capture Leaks data" and "Unable to acquire required task port", one thing to check is your code signing setup. I don't know what specifically was wrong, but it's easy enough to just not sign local debug/profile builds most of the time anyway.</p>
   </div>
@@ -505,7 +501,7 @@ I also modified the build version strings in <code>Default_Version.h</code> so I
     <p>So this is a fun one, some marvellous hackers, including Zoltan Balaton and Sebastien Mauer have been working on Qemu to add support for the <a href="https://en.wikipedia.org/wiki/Sam460ex">Sam460ex motherboard</a>, a PowerPC system from 2010. Of particular interest to me is that this was a board which received an official port of Amiga OS 4, the spiritual successor to AmigaOS, one of my very favourite operating systems.</p>
 <p>I'll probably write more about this later, but for now, here is a simple screenshot of the install CD having just booted.</p>
 <p><em>Update</em>: Zoltan has published a page with information about how to get it working, <a href="http://zero.eik.bme.hu/~balaton/qemu/amiga/">see here</a></p>
-<p><img alt="Screenshot" src="http://cmsj.net/images/2018-07-05-amigaos-qemu.png"></p>
+<p><img alt="Screenshot" src="http://cmsj.net/2018-07-05-amigaos-qemu.png"></p>
   </div>
 </article>
 
