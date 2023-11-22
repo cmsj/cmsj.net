@@ -3,7 +3,7 @@
 
 AUTHOR = 'Chris Jones'
 SITENAME = 'cmsj.net'
-SITEURL = 'https://cmsj.net'
+SITEURL = 'http://cmsj.net'
 
 PATH = 'content'
 STATIC_PATHS = ['images', 'static']
