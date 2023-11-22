@@ -13,21 +13,21 @@ The LCD is a red-on-black pre-made 5.25" bay insert from [LCDModKit](http://www.
 
 Something I hadn't properly accounted for in my earlier simulator work is that the real hardware only has space for 8 user-definable characters and I was using way more than that (three of my own custom icons, but lcd4linux's split bars and hollow graphs use custom characters too). Rather than curtail my own custom icons, I chose to stop using hollow graphs, which seems to have worked.
 
-![Icy Box enclosure]({filename}/images/IMG_5588.jpg)
+![Icy Box enclosure]({static}/IMG_5588.jpg)
 *The Icy Box enclosure*
 
-![Ta-da! The back opens up]({filename}/images/IMG_5592.jpg)
+![Ta-da! The back opens up]({static}/IMG_5592.jpg)
 *Ta-da! The back opens up*
 
-![Selector switch]({filename}/images/IMG_5590.jpg)
+![Selector switch]({static}/IMG_5590.jpg)
 *Selector switch for which type of volume/RAID you want*
 
-![Icy Box and LCD]({filename}/images/IMG_5598.jpg)
+![Icy Box and LCD]({static}/IMG_5598.jpg)
 *Marrying the Icy Box and the LCD. Only a small amount of metalwork required*
 
-![Box and LCD installed]({filename}/images/IMG_5600.jpg)
+![Box and LCD installed]({static}/IMG_5600.jpg)
 *Icy Box and LCD being installed*
 
-![Finished installed]({filename}/images/IMG_5606.jpg)
+![Finished installed]({static}/IMG_5606.jpg)
 *Finished install!*
 

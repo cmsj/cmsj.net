@@ -15,11 +15,11 @@ I started Googling and quickly discovered that my printer is actually a rebadged
 
 Looking inside the controller box showed a pretty capable circuit board:
 
-![EasyThreed X1 controller board]({filename}/images/easythreed_x1_controller.jpg)
+![EasyThreed X1 controller board]({static}/easythreed_x1_controller.jpg)
 
 but it was instantly obvious that next to the power terminal for the extruder heater, was a terminal labelled `HOT-BED`:
 
-![Hot bed power terminal]({filename}/images/easythreed_x1_terminals.jpg)
+![Hot bed power terminal]({static}/easythreed_x1_terminals.jpg)
 
 Next on my journey of discovery was the communication info that Octoprint was sending/receiving, among which I saw:
 
@@ -31,20 +31,20 @@ I reached out to Labists and they were happy to supply the source, then I also e
 
 Since it's all GPL, I've republished their code with my cleanups:
 
- * [Labists X1](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-Labists-X1)
- * [EasyThreed X1](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X1)
- * [EasyThreed X3](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X3)
+* [Labists X1](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-Labists-X1)
+* [EasyThreed X1](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X1)
+* [EasyThreed X3](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X3)
 
 The specific diffs aren't particularly important (although the Labists firmware does have some curious changes, like disabling thermal runaway protection), but by reading up a bit on configuring Marlin, and comparing the differences between the X3 and the X1, it seemed like very little would need to change to enable the bed heater and its temperature sensor (a header for which is also conveniently present on the controller board).
 
 At this point in the investigation I had:
 
- * A controller board with:
-     * A power terminal for a bed heater
-     * A header for a bed temperature sensor
- * Source for the controller firmware
- * Source for an extremely similar printer that has a bed heater
- * An external bed heater with power and sensor cables
+* A controller board with:
+  * A power terminal for a bed heater
+  * A header for a bed temperature sensor
+* Source for the controller firmware
+* Source for an extremely similar printer that has a bed heater
+* An external bed heater with power and sensor cables
 
 Not a bad situation to be in!
 
@@ -75,7 +75,7 @@ Perfect!
 
 And here is the first test print I did, to make sure everything else was still working:
 
-![Calibration cubes]({filename}/images/easythreed_x1_cubes.jpg)
+![Calibration cubes]({static}/easythreed_x1_cubes.jpg)
 
 The cubes on the left are from before the heated bed, where I was having to level the bed closer to the nozzle to get enough adhesion and the cube on the right is the first print with the heated bed. I think the results speak for themselves - much better detail retention. It's not visible, but the "elephant's foot" is gone too!
 
@@ -85,20 +85,20 @@ This has been a super rewarding journey, and I'm incredibly grateful to all the 
 
 If you want to do this mod to your X1, here are some things you should know, and some things you will need:
 
- * I am not responsible for your printer. This is a physical and firmware mod, please be careful and think about what you're doing.
- * Buy the official [hotbed accessory](https://www.aliexpress.com/i/4000911088465.html), open its control box and unplug the temperature sensor cable. If for some reason you use a different hotbed, it needs to be 12V, draw no more than 30W, and your temp sensor will need to be something that Marlin can understand via the `TEMP_SENSOR_BED` define.
- * Buy a 12V 5A barrel plug power supply (I used [this one](https://amzn.to/3oM2VN3) but there are a million options). Use this from now on to power your X1.
- * Grab the modified Marlin source from my GitHub repo:
-     * Either [EasyThreed X1](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X1-cmsj) - see the precise changes from EasyThreed's firmware [here](https://github.com/cmsj/Marlin/compare/1.1.0-RC3-EasyThreeD-X1...cmsj:1.1.0-RC3-EasyThreeD-X1-cmsj)
-     * Or [Labists X1](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-Labists-X1-cmsj) - this has [more changes](https://github.com/cmsj/Marlin/compare/1.1.0-RC3-Labists-X1...cmsj:1.1.0-RC3-Labists-X1-cmsj) than the EasyThreed version, since I pulled back in some of Labists changes, but left thermal runaway protection enabled.
- * Install the CH340 USB Serial drivers. There seem to be lots of places to get these from, I used [these](http://www.wch.cn/download/ch341ser_exe.html)
- * Install Arduino IDE 1.0.5 - still available from the bottom of [this page](https://www.arduino.cc/en/main/OldSoftwareReleases)
- * In Arduino IDE, open the `Marlin.ino` file from the `Marlin` directory and click the ✔ button on the toolbar, this will compile the source so you can check everything is installed correctly.
- * If you plan to print PLA, you might want to increase the `BED_MAXTEMP` define to something higher than `100`.
- * Remove the bed-levelling screws from your X1, swap the original bed for the heated one.
- * Open the controller box of your X1, plug the bed's thermal sensor into the controller board in the `TB1` header.
- * Wire the bed's power into the green `HOT-BED` terminal. For the best results you probably want to unsolder the original power cable from the bed and use something thinner and more flexible (but at the very least you need something longer).
- * Reassemble the controller box and run all the wires neatly. I recommend you manually move the bed around to make sure neither the power nor temp sensor wires snag on anything.
- * Connect the controller box's USB port to your PC, and in Arduino IDE click the ➡ button to compile and upload the firmware. Wait until it says `Upload complete`.
- * In theory, you're done! Check the temperature readings in some software that can talk to the printer (Octoprint, Pronterface, etc.), tell it to turn the bed heater on and make sure the temps rise to the level you asked for. I would definitely encourage you to do this while next to the printer, in case something goes dangerously wrong!
+* I am not responsible for your printer. This is a physical and firmware mod, please be careful and think about what you're doing.
+* Buy the official [hotbed accessory](https://www.aliexpress.com/i/4000911088465.html), open its control box and unplug the temperature sensor cable. If for some reason you use a different hotbed, it needs to be 12V, draw no more than 30W, and your temp sensor will need to be something that Marlin can understand via the `TEMP_SENSOR_BED` define.
+* Buy a 12V 5A barrel plug power supply (I used [this one](https://amzn.to/3oM2VN3) but there are a million options). Use this from now on to power your X1.
+* Grab the modified Marlin source from my GitHub repo:
+  * Either [EasyThreed X1](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-EasyThreeD-X1-cmsj) - see the precise changes from EasyThreed's firmware [here](https://github.com/cmsj/Marlin/compare/1.1.0-RC3-EasyThreeD-X1...cmsj:1.1.0-RC3-EasyThreeD-X1-cmsj)
+  * Or [Labists X1](https://github.com/cmsj/Marlin/tree/1.1.0-RC3-Labists-X1-cmsj) - this has [more changes](https://github.com/cmsj/Marlin/compare/1.1.0-RC3-Labists-X1...cmsj:1.1.0-RC3-Labists-X1-cmsj) than the EasyThreed version, since I pulled back in some of Labists changes, but left thermal runaway protection enabled.
+* Install the CH340 USB Serial drivers. There seem to be lots of places to get these from, I used [these](http://www.wch.cn/download/ch341ser_exe.html)
+* Install Arduino IDE 1.0.5 - still available from the bottom of [this page](https://www.arduino.cc/en/main/OldSoftwareReleases)
+* In Arduino IDE, open the `Marlin.ino` file from the `Marlin` directory and click the ✔ button on the toolbar, this will compile the source so you can check everything is installed correctly.
+* If you plan to print PLA, you might want to increase the `BED_MAXTEMP` define to something higher than `100`.
+* Remove the bed-levelling screws from your X1, swap the original bed for the heated one.
+* Open the controller box of your X1, plug the bed's thermal sensor into the controller board in the `TB1` header.
+* Wire the bed's power into the green `HOT-BED` terminal. For the best results you probably want to unsolder the original power cable from the bed and use something thinner and more flexible (but at the very least you need something longer).
+* Reassemble the controller box and run all the wires neatly. I recommend you manually move the bed around to make sure neither the power nor temp sensor wires snag on anything.
+* Connect the controller box's USB port to your PC, and in Arduino IDE click the ➡ button to compile and upload the firmware. Wait until it says `Upload complete`.
+* In theory, you're done! Check the temperature readings in some software that can talk to the printer (Octoprint, Pronterface, etc.), tell it to turn the bed heater on and make sure the temps rise to the level you asked for. I would definitely encourage you to do this while next to the printer, in case something goes dangerously wrong!
 
