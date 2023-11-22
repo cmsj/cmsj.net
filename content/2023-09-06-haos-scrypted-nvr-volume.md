@@ -47,6 +47,12 @@ ACTION=="remove", ENV{dir_name}!="", RUN{program}+="/usr/bin/systemd-umount %E{m
 LABEL="abort_rule"
 ```
 
+It's likely a good idea to reboot the Home Assistant OS machine at this point.
+
+Now you can go to Scrypted's web UI, into the Scrypted NVR plugin and configure it to use `/data/scrypted_nvr` as its NVR Recordings Directory. The Available Storage box there will show the correct free space for the new volume.
+
+And that's it!
+
 Notes:
 
  * As far as I know, the mountpoint for the Scrypted add-on should be stable, but I can't promise this.
