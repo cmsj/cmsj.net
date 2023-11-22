@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
+
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+  <meta name="og:url" content="http://cmsj.net/2012/07/01/photo-import-workflow.html" />
+  <meta name="og:title" content="Photo import workflow" />
+  <meta name="og:description" content="Introduction Since I'm writing about workflows today, I thought I'd also quickly chuck in a guide to how I get the photos and movies that I've taken with my iPhone, onto my laptop and specifically, imported into Aperture. The Mechanics This requires a few moving parts to produce a final …" />
+  <meta name="keywords" content="">
+
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Photo import workflow  </title></head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="http://cmsj.net">cmsj.net</a>
+      </div>
+      <p>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2012/07/01/photo-import-workflow.html">Photo import workflow</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Sun 01 July 2012</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <h2><strong>Introduction</strong></h2>
+<p>Since I'm writing about workflows today, I thought I'd also quickly chuck in a guide to how I get the photos and movies that I've taken with my iPhone, onto my laptop and specifically, imported into Aperture.
+The Mechanics
+This requires a few moving parts to produce a final workflow. The high-level process is:
+1.  Plug iPhone into a USB port
+2.  Copy photos from the iPhone into a temporary directory, deleting them as they are successfully retrieved
+3.  Import the photos into Aperture, ensuring they are copied into its library and deleted from the temporary directory</p>
+<p>Simple, right? Well yes and no.
+<strong>Retrieval from iPhone</strong></p>
+<hr>
+<p>This really ought to be easier than it is, but at least it is possible.
+Aperture can import photos from devices, but it doesn't seem to offer the ability to delete them from the device after import. That alone makes it not even worth bothering with if you don't want to build up a ton of old photos on your phone.
+OS X does ship with a tool that can import photos from camera devices and delete the photos afterwards, a tool called AutoImporter.app, but you won't find it without looking hard. It lives at:
+<code>/System/Library/Image Capture/Support/Application/AutoImporter.app</code></p>
+<p>If you run that tool, you will see no window, just a dock icon and some menus. Go into its Preferences and you will be able to choose a directory to import to, and choose whether or not to delete the files:
+<img alt="prefs" src="http://cmsj.net/images/autoimporter.png"></p>
+<p>Easy!
+<strong>Importing into Aperture</strong></p>
+<hr>
+<p>This involves using Automator to build a Folder Action workflow for the directory that AutoImporter is pulling the photos into. All it does is check to see if AutoImporter is still running and if so wait, then launch Aperture and tell it to import everything from that directory into a particular Project, and then delete the source files:
+<img alt="Aperture autoimport workflow" src="http://cmsj.net/images/aperture-autoimport-workflow.png"></p>
+<h2><strong>That's it!</strong></h2>
+<p>Really, that's all there is. Now whenever you plug in your iPhone, all of the pictures and movies you've taken recently, will get imported into Aperture for you to process, archive, touch-up, export or whatever else it is that you do with your photos and movies.</p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
+      <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
+      </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
+
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+  <meta name="og:url" content="http://cmsj.net/2007/06/09/more-ps3-video-stuff.html" />
+  <meta name="og:title" content="More PS3 video stuff" />
+  <meta name="og:description" content="I came across a python script called vepp, which aims to be a simple way of transcoding files for portable media devices. Why not also use it for very unportable media devices such as the PS3? :) Initially I've just added a target for fairly high bitrate 720p H.264/AVC …" />
+  <meta name="keywords" content="">
+
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; More PS3 video stuff  </title></head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="http://cmsj.net">cmsj.net</a>
+      </div>
+      <p>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2007/06/09/more-ps3-video-stuff.html">More PS3 video stuff</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Sat 09 June 2007</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I came across a python script called <a href="http://can.homeunix.org/sw/vepp/">vepp</a>, which aims to be a simple way of transcoding files for portable media devices. Why not also use it for very unportable media devices such as the PS3? :)
+Initially I've just added a target for fairly high bitrate 720p H.264/AVC, 1080 and MPG-SP targets still to come.
+If you want to track my development version, you can do so <a href="https://code.launchpad.net/~cmsj/+junk/ps3tools">via Launchpad</a>. You will need to use <a href="http://www.bazaar-vcs.org">bzr</a> thus: bzr branch http://bazaar.launchpad.net/~cmsj/+junk/ps3tools
+You'll need a capable version of ffmpeg, as discussed <a href="http://www.tenshu.net/archives/2007/06/03/transcoding-video-for-the-ps3-in-ubuntu/">previously</a>. Output files will be written to the current directory (I'm looking at adapting the current behaviour to be able to automatically direct the output to either attached media that is PS3 compatible (CF/SD/MS/USB) or sending it straight to a directory you are <a href="http://mediatomb.cc/">sharing via UPnP</a> (far more useful than ferrying things about with SD cards!)
+Here is my current patch against vepp:
+<code>=== modified file 'vepp-2.0.1.py' (properties changed)--- vepp-2.0.1.py       2007-06-09 01:01:48 +0000+++ vepp-2.0.1.py       2007-06-09 03:12:21 +0000@@ -4,8 +4,8 @@ from math import sqrt # defaults-remove = True-target = 'psp-oe'+remove = False+target = 'ps3-avc-720p' vbr = True audio = None@@ -85,6 +85,22 @@         'qmax': 24,         'channels': (2, 1),         },+    'ps3-avc-720p': { # Only tested with firmware 1.80+        'maxx': 1280,+        'maxy': 720,+        'stepx': 8, # FIXME: lower?+        'stepy': 8, # FIXME: lower?+        'pixels': 1280 * 720,+        'namedfiles': True,+        'thumb': False, # FIXME: Can this be True?+        'ext': "mp4",+        'video': ["-vcodec", "h264", "-f", "mp4", "-bufsize", "14000k", "-maxrate", "14000k", "-coder", "1", "-level", "31", "-r", "24000/1001", "-g", "300"],+        'audio': ["-acodec", "aac", "-ab", "160k"],+        'bitrate': lambda x,y: "3072000",+        'qscale': 18,+        'qmax': 24,+        'channels': (2, 1),+        },     's60': {         'maxx': 352,         'maxy': 288,</code>
+It would be nice to be able to push content to the PS3 from a LAN, but I have no idea how they could do it sanely. Maybe I can push files via Bluetooth.
+Of course, if the rumours are true, this is going to all be immaterial shortly...</p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
+      <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
+      </div>
+    </footer>
+</body>
+</html>

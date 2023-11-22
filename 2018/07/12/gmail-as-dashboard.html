@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
+
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+  <meta name="og:url" content="http://cmsj.net/2018/07/12/gmail-as-dashboard.html" />
+  <meta name="og:title" content="Abusing Gmail as a ghetto dashboard" />
+  <meta name="og:description" content="I'm sure many of us receive regular emails from the same source - by which I mean things like a daily status email from a backup system, or a weekly newsletter from a blogger/journalist we like, etc. These are a great way of getting notified or kept up to date …" />
+  <meta name="keywords" content="">
+
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Abusing Gmail as a ghetto dashboard  </title></head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="http://cmsj.net">cmsj.net</a>
+      </div>
+      <p>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2018/07/12/gmail-as-dashboard.html">Abusing Gmail as a ghetto dashboard</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Thu 12 July 2018</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I'm sure many of us receive regular emails from the same source - by which I mean things like a daily status email from a backup system, or a weekly newsletter from a blogger/journalist we like, etc.</p>
+<p>These are a great way of getting notified or kept up to date, but every one of these you receive is also a piece of work you need to do, to keep your Inbox under control. Gmail has a lot of powerful filtering primitives, but as far as I am able to tell, none of them let you manage this kind of email without compromise.</p>
+<p>My ideal scenario would be that, for example, my daily backup status email would keep the most recent copy in my Inbox, and automatically archive older ones. Same for newsletters - if I didn't read last week's one, I'm realistically never going to, so once it's more than a couple of weeks stale, just get it out of my Inbox.</p>
+<p>Thankfully, Google has an indirect way of making this sort of thing work - <a href="https://developers.google.com/apps-script/">Google Apps Script</a>. You can trigger small JavaScript scripts to run every so often, and operate on your data in various Google apps, including Gmail.</p>
+<p>So, I quickly wrote <a href="https://gist.github.com/cmsj/0d12c452277f32704f347c7fe117215a">this script</a> and it runs every few hours now:</p>
+<div class="highlight"><pre><span></span><code><span class="c1">// Configuration data</span>
+<span class="c1">// Each config should have the following keys:</span>
+<span class="c1">//  * age_min: maps to &#39;older_than:&#39; in gmail query terms</span>
+<span class="c1">//  * age_max: maps to &#39;newer_than:&#39; in gmail query terms</span>
+<span class="c1">//  * query: freeform gmail query terms to match against</span>
+<span class="c1">//</span>
+<span class="c1">// The age_min/age_max values don&#39;t need to exist, given the freeform query value,</span>
+<span class="c1">// but age_min forces you to think about how frequent the emails are, and age_max</span>
+<span class="c1">// forces you to not search for every single email tha matches the query</span>
+<span class="c1">//</span>
+<span class="c1">// TODO:</span>
+<span class="c1">//  * Add a per-config flag that skips the archiving if there&#39;s only one matching thread (so the most recent matching email always stays in Inbox)</span>
+<span class="kd">var</span><span class="w"> </span><span class="nx">configs</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;14d&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;90d&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">query</span><span class="o">:</span><span class="s2">&quot;subject:(Benedict&#39;s Newsletter)&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;7d&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;30d&quot;</span><span class="p">,</span><span class="w"> </span><span class="nx">query</span><span class="o">:</span><span class="s2">&quot;from:hello@visualping.io subject:gnubert&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;1d&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;7d&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">query</span><span class="o">:</span><span class="s2">&quot;subject:(Nightly clone to Thunderbay4 Successfully)&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">{</span><span class="w"> </span><span class="nx">age_min</span><span class="o">:</span><span class="s2">&quot;1d&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">age_max</span><span class="o">:</span><span class="s2">&quot;7d&quot;</span><span class="p">,</span><span class="w">  </span><span class="nx">query</span><span class="o">:</span><span class="s2">&quot;from:Amazon subject:(Arriving today)&quot;</span><span class="w"> </span><span class="p">},</span>
+<span class="w">  </span><span class="p">];</span>
+
+<span class="kd">function</span><span class="w"> </span><span class="nx">processInbox</span><span class="p">()</span><span class="w"> </span><span class="p">{</span>
+<span class="w">  </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="nx">config_key</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">configs</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">config</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">configs</span><span class="p">[</span><span class="nx">config_key</span><span class="p">];</span>
+<span class="w">    </span><span class="nx">Logger</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Processing query: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">]);</span>
+
+<span class="w">    </span><span class="kd">var</span><span class="w"> </span><span class="nx">threads</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">GmailApp</span><span class="p">.</span><span class="nx">search</span><span class="p">(</span><span class="s2">&quot;in:inbox &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;query&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; newer_than:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;age_max&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="s2">&quot; older_than:&quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">config</span><span class="p">[</span><span class="s2">&quot;age_min&quot;</span><span class="p">]);</span>
+<span class="w">    </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kd">var</span><span class="w"> </span><span class="nx">thread_key</span><span class="w"> </span><span class="ow">in</span><span class="w"> </span><span class="nx">threads</span><span class="p">)</span><span class="w"> </span><span class="p">{</span>
+<span class="w">      </span><span class="kd">var</span><span class="w"> </span><span class="nx">thread</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="nx">threads</span><span class="p">[</span><span class="nx">thread_key</span><span class="p">];</span>
+<span class="w">      </span><span class="nx">Logger</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;  Archiving: &quot;</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="nx">thread</span><span class="p">.</span><span class="nx">getFirstMessageSubject</span><span class="p">());</span>
+
+<span class="w">      </span><span class="nx">thread</span><span class="p">.</span><span class="nx">markRead</span><span class="p">();</span>
+<span class="w">      </span><span class="nx">thread</span><span class="p">.</span><span class="nx">moveToArchive</span><span class="p">();</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>(apologies for the very basic JavaScript - it's not a language I have any real desire to be good at. Don't @ me).</p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
+      <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
+      </div>
+    </footer>
+</body>
+</html>

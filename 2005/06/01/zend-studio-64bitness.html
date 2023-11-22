@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
+
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+  <meta name="og:url" content="http://cmsj.net/2005/06/01/zend-studio-64bitness.html" />
+  <meta name="og:title" content="Zend Studio 64bitness" />
+  <meta name="og:description" content="I'm quite a big fan of the Zend Studio development environment for PHP - I use it quite extensively at work and generally speaking it's a very capable tool and makes developing PHP a lot easier/quicker. However, it's closed source and quite expensive, which is a bit of a downside …" />
+  <meta name="keywords" content="">
+
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Zend Studio 64bitness  </title></head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="http://cmsj.net">cmsj.net</a>
+      </div>
+      <p>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2005/06/01/zend-studio-64bitness.html">Zend Studio 64bitness</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Wed 01 June 2005</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I'm quite a big fan of the Zend Studio development environment for PHP - I use it quite extensively at work and generally speaking it's a very capable tool and makes developing PHP a lot easier/quicker.
+However, it's closed source and quite expensive, which is a bit of a downside, but at the same time it should give me some leverage to get the features I want into future versions, right? Probably not.
+I've been bugging the Zend support guys about AMD64 support for near enough 10 months now, with little success. Now, this might not seem too surprising, what with it being closed source, but the important difference here is that Zend's Studio is written in <em>Java</em>.
+Given that Java is supposed to be a platform agnostic virtual machine, precisely why is it that Zend only ship binaries for a few platforms? The answer appears to be that the installer they use to install said binaries on customer machines is a complete nightmare.
+Specifically they appear to be using InstallAnywhere, which is becoming quite common for installing java programs, especially on Linux. Sadly it has some pretty serious flaws. Firstly it's one of those godawful self-extracting/installing shell scripts, so modifying the installer is exceptionally hard. It also knows almost nothing about AMD64, despite the fact that it ought to be really quite compatible with 32bit code (especially for something as library-free as java) and triggers a lovely glibc bug (set "<code>LD_ASSUME_KERNEL=2.2.5</code>" on an AMD64 machine and then try to run anything ;)
+So basically that all sucks and anyone using InstallAnywhere is cutting themselves off from potential customers for no particularly good reasons. Obviously I can't accept that, so knowing that Zend Studio is really just a Java program I went at it with a copy of vim and a lot of scribbling notes until I figured out how InstallAnywhere's crazy LAX configuration system worked. With that out of the way I was able to determine that all you need to do to make this thing run *perfectly* on AMD64 is make two tiny changes to two not-so-tiny text files. Simple!
+Here's how:</p>
+<ol>
+<li>Install Zend Studio somewhere (a 32bit machine or a 32bit chroot), copy the folder to your 64bit install</li>
+<li>Look in the directory Studio is installed in (e.g. "<code>/usr/local/Zend/ZendStudioClient-4.0.2/</code>") and edit "<code>bin/ZDE.lax</code>", you need to have "<code>lax.nl.current.vm</code>" point to your 64bit Java VM binary (e.g. "<code>/usr/bin/java</code>").</li>
+<li>Now edit "<code>bin/ZDE</code>" and comment out the line "<code>export LD_ASSUME_KERNEL=2.2.5</code>"</li>
+</ol>
+<p>That should be it, fire up <code>bin/ZDE</code> and you should be hacking PHP in 64bits of goodness (be aware you may need to reconfigure where Zend Studio finds external binaries like cvs - see the ZDE configuration window).
+<strong>Update</strong>
+I've spoken with Zend since writing this and although they are still not committing to supporting AMD64, they did provide me with a handy link to download the Zend Studio installer without the 32bit JVM in it, which (with some work) makes a native 64bit install possible. Hurrah!
+So, what to do, well firstly you will need the tarball (I'm not going to link to it, ask Zend) and to extract it. This should leave you with a single file called <code>ZendStudio-4_0_2.bin</code> (in the case of 4.0.2, current release at the time of writing). Run the command:
+<code>cat ZendStudio-4_0_2.bin | sed -e 's/=2.2.5/=a.a.a/g' &gt;ZendStudio-4_0_2.bin.1</code>
+Then run "<code>sh ./ZendStudio-4_0_2.bin.1</code>" and the installer should start. Once it has completed you still won't actually be able to start ZDE because the same LD_ASSUME nonsense is going on there, so edit "bin/ZDE". Above I showed the quick and hacky way to make this work - comment out the "<code>LD_ASSUME_KERNEL=2.2.5</code>" - however there is a way that is probably better, so I will encourage you to do this instead... Edit line 1326 so instead of reading simply:
+<code>if [ `uname` = "Linux" ]; then</code>
+it now reads:
+<code>if [ `uname` = "Linux" -a `uname -m` != "x86_64" ]; then</code>
+and all will be well :o)
+<strong>Update 2</strong>
+One thing I hadn't noticed because it was working transparently is that not all of ZDE is Java, for example the code analyzer binary in Zend's bin/ folder appears to be a native 32bit binary. These should still work fine if you have some 32bit compatibility libraries installed (Fedora should install these by default on AMD64, Debian based systems may need to install the ia32-libs package).</p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
+      <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
+      </div>
+    </footer>
+</body>
+</html>

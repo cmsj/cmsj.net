@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <!-- ## for client-side less
+  <link rel="stylesheet/less" type="text/css" href="http://cmsj.net/theme/css/style.less">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/less.js/1.7.3/less.min.js" type="text/javascript"></script>
+  -->
+
+
+  <link rel="icon" type="image/vnd.microsoft.icon" href="http://cmsj.net/">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/normalize.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/style.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/pygments.css">
+  <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto+Mono">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/fontawesome-all.min.css">
+  <link rel="stylesheet" type="text/css" href="http://cmsj.net/theme/css/hatena-bookmark-icon.css">
+
+  <meta charset="utf-8" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Chris Jones">
+  <meta name="description" content="Posts and writings by Chris Jones">
+  <meta name="og:site_name" content="cmsj.net">
+
+  <!-- Twitter Card -->
+
+
+  <meta name="og:url" content="http://cmsj.net/2013/01/26/funky-lcd4linux-python-module.html" />
+  <meta name="og:title" content="Funky lcd4linux python module" />
+  <meta name="og:description" content="I've got an LCD on the way, to put in my fileserver and show some status/health info. Rather than wait for the thing to arrive I've gone ahead and started making the config I want with lcd4linux. Since the LCD I'm getting is only 20 characters wide and 4 …" />
+  <meta name="keywords" content="">
+
+
+  <link href="http://cmsj.net/feeds/all.atom.xml" type="application/atom+xml" rel="alternate" title="cmsj.net Atom" />
+
+
+  <title>
+    cmsj.net
+&ndash; Funky lcd4linux python module  </title></head>
+
+<body>
+  <main>
+    <header>
+      <div class="site-name">
+        <a href="http://cmsj.net">cmsj.net</a>
+      </div>
+      <p>
+        <a href="http://cmsj.net/archives.html"><i class="fas fa-archive"></i> Archive</a>
+      </p>
+    </header>
+
+<article>
+  <div class="article__title">
+    <h1><a href="http://cmsj.net/2013/01/26/funky-lcd4linux-python-module.html">Funky lcd4linux python module</a></h1>
+  </div>
+  <div class="article__meta">
+    <p class="article__meta__post-date">Posted on: Sat 26 January 2013</p>
+    </p>
+  </div>
+  <div class="article__text">
+    <p>I've got an LCD on the way, to put in my fileserver and show some status/health info.
+Rather than wait for the thing to arrive I've gone ahead and started making the config I want with lcd4linux.
+Since the LCD I'm getting is only 20 characters wide and 4 lines tall, there is not very much space, so I've had to get pretty creative with how I'm displaying information.
+One thing I wanted was to show the percentage used of the various disks in the machine, but since I have at least 3 mount points, that would either mean scrolling text (ugly) or consuming ¾ of the display (inefficient).
+It seemed like a much nicer idea to use a single line to represent the space used as a percentage and simple display each of the mounts in turn, but unfortunately lcd4linux's "Evaluator" syntax is not sufficiently complex to be able to implement this directly, so I faced the challenge of either writing a C plugin or passing the functionality off to a Python module.
+I tend to think that this feature ought to be implemented as a C plugin because it makes it easier to use, but I am unlikely to bother with that because I prefer Python, so I went with a Python module :)
+The code is <a href="https://github.com/cmsj/lcd4linux_rotator">on github</a> and the included README.md covers how to use it in an lcd4linux configuration.
+At some point soon I'll post my lcd4linux configuration - just as soon as I've figured out what to do with the precious 4th line. In the mean time, here is a video of the rotator plugin operating on the third line (the first line being disk activity and the second line being network activity):</p>
+<p>Update: I figured out what to do with the fourth line:</p>
+<p>That's another python module, this time a port of Chris Applegate's <a href="http://www.qwghlm.co.uk/toys/dailymail/">Daily Mail headline generator</a> from JavaScript to Python. Code is on <a href="https://github.com/cmsj/dailymail">github</a>.
+As promised, the complete lcd4linux config is available (also on github) <a href="https://gist.github.com/4694242">here</a>.</p>
+  </div>
+
+</article>
+
+
+  </main>
+    <footer>
+      <div class="author__logo">
+          <img src="http://cmsj.net/theme/images/logo.png" alt="logo">
+      </div>
+      <section class="author">
+        <div class="author__name">
+          <a href="http://cmsj.net/pages/about.html">Chris Jones</a>
+          <p></p>
+        </div>
+        <div class="author__link">
+          <ul>
+            <li>
+              <a href="https://twitter.com/cmsj" target="_blank" title="twitter">
+                <i class="fab fa-twitter-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="https://github.com/cmsj" target="_blank" title="github">
+                <i class="fab fa-github-square"></i>
+              </a>
+            </li>
+            <li>
+              <a href="http://cmsj.net/feeds/all.atom.xml" target="_blank" title="Feed">
+                <i class="fas fa-rss-square"></i>
+              </a>
+            </li>
+          </ul>
+        </div>
+      </section>
+      <div class="ending-message">
+        <p>&copy; Chris Jones. Powered by <a href="http://getpelican.com" target="_blank">Pelican</a>, Theme is using <a href="https://github.com/laughk/pelican-hss" target="_blank">HSS</a>. </p>
+      </div>
+    </footer>
+</body>
+</html>
