@@ -19,6 +19,8 @@ jobs:
       contents: read
       pages: write
     with:
+      siteurl: "https://cmsj.net"
+      feed_domain: "https://cmsj.net"
       settings: "publishconf.py"
       requirements: "-r requirements.txt"
       theme: "https://github.com/fle/pelican-simplegrey"
