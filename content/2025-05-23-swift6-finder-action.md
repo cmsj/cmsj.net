@@ -7,7 +7,10 @@ Swift 6 is great, but the strict concurrency checking can make interactions with
 
 Furthermore, older Apple APIs can be less aware of `async` Swift features, such as `actor`s. I recently ran into both of these while adding a Finder "action extension" to an app I'm working on, where the code that does the "action" (extracting a compressed archive) is in an `actor`.
 
-Since there wasn't a ton of relevant info online already, I figured I'd blog about it in the hopes that it can save some time for the next person who needs to do this.
+Apple provides [sample code]{https://developer.apple.com/documentation/appkit/add-functionality-to-finder-with-action-extensions} for this, but it assumes the actual work to be done, is synchronous. Since there wasn't a ton of relevant info online already, I figured I'd blog about it in the hopes that it can save some time for the next person who needs to do this.
+
+After some head scratching I was able to take Apple’s sample code and make it work with an actor.
+
 Rather than write it out in pieces with explanations, I have put all the explanations in the code as commands:
 
 ```swift
