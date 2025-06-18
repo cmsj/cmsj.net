@@ -85,7 +85,7 @@ class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
             // (you can also think of this as increasing a reference counter)
             dispatchGroup.enter()
 
-            // In my case, I need to operate on mutliple UTTypes, so rather than repeat all this code
+            // In my case, I need to operate on multiple UTTypes, so rather than repeat all this code
             // for ~20 types of archive, I just grab the UTType of the incoming NSItemProvider and
             // use that to load the FileRepresentation
             guard let attachmentTypeID = attachment.registeredTypeIdentifiers.first else { continue }
