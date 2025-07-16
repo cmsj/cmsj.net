@@ -5,13 +5,11 @@ date: 2025-05-23
 
 Swift 6 is great, but the strict concurrency checking can make interactions with older Apple APIs be... not fun.
 
-Furthermore, older Apple APIs can be less aware of `async` Swift features, such as `actor`s. I recently ran into both of these while adding a Finder "action extension" to an app I'm working on, where the code that does the "action" (extracting a compressed archive) is in an `actor`.
+Furthermore, older Apple APIs can be less aware of Swift's `async` features, which becomes particularly relevant if you have adopted `actor` objects, since access to those is *always* async.. I recently ran into a situation like this while adding a Finder "action extension" to an app I'm working on, where the code that does the "action" is in an `actor`.
 
-Apple provides [sample code](https://developer.apple.com/documentation/appkit/add-functionality-to-finder-with-action-extensions) for writing an extension, but it assumes the actual work to be done, is synchronous. Since there wasn't a ton of relevant info online already, I figured I'd blog about it in the hopes that it can save some time for the next person who needs to do this.
+Apple provides [sample code](https://developer.apple.com/documentation/appkit/add-functionality-to-finder-with-action-extensions) for writing Finder extensions, but it assumes the actual work to be done, is synchronous. Since there wasn't a ton of relevant info online already, I figured I'd blog about it in the hopes that it can save some time for the next person who needs to do this.
 
-After some head scratching I was able to take Apple’s sample code and make it work with an actor.
-
-Rather than write it out in pieces with explanations, I have put all the explanations in the code as commands:
+Rather than make this blog post huge, I've just added lots of comments to the code so you can follow it in-place. The context is that we are writing an extension that can extract compressed archives (e.g. Zip files) and all of the actual code for interacting with archive files, is in an actor so the UI in our main app stays performant even with very large archives. You are invited to compare this code to Apple's sample code above, to see what my changes actually are.
 
 ```swift
 //
@@ -25,15 +23,16 @@ import Foundation
 import UniformTypeIdentifiers
 import Synchronization
 
-// This is a function that will instantiate our actor, pass it a URL from
-// Finder and return the URL of the directory it created with the extracted files
-// in it.
+// This is a helper function that will instantiate our actor, call it with the url from Finder that
+// we're extracting, and then return the URL we wrote the archive's contents to.
 func extract(_ url: URL) async throws -> URL? {
     // This first FileManager call is super weird, but it gives you a private, temporary
     // directory to use to write your output files/folders to.
-    // (it's super weird because we don't tell it anything about the action we're currently
-    // responding to, and the directory it creates is accessible to our code, but otherwise
-    // not - the user can't go into this directory, nor can root).
+    // It's super weird because we don't tell it anything about the action we're currently
+    // responding to, and the directory it creates is accessible only by our code - the user can't 
+    // go into this directory, nor can root.
+    // Somehow macOS knows what we're doing and gives us an appropriate directory. I have put no
+    // effort into trying to understand that, it is what it is.
     let itemReplacementDirectory = try FileManager.default.url(for: .itemReplacementDirectory,
                                                                in: .userDomainMask,
                                                                appropriateFor: URL(fileURLWithPath: NSHomeDirectory()),
@@ -50,29 +49,34 @@ func extract(_ url: URL) async throws -> URL? {
     await someActor.extract(to: outputFolderURL)
 
     // Return our extraction directory so the handler below can tell Finder about it.
-    // Finder will then take care of moving it to the directory `url` is in, and renaming it
-    // if any duplicates exist.
+    // Finder will then take care of moving it to the directory the user is in, renaming it
+    // if any duplicates exist, and offering the user the opportunity to change the name.
     return outputFolderURL
 }
 
+// This is the class that implements the Finder extension
 class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
     func beginRequest(with context: NSExtensionContext) {
         NSLog("beginRequest(): Starting up...")
 
-        // Get the input item
+        // Get the input item from Finder
         guard let inputItem = context.inputItems.first as? NSExtensionItem else {
             preconditionFailure("beginRequest(): Expected an extension item")
         }
 
-        // Get the "attachments" from the input item. These are NSItemProviders
+        // Get the "attachments" from the input item. These are NSItemProviders representing the 
+        // file(s) selected by the user
         guard let inputAttachments = inputItem.attachments else {
             preconditionFailure("beginRequest(): Expected a valid array of attachments")
         }
         precondition(inputAttachments.isEmpty == false, "beginRequest(): Expected at least one attachment")
 
-        // Because we have two kinds of callback closures, and they are apparently not all
-        // clamped to MainActor, we need to make some thread-safe storage for the NSItemProviders
-        // we need to create. Mutex will do the job nicely.
+        // Similar to Finder giving us NSItemProvider objects for our input files, we also have to create
+        // NSItemProvider objects for our output files.
+        // Below we will do that through a complex arrangement of two callback methods which do not
+        // guarantee that they are called on the main thread. Because of that lack of guarantee, we need
+        // to ensure we are thread-safe, which we will do be creating a Mutex-wrapped array to store our
+        // output NSItemProviders in.
         let outputAttachmentsStore: Mutex<[NSItemProvider]> = Mutex([])
 
         // This is how we will schedule our final work to be done after all of our output attachments
@@ -82,9 +86,12 @@ class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
         // Iterate the incoming NSItemProviders
         for attachment in inputAttachments {
             // Tell the dispatch group that we're starting a new piece of work
-            // (you can also think of this as increasing a reference counter)
+            // (you can also think of this as incrementing a reference counter)
             dispatchGroup.enter()
 
+            // Before we can call loadInPlaceFileRepresentation below, we need to know what UTType it
+            // should load. Usually you'll already know what this is because you operate on one type
+            // of file.
             // In my case, I need to operate on multiple UTTypes, so rather than repeat all this code
             // for ~20 types of archive, I just grab the UTType of the incoming NSItemProvider and
             // use that to load the FileRepresentation
@@ -96,7 +103,7 @@ class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
             // is responsible for producing our output file.
             _ = attachment.loadInPlaceFileRepresentation(forTypeIdentifier: attachmentTypeID) { (url, inPlace, error) in
                 // Once we have finished creating the NSItemProvider, signal to the DispatchGroup
-                // that we've finished a piece of work (ie decrement a reference counter)
+                // that we've finished a piece of work (ie decrement the reference counter)
                 defer { dispatchGroup.leave() }
 
                 guard let url = url else {
@@ -109,11 +116,8 @@ class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
                 outputAttachmentsStore.withLock { outputAttachments in
                     let itemProvider = NSItemProvider()
 
-                    // Even though we're passing a URL back to Finder, if we tell it it's a UTType.fileURL
-                    // all it will do is write a file with the URL inside it.
-                    // So instead we will vend a UTType.data.
-                    // The closure for this output NSItemProvider is where we'll call our helper function from
-                    // earlier.
+                    // The loadHandler closure for this output NSItemProvider is where we'll call our 
+                    // helper function from earlier.
                     NSLog("beginRequest(): Registering file representation...")
                     itemProvider.registerFileRepresentation(forTypeIdentifier: UTType.data.identifier,
                                                             fileOptions: [.openInPlace],
@@ -121,8 +125,10 @@ class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
                                                             loadHandler: { completionHandler in
                         NSLog("beginRequest(): in registerFileRepresentation loadHandler closure")
 
-                        // I found that using a detached Task was necessary here to avoid blocking the thread
-                        // we're currently running on.
+                        // We can't just directly await our extract() helper function here because we're in a
+                        // syncronous context, not an async one, so we need a Task, but if we just ask for a Task
+                        // on our current thread, it will never execute because the thread will be blocked waiting for it.
+                        // So, we will ask for a detached, ie background, Task to do our work and call the completion handler.
                         Task.detached {
                             NSLog("beginRequest(): in Task")
                             do {
@@ -137,6 +143,9 @@ class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
                         return nil
                     })
 
+                    // Store the output NSItemProvider in our thread-safe storage.
+                    // Note that at this point, the callback above hasn't actually run yet, and doesn't run until
+                    // Finder is ready to call it at some point in the future.
                     outputAttachments.append(itemProvider)
                     NSLog("beginRequest(): Adding provider output, there are now \(outputAttachments.count) providers")
                 }
@@ -148,6 +157,10 @@ class ActionRequestHandler: NSObject, NSExtensionRequestHandling {
         // has been drained of tasks (ie the reference counter has reached zero).
         // We can't do something like dispatchGroup.wait() because that would block the queue
         // and prevent the various NSItemProvider callbacks from executing.
+        // Instead, the main queue of this extension's process just keeps ticking along
+        // until the final call to dispatchGroup.leave().
+        // This means you can deadlock the process if that never happens, but that
+        // should only happen if your actor gets stuck indefinitely.
         dispatchGroup.notify(queue: DispatchQueue.main) {
             NSLog("beginRequest(): DispatchGroup completed")
 
