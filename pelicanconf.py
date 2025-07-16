@@ -32,8 +32,9 @@ FEED_RSS = ('feed.xml')
 RSS_FEED_SUMMARY_ONLY = False
 
 # Social widget
-SOCIAL = (('twitter', 'https://twitter.com/cmsj'),
-          ('github', 'https://github.com/cmsj'))
+SOCIAL = (
+    ('github', 'https://github.com/cmsj')
+)
 
 ARTICLE_URL = '{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
 ARTICLE_SAVE_AS = '{date:%Y}/{date:%m}/{date:%d}/{slug}.html'
